@@ -1,4 +1,5 @@
 @echo off
+cls
 setlocal enabledelayedexpansion
 
 set "PROJECT_DIR=%~dp0"
@@ -94,7 +95,6 @@ if !errorlevel! neq 0 (
         echo URL remota 'origin' ja correta.
     )
 )
-echo Repositorio remoto configurado.
 echo.
 
 echo ETAPA 5: Sincronizando com o repositorio remoto (git pull)...
