@@ -17,7 +17,7 @@ if not exist ".git" (
     git init
     if !errorlevel! neq 0 (
         echo ERRO: Falha ao inicializar o repositorio Git.
-        goto :eof
+        exit /b 1
     )
     echo Repositorio Git inicializado.
 ) else (
@@ -29,7 +29,7 @@ echo ETAPA 2: Adicionando arquivos ao staging area...
 git add .
 if !errorlevel! neq 0 (
     echo ERRO: Falha ao adicionar arquivos.
-    goto :eof
+    exit /b 1
 )
 echo Arquivos adicionados.
 echo.
@@ -41,10 +41,10 @@ echo Debug: git diff --cached --quiet returned !changes_staged!
 
 if !changes_staged! equ 0 (
     echo Sub-etapa 3.1: Nenhum commit novo a ser feito.
-    goto :end_commit_section
+    goto :SKIP_COMMIT_SECTION
 )
 
-:: Se chegamos aqui, changes_staged nao e 0, entao ha alteracoes para commitar.
+:: --- INICIO DA SEÇÃO DE COMMIT ---
 set "TEMP_COMMIT_MSG_FILE=!TEMP!\git_commit_msg.tmp"
 set "TEMP_TIMESTAMP_FILE=!TEMP!\git_timestamp.tmp"
 
@@ -64,13 +64,14 @@ echo Debug: commit_result after git commit is !commit_result!
 if !commit_result! neq 0 (
     echo ERRO: Falha ao fazer o commit. (Exit code: !commit_result!)
     del "!TEMP_COMMIT_MSG_FILE!" 2>nul
-    goto :eof
+    exit /b 1
 )
 
 echo Sub-etapa 3.2: Alteracoes commitadas.
 del "!TEMP_COMMIT_MSG_FILE!" 2>nul
+:: --- FIM DA SEÇÃO DE COMMIT ---
 
-:end_commit_section
+:SKIP_COMMIT_SECTION
 echo Debug: FINALIZOU ETAPA 3. PROSSEGUINDO...
 echo.
 
@@ -81,7 +82,7 @@ if !errorlevel! neq 0 (
     git remote add origin https://github.com/leonardolauriquer/safety_ai_app.git
     if !errorlevel! neq 0 (
         echo ERRO: Falha ao adicionar o remoto 'origin'.
-        goto :eof
+        exit /b 1
     )
 ) else (
     echo 'origin' remoto ja existe. Verificando URL...
@@ -91,7 +92,7 @@ if !errorlevel! neq 0 (
         git remote set-url origin https://github.com/leonardolauriquer/safety_ai_app.git
         if !errorlevel! neq 0 (
             echo ERRO: Falha ao atualizar a URL remota 'origin'.
-            goto :eof
+            exit /b 1
         )
     ) else (
         echo URL remota 'origin' ja correta.
@@ -108,7 +109,7 @@ if !errorlevel! neq 0 (
     echo Resolva manualmente (edite, 'git add .', 'git commit').
     echo Apos resolver, execute este script novamente.
     echo.
-    goto :eof
+    exit /b 1
 )
 echo Repositorio local atualizado.
 echo.
@@ -117,7 +118,7 @@ echo ETAPA 6: Enviando alteracoes para a branch 'main' no GitHub...
 git push -u origin main --force
 if !errorlevel! neq 0 (
     echo ERRO: Falha ao enviar para o GitHub. Verifique credenciais ou permissoes. (Exit code: !errorlevel!)
-    goto :eof
+    exit /b 1
 )
 echo.
 echo ===============================================
@@ -127,3 +128,4 @@ echo.
 
 pause
 endlocal
+exit /b 0
