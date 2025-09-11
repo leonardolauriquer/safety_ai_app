@@ -43,13 +43,9 @@ if !changes_staged! neq 0 (
     set "TEMP_COMMIT_MSG_FILE=!TEMP!\git_commit_msg.tmp"
     set "TEMP_TIMESTAMP_FILE=!TEMP!\git_timestamp.tmp"
     
-    :: Gera o timestamp via PowerShell e salva em um arquivo temporario.
     powershell -Command "(Get-Date -Format 'yyyy-MM-dd HH-mm-ss').ToString()" > "!TEMP_TIMESTAMP_FILE!" 2>nul
-    
-    :: Le o timestamp do arquivo temporario para uma variavel.
     set /p "TIMESTAMP_FOR_COMMIT="<"!TEMP_TIMESTAMP_FILE!"
     
-    :: Monta a mensagem de commit completa.
     set "FULL_COMMIT_MESSAGE=Automated commit: !TIMESTAMP_FOR_COMMIT!"
 
     echo !FULL_COMMIT_MESSAGE! > "!TEMP_COMMIT_MSG_FILE!"
@@ -57,6 +53,7 @@ if !changes_staged! neq 0 (
     echo Sub-etapa 3.1: Tentando commit lendo mensagem do arquivo: "!TEMP_COMMIT_MSG_FILE!"
     git commit -F "!TEMP_COMMIT_MSG_FILE!"
     set "commit_result=!errorlevel!"
+    echo Debug: commit_result after git commit is !commit_result!
 
     if !commit_result! neq 0 (
         echo ERRO: Falha ao fazer o commit. (Exit code: !commit_result!)
@@ -70,6 +67,7 @@ if !changes_staged! neq 0 (
 ) else (
     echo Sub-etapa 3.1: Nenhum commit novo a ser feito.
 )
+echo Debug: Script continued past commit check.
 echo.
 
 echo ETAPA 4: Configurando o repositorio remoto...
@@ -99,10 +97,9 @@ echo.
 
 echo ETAPA 5: Sincronizando com o repositorio remoto (git pull)...
 git pull origin main
-set "pull_result=!errorlevel!"
-if !pull_result! neq 0 (
+if !errorlevel! neq 0 (
     echo.
-    echo ATENCAO: Ocorreu um erro ou conflito durante o 'git pull'. (Exit code: !pull_result!)
+    echo ATENCAO: Ocorreu um erro ou conflito durante o 'git pull'. (Exit code: !errorlevel!)
     echo Resolva manualmente (edite, 'git add .', 'git commit').
     echo Apos resolver, execute este script novamente.
     echo.
@@ -113,9 +110,8 @@ echo.
 
 echo ETAPA 6: Enviando alteracoes para a branch 'main' no GitHub...
 git push -u origin main --force
-set "push_result=!errorlevel!"
-if !push_result! neq 0 (
-    echo ERRO: Falha ao enviar para o GitHub. Verifique credenciais ou permissoes. (Exit code: !push_result!)
+if !errorlevel! neq 0 (
+    echo ERRO: Falha ao enviar para o GitHub. Verifique credenciais ou permissoes. (Exit code: !errorlevel!)
     goto :eof
 )
 echo.
