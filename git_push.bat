@@ -8,7 +8,7 @@ cd /d "%PROJECT_DIR%"
 echo.
 echo ===========================================
 echo === Enviando Projeto para o GitHub ====
-echo ===========================================
+===========================================
 echo.
 
 echo ETAPA 1: Inicializando o repositorio Git...
@@ -17,7 +17,7 @@ if not exist ".git" (
     git init
     if !errorlevel! neq 0 (
         echo ERRO: Falha ao inicializar o repositorio Git.
-        exit /b 1
+        goto :eof
     )
     echo Repositorio Git inicializado.
 ) else (
@@ -29,7 +29,7 @@ echo ETAPA 2: Adicionando arquivos ao staging area...
 git add .
 if !errorlevel! neq 0 (
     echo ERRO: Falha ao adicionar arquivos.
-    exit /b 1
+    goto :eof
 )
 echo Arquivos adicionados.
 echo.
@@ -39,36 +39,39 @@ git diff --cached --quiet
 set "changes_staged=!errorlevel!"
 echo Debug: git diff --cached --quiet returned !changes_staged!
 
-if !changes_staged! neq 0 (
-    set "TEMP_COMMIT_MSG_FILE=!TEMP!\git_commit_msg.tmp"
-    
-    :: ESTE TIMESTAMP É APENAS PARA DEBUG. REMOVEMOS A GERACAO DINAMICA TEMPORARIAMENTE.
-    set "TIMESTAMP_FOR_COMMIT=2025-09-11 19-00-00 (DEBUG)"
-    
-    set "FULL_COMMIT_MESSAGE=Automated commit: !TIMESTAMP_FOR_COMMIT!"
-
-    echo !FULL_COMMIT_MESSAGE! > "!TEMP_COMMIT_MSG_FILE!"
-    
-    echo Sub-etapa 3.1: Tentando commit lendo mensagem do arquivo: "!TEMP_COMMIT_MSG_FILE!"
-    git commit -F "!TEMP_COMMIT_MSG_FILE!"
-    set "commit_result=!errorlevel!"
-    echo Debug: commit_result after git commit is !commit_result!
-    pause  :: PAUSE 1: APÓS EXIBIR O RESULTADO DO COMMIT
-
-    if !commit_result! neq 0 (
-        echo ERRO: Falha ao fazer o commit. (Exit code: !commit_result!)
-        del "!TEMP_COMMIT_MSG_FILE!" 2>nul
-        exit /b 1
-    )
-    echo Sub-etapa 3.2: Alteracoes commitadas.
-    del "!TEMP_COMMIT_MSG_FILE!" 2>nul
-    pause  :: PAUSE 2: APÓS O SUCESSO DO COMMIT E LIMPEZA DE ARQUIVOS TEMP
-) else (
+if !changes_staged! equ 0 (
     echo Sub-etapa 3.1: Nenhum commit novo a ser feito.
-    pause :: PAUSE 2.1: SE NENHUM COMMIT FOI NECESSÁRIO
+    goto :end_commit_section
 )
+
+:: Se chegamos aqui, changes_staged nao e 0, entao ha alteracoes para commitar.
+set "TEMP_COMMIT_MSG_FILE=!TEMP!\git_commit_msg.tmp"
+set "TEMP_TIMESTAMP_FILE=!TEMP!\git_timestamp.tmp"
+
+powershell -Command "(Get-Date -Format 'yyyy-MM-dd HH-mm-ss').ToString()" > "!TEMP_TIMESTAMP_FILE!" 2>nul
+set /p "TIMESTAMP_FOR_COMMIT="<"!TEMP_TIMESTAMP_FILE!"
+del "!TEMP_TIMESTAMP_FILE!" 2>nul
+
+set "FULL_COMMIT_MESSAGE=Automated commit: !TIMESTAMP_FOR_COMMIT!"
+
+echo !FULL_COMMIT_MESSAGE! > "!TEMP_COMMIT_MSG_FILE!"
+
+echo Sub-etapa 3.1: Tentando commit lendo mensagem do arquivo: "!TEMP_COMMIT_MSG_FILE!"
+git commit -F "!TEMP_COMMIT_MSG_FILE!"
+set "commit_result=!errorlevel!"
+echo Debug: commit_result after git commit is !commit_result!
+
+if !commit_result! neq 0 (
+    echo ERRO: Falha ao fazer o commit. (Exit code: !commit_result!)
+    del "!TEMP_COMMIT_MSG_FILE!" 2>nul
+    goto :eof
+)
+
+echo Sub-etapa 3.2: Alteracoes commitadas.
+del "!TEMP_COMMIT_MSG_FILE!" 2>nul
+
+:end_commit_section
 echo Debug: FINALIZOU ETAPA 3. PROSSEGUINDO...
-pause :: PAUSE 3: APÓS O FIM DO BLOCO DA LÓGICA DE COMMIT
 echo.
 
 echo ETAPA 4: Configurando o repositorio remoto...
@@ -78,7 +81,7 @@ if !errorlevel! neq 0 (
     git remote add origin https://github.com/leonardolauriquer/safety_ai_app.git
     if !errorlevel! neq 0 (
         echo ERRO: Falha ao adicionar o remoto 'origin'.
-        exit /b 1
+        goto :eof
     )
 ) else (
     echo 'origin' remoto ja existe. Verificando URL...
@@ -88,7 +91,7 @@ if !errorlevel! neq 0 (
         git remote set-url origin https://github.com/leonardolauriquer/safety_ai_app.git
         if !errorlevel! neq 0 (
             echo ERRO: Falha ao atualizar a URL remota 'origin'.
-            exit /b 1
+            goto :eof
         )
     ) else (
         echo URL remota 'origin' ja correta.
@@ -105,7 +108,7 @@ if !errorlevel! neq 0 (
     echo Resolva manualmente (edite, 'git add .', 'git commit').
     echo Apos resolver, execute este script novamente.
     echo.
-    exit /b 1
+    goto :eof
 )
 echo Repositorio local atualizado.
 echo.
@@ -114,7 +117,7 @@ echo ETAPA 6: Enviando alteracoes para a branch 'main' no GitHub...
 git push -u origin main --force
 if !errorlevel! neq 0 (
     echo ERRO: Falha ao enviar para o GitHub. Verifique credenciais ou permissoes. (Exit code: !errorlevel!)
-    exit /b 1
+    goto :eof
 )
 echo.
 echo ===============================================
@@ -124,4 +127,3 @@ echo.
 
 pause
 endlocal
-exit /b 0
