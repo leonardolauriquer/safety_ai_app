@@ -3,6 +3,10 @@ setlocal
 
 echo --- Iniciando Safety AI App Web (Streamlit) ---
 
+:: Define a variável de ambiente GOOGLE_API_KEY aqui.
+:: ATENÇÃO: Hardcoding de chaves de API não é a prática mais segura para produção.
+set GOOGLE_API_KEY=AIzaSyD2sKHDVSSRQ5xveygd1oj57yBJHCW9hQ
+
 :: Navega para o diretório raiz do projeto (onde está o pyproject.toml)
 pushd "%~dp0"
 
