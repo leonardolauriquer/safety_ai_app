@@ -11,6 +11,12 @@ htmlcov/
 .venv/
 .env
 
+# Google API Files
+# Arquivo com as credenciais do seu aplicativo no Google Cloud (Client ID/Secret)
+credentials.json
+# Arquivo com o token de autenticação do usuário do Google Drive
+token.pickle
+
 # IDE e SO
 .idea/
 .vscode/
