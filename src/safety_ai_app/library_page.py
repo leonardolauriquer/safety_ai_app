@@ -1,3 +1,5 @@
+# src/safety_ai_app/library_page.py
+
 import streamlit as st
 import os
 from pathlib import Path
@@ -16,10 +18,10 @@ from safety_ai_app.google_drive_integrator import (
     list_drive_folders,
     _fetch_drive_files_cached,
     OUR_DRIVE_FOLDER_ID,
-    OUR_DRIVE_DONATION_FOLDER_ID, # Nova constante para a pasta de doações
+    OUR_DRIVE_DONATION_FOLDER_ID,
     DOWNLOAD_FOLDER
 )
-from safety_ai_app.theme_config import THEME
+from safety_ai_app.theme_config import THEME # Importado para acessar emojis e frases
 
 # Constantes para limites de doação
 MAX_DAILY_DONATIONS = 5
@@ -178,9 +180,9 @@ def display_file_list(drive_service_key_for_display, files, drive_type_prefix):
 
         with col1:
             if is_folder:
-                st.markdown(f"**�� Pasta: {file_display_name}**")
+                st.markdown(f"**{THEME['emojis']['folder_docs']} Pasta: {file_display_name}**") # Emoji centralizado
             else:
-                st.markdown(f"**📄 {file_display_name}**")
+                st.markdown(f"**{THEME['emojis']['file_doc']} {file_display_name}**") # Emoji centralizado
                 st.caption(f"{MIME_TYPE_DISPLAY.get(file_mime_type, MIME_TYPE_DISPLAY['default'])} | Tamanho: {format_file_size(file_size)}")
 
         with col2:
@@ -198,13 +200,13 @@ def display_file_list(drive_service_key_for_display, files, drive_type_prefix):
                     st.caption("Não baixável")
                 else:
                     if current_dl_state == 'initial':
-                        if st.button("⬇️ Baixar", key=f"dl_trigger_{drive_type_prefix}_{file_id}", help="Clique para iniciar o download do arquivo."):
+                        if st.button(f"{THEME['emojis']['download_arrow']} Baixar", key=f"dl_trigger_{drive_type_prefix}_{file_id}", help="Clique para iniciar o download do arquivo."):
                             st.session_state[download_state_key] = 'fetching'
                             st.session_state[download_bytes_key] = None
                             st.rerun()
 
                     elif current_dl_state == 'fetching':
-                        st.button("⏳ Baixando...", disabled=True, key=f"dl_trigger_{drive_type_prefix}_{file_id}") 
+                        st.button(f"{THEME['emojis']['loading_hourglass']} Baixando...", disabled=True, key=f"dl_trigger_{drive_type_prefix}_{file_id}") 
                         with st.spinner(f"Baixando '{file_display_name}' do Google Drive..."):
                             try:
                                 file_bytes = get_file_bytes_for_download(current_drive_service, file_id, download_mime)
@@ -213,18 +215,18 @@ def display_file_list(drive_service_key_for_display, files, drive_type_prefix):
                                     st.session_state[download_state_key] = 'ready'
                                 else:
                                     st.session_state[download_state_key] = 'error'
-                                    st.error(f"❌ Conteúdo do arquivo '{file_display_name}' vazio ou não disponível.")
+                                    st.toast(f"{THEME['emojis']['error_x']} Conteúdo do arquivo '{file_display_name}' vazio ou não disponível.", icon=THEME["emojis"]["error_x"])
                                     logging.warning(f"Empty or unavailable file content: {file_display_name} (ID: {file_id})")
                             except Exception as e:
                                 st.session_state[download_state_key] = 'error'
-                                st.error(f"❌ Erro ao buscar '{file_display_name}': {e}. Tente novamente.")
+                                st.toast(f"{THEME['emojis']['error_x']} Erro ao buscar '{file_display_name}': {e}. Tente novamente.", icon=THEME["emojis"]["error_x"])
                                 logging.error(f"Error fetching bytes for {file_display_name} (ID: {file_id}): {type(e).__name__}: {e}")
                             st.rerun()
 
                     elif current_dl_state == 'ready':
                         if st.session_state.get(download_bytes_key):
                             st.download_button(
-                                label="💾 Salvar no Dispositivo",
+                                label=f"{THEME['emojis']['save_disk']} Salvar no Dispositivo",
                                 data=st.session_state[download_bytes_key],
                                 file_name=download_filename,
                                 mime=download_mime,
@@ -237,18 +239,18 @@ def display_file_list(drive_service_key_for_display, files, drive_type_prefix):
                             )
                         else:
                             st.session_state[download_state_key] = 'error'
-                            st.error("Erro interno: Dados do arquivo não encontrados para download. Tente novamente.")
+                            st.toast(f"{THEME['emojis']['error_x']} Erro interno: Dados do arquivo não encontrados para download. Tente novamente.", icon=THEME["emojis"]["error_x"])
                             logging.error(f"Bytes data for {file_display_name} (ID: {file_id}) not found in 'ready' state.")
                             st.rerun()
 
                     elif current_dl_state == 'completed':
-                        st.button("✅ Concluído", disabled=True, key=f"dl_status_{drive_type_prefix}_{file_id}")
+                        st.button(f"{THEME['emojis']['success_check']} Concluído", disabled=True, key=f"dl_status_{drive_type_prefix}_{file_id}")
                         if st.button("Baixar Novamente", key=f"dl_retry_completed_{drive_type_prefix}_{file_id}"):
                             st.session_state[download_state_key] = 'initial'
                             st.rerun()
 
                     elif current_dl_state == 'error':
-                        st.button("❌ Falha", disabled=True, key=f"dl_status_{drive_type_prefix}_{file_id}")
+                        st.button(f"{THEME['emojis']['error_x']} Falha", disabled=True, key=f"dl_status_{drive_type_prefix}_{file_id}")
                         if st.button("Tentar Novamente", key=f"dl_retry_{drive_type_prefix}_{file_id}"):
                             st.session_state[download_state_key] = 'initial'
                             st.rerun()
@@ -256,22 +258,26 @@ def display_file_list(drive_service_key_for_display, files, drive_type_prefix):
 
 
 def library_page():
-    st.title("📚 Biblioteca de Documentos")
+    # Botão de voltar para a Página Inicial, posicionado no topo
+    if st.button(f"{THEME['emojis']['back_arrow']} {THEME['phrases']['back_to_home']}", key="back_to_home_library"): 
+        st.session_state.page = "home"
+        st.rerun()
+
+    # Título neon usando a classe global e emojis centralizados
+    st.markdown(f'<h1 class="neon-title">{THEME["emojis"]["library_books"]} {THEME["phrases"]["document_library"]}</h1>', unsafe_allow_html=True)
     st.write("Aqui você pode gerenciar os documentos que servem como base de conhecimento para o SafetyAI.")
-    st.markdown("---")
+    st.markdown("---") # Separador após a descrição inicial
 
     if "user_drive_service" not in st.session_state:
         st.session_state["user_drive_service"] = None
     if "app_drive_service" not in st.session_state:
         st.session_state["app_drive_service"] = None
     
-    # Inicializa o contador de doações e a data da última doação na session_state.
     if 'daily_donations_count' not in st.session_state:
         st.session_state['daily_donations_count'] = 0
     if 'last_donation_date' not in st.session_state:
-        st.session_state['last_donation_date'] = None
+        st.session_state['last_donation_date'] = date.min 
 
-    # Reseta o contador de doações se o dia mudou.
     today = date.today()
     if st.session_state['last_donation_date'] != today:
         st.session_state['daily_donations_count'] = 0
@@ -306,12 +312,10 @@ def library_page():
     if app_service_status_message:
         st.warning(app_service_status_message)
 
-    # Abas atualizadas: "Biblioteca" e "Doação de Conteúdo".
-    tab1, tab2 = st.tabs(["Biblioteca", "Doação de Conteúdo"])
+    tab1, tab2 = st.tabs(["Biblioteca Central", "Doação de Conteúdo"])
 
     with tab1:
         st.header("Biblioteca Central")
-        # Mensagem simplificada para a Biblioteca Central.
         st.info(
             "Esta é a biblioteca de documentos principal do SafetyAI. "
             "Utilize-a para baixar arquivos e aprimorar seu conhecimento. Tenha um ótimo estudo!"
@@ -322,9 +326,9 @@ def library_page():
             app_files = _fetch_drive_files_cached(st.session_state["app_drive_service"], OUR_DRIVE_FOLDER_ID)
             if not app_files and not app_service_status_message:
                 st.error(
-                    f"❌ Não foi possível listar os arquivos da Biblioteca. "
+                    f"{THEME['emojis']['error_x']} Não foi possível listar os arquivos da Biblioteca. "
                     f"Verifique se a pasta com ID '{OUR_DRIVE_FOLDER_ID}' existe, "
-                    f"se a conta de serviço tem permissão de leitura/escrita nela e "
+                    f"se a conta de serviço tem permissão de leitura nela e "
                     f"se as credenciais da conta de serviço estão corretas."
                 )
             elif app_files:
@@ -332,9 +336,7 @@ def library_page():
         else:
             st.info("O serviço da conta de aplicativo não está configurado ou autenticado. Não é possível exibir a biblioteca central.")
 
-    # A antiga tab2 "Seu Drive Pessoal" foi removida daqui.
-
-    with tab2: # Esta é a antiga tab3 "Upload Local".
+    with tab2:
         st.header("Doação de Conteúdo")
         st.info(
             "Aqui você pode doar conteúdo valioso para enriquecer a biblioteca do SafetyAI. "
@@ -353,7 +355,7 @@ def library_page():
             uploaded_files = st.file_uploader(
                 f"Selecione arquivos para doação (PDF, DOCX, TXT): (Restantes hoje: {uploads_left})",
                 type=['pdf', 'docx', 'txt'],
-                accept_multiple_files=can_upload_more, # Desabilita upload se o limite diário for atingido.
+                accept_multiple_files=can_upload_more,
                 key="donation_file_uploader",
                 help=f"Selecione até {MAX_DAILY_DONATIONS} arquivos por dia, com no máximo {MAX_DONATION_SIZE_MB}MB cada."
             )
@@ -368,33 +370,29 @@ def library_page():
                     with col1:
                         st.write(f"- **{up_file.name}** (Tamanho: {format_file_size(up_file.size)})")
                         if file_too_large:
-                            st.error(f"❌ Arquivo '{up_file.name}' excede o limite de {MAX_DONATION_SIZE_MB}MB.")
+                            st.error(f"{THEME['emojis']['error_x']} Arquivo '{up_file.name}' excede o limite de {MAX_DONATION_SIZE_MB}MB.")
 
                     with col2:
                         if can_upload_more and not file_too_large:
-                            if st.button("⬆️ Doar Conteúdo", key=f"donate_file_{up_file.name}_{i}"):
+                            if st.button(f"{THEME['emojis']['upload_arrow']} Doar Conteúdo", key=f"donate_file_{up_file.name}_{i}"): # Usando emoji centralizado
                                 try:
-                                    # O arquivo é enviado para a pasta de doações.
                                     upload_file_to_drive(st.session_state["user_drive_service"], up_file, parent_folder_id=OUR_DRIVE_DONATION_FOLDER_ID)
                                     st.session_state['daily_donations_count'] += 1
-                                    st.toast(f"✅ Conteúdo '{up_file.name}' doado com sucesso! Obrigado pela sua contribuição.", icon='🙏')
-                                    # Força um rerun para atualizar o contador de doações e o estado dos botões.
+                                    st.toast(f"{THEME['emojis']['success_check']} Conteúdo '{up_file.name}' doado com sucesso! Obrigado pela sua contribuição.", icon=THEME["emojis"]["donation_hands"]) # Emoji centralizado
                                     st.rerun() 
                                 except Exception as e:
-                                    st.error(f"❌ Erro ao doar o arquivo '{up_file.name}': {e}. Verifique suas permissões na pasta de destino.")
+                                    st.error(f"{THEME['emojis']['error_x']} Erro ao doar o arquivo '{up_file.name}': {e}. Verifique suas permissões na pasta de destino.")
                         elif file_too_large:
-                             st.button("⬆️ Doar Conteúdo", key=f"donate_file_{up_file.name}_{i}", disabled=True)
+                             st.button(f"{THEME['emojis']['upload_arrow']} Doar Conteúdo", key=f"donate_file_{up_file.name}_{i}", disabled=True) # Usando emoji centralizado
                         else:
-                            st.button("⬆️ Doar Conteúdo", key=f"donate_file_{up_file.name}_{i}", disabled=True, help="Limite diário de doações atingido.")
+                            st.button(f"{THEME['emojis']['upload_arrow']} Doar Conteúdo", key=f"donate_file_{up_file.name}_{i}", disabled=True, help="Limite diário de doações atingido.") # Usando emoji centralizado
         else:
             st.info("Faça login com seu Google Drive para começar a doar conteúdos!")
 
-    st.markdown("---")
-    if st.button("Voltar para a Página Inicial", key="back_to_home_library"):
-        st.session_state.page = "home"
-        st.rerun()
-
-st.markdown("""
----
-Desenvolvido com IA 🤖 por Leo - Focado em um futuro mais seguro.
-""")
+    st.markdown("---") # Separador antes do rodapé padrão
+    st.markdown(f"""
+    <br>
+    <div class="footer">
+        {THEME["phrases"]["footer_text"]}
+    </div>
+    """, unsafe_allow_html=True)
