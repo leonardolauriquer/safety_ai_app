@@ -173,10 +173,14 @@ del "!TEMP_PULL_OUTPUT!" 2>nul
 echo ETAPA 6: Enviando alteracoes para a branch 'main' no GitHub...
 rem O '-u' (ou '--set-upstream') configura o branch remoto para o branch local,
 rem facilitando futuros 'git pull' e 'git push' sem especificar 'origin main'.
+rem
+rem IMPORTANTE: Se voce reescreveu o historico do Git (ex: para remover um segredo),
+rem pode ser necessario usar 'git push --force-with-lease origin main' manualmente na primeira vez.
 git push -u origin main
 if !errorlevel! neq 0 (
     echo ERRO: Falha ao enviar para o GitHub. Verifique credenciais, permissoes ou conflitos. Codigo de saida: !errorlevel!
     echo Causa comum: Alteracoes no remoto que nao foram puxadas (git pull) antes do push.
+    echo Ou, se voce reescreveu o historico (ex: para remover um segredo), pode ser necessario um 'git push --force-with-lease origin main' manual.
     pause "Pressione qualquer tecla para sair e investigar o erro de 'git push'."
     goto :eof
 )

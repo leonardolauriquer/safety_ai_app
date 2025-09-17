@@ -12,10 +12,14 @@ dependencies = [
     "sentence-transformers (>=5.1.0,<6.0.0)",
     "chromadb (>=1.0.21,<2.0.0)",
     "pypdf (>=6.0.0,<7.0.0)",
+<<<<<<< HEAD
     "markdown (>=3.9,<4.0)",
     "google-auth-oauthlib (>=1.2.2,<2.0.0)",
     "google-api-python-client (>=2.181.0,<3.0.0)",
     "google-auth-httplib2 (>=0.2.0,<0.3.0)"
+=======
+    "markdown (>=3.9,<4.0)"
+>>>>>>> 4905d811e996186d329c45a9547be5d2370b9e18
 ]
 
 [project.scripts]
