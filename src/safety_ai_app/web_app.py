@@ -1,9 +1,8 @@
-# src/safety_ai_app/web_app.py (Novo ponto de entrada principal)
-
 import streamlit as st
 from safety_ai_app.home_page import home_page
 from safety_ai_app.chat_page import chat_page
-from safety_ai_app.theme_config import THEME
+from safety_ai_app.theme_config import THEME # Importado o tema
+from safety_ai_app.library_page import library_page
 
 # Configuração da página principal (aplicada a todas as sub-páginas)
 st.set_page_config(
@@ -30,14 +29,10 @@ elif st.session_state.page == "chat":
         del st.session_state.user_query_input
     chat_page()
 elif st.session_state.page == "library":
-    st.markdown(f"<h1 style='color:{THEME['colors']['accent_green']}; text-align:center;'>📚 Biblioteca de Documentos</h1>", unsafe_allow_html=True)
-    st.markdown(f"<p style='color:{THEME['colors']['text_primary']}; text-align:center;'>Esta seção está em desenvolvimento.</p>", unsafe_allow_html=True)
-    if st.button("Voltar para a Página Inicial", key="back_home_library"):
-        st.session_state.page = "home"
-        st.rerun()
+    library_page()
 elif st.session_state.page == "procedures":
-    st.markdown(f"<h1 style='color:{THEME['colors']['accent_green']}; text-align:center;'>📋 Procedimentos</h1>", unsafe_allow_html=True)
-    st.markdown(f"<p style='color:{THEME['colors']['text_primary']}; text-align:center;'>Esta seção está em desenvolvimento.</p>", unsafe_allow_html=True)
+    st.markdown(f"<h1 style='color:{THEME['colors']['accent_green']}; text-align:center;'>�� Procedimentos", unsafe_allow_html=True)
+    st.markdown(f"<p style='color:{THEME['colors']['text_primary']}; text-align:center;'>Esta seção está em desenvolvimento.", unsafe_allow_html=True)
     if st.button("Voltar para a Página Inicial", key="back_home_procedures"):
         st.session_state.page = "home"
         st.rerun()
