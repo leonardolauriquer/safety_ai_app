@@ -50,8 +50,15 @@ class NRQuestionAnswering:
         )
         print(f"[*] Google Gemini: Modelo '{GEMINI_MODEL_NAME}' (via Langchain) configurado.")
 
-    def answer_question(self, query: str, chat_history: list[dict], n_results: int = 7) -> str: # Aumentei para 7 chunks para mais contexto
+    def answer_question(self, query: str, chat_history: list[dict], dynamic_context_texts: list[str] = None, n_results: int = 7) -> str:
         print(f"\n[*] Processando pergunta: '{query}'")
+
+        # Inicializa a lista de chunks de contexto, incluindo os dinâmicos primeiro
+        all_context_chunks = []
+        if dynamic_context_texts:
+            for i, text in enumerate(dynamic_context_texts):
+                all_context_chunks.append(f"### Documento do Usuário {i+1}\n{text}")
+            print(f"[*] Adicionados {len(dynamic_context_texts)} chunks de contexto dinâmico.")
 
         # 1. Recuperação (Retrieval) - Busca no ChromaDB
         # Usa apenas a última pergunta para buscar no RAG, evitando poluir a busca com histórico irrelevante
@@ -61,47 +68,79 @@ class NRQuestionAnswering:
             include=['documents', 'metadatas']
         )
 
-        context_chunks = []
         if results and results['documents'] and results['documents'][0]:
-            print(f"[*] Recuperados {len(results['documents'][0])} chunks relevantes.")
+            print(f"[*] Recuperados {len(results['documents'][0])} chunks relevantes do ChromaDB.")
             for i, doc_content in enumerate(results['documents'][0]):
                 metadata = results['metadatas'][0][i]
                 chunk_info = f"NR-{metadata.get('nr_number')} - Item: {metadata.get('item_id')}"
-                context_chunks.append(f"### {chunk_info}\n{doc_content}")
+                all_context_chunks.append(f"### {chunk_info}\n{doc_content}")
         else:
-            print("[!] Nenhum chunk relevante encontrado no ChromaDB.")
-            return "Não encontrei informações específicas sobre isso nas Normas Regulamentadoras disponíveis. Posso tentar responder de forma geral ou buscar algo diferente?"
+            print("[!] Nenhum chunk relevante encontrado no ChromaDB para a pergunta.")
+            if not all_context_chunks: # Se não encontrou no ChromaDB e não tem contexto dinâmico
+                return "Não encontrei informações específicas sobre isso nas Normas Regulamentadoras disponíveis. Posso tentar responder de forma geral ou buscar algo diferente?"
 
-        # 2. Prepara as mensagens para o LLM com o histórico e o contexto RAG
-        messages = [SystemMessage(
-            content="Você é um assistente amigável e direto, especialista em Normas Regulamentadoras (NRs) do Brasil, com foco em Saúde e Segurança do Trabalho (SST). "
-                    "Sua missão é fornecer respostas claras, precisas e fáceis de entender, baseadas no contexto das NRs fornecido e em seu conhecimento geral de SST. "
-                    "**Cruze as informações:** Analise o contexto das NRs e seu conhecimento para sintetizar a melhor resposta possível, mesmo que a informação não esteja explícita em um único trecho. "
-                    "**Priorize a clareza e a amigabilidade:**"
-                    "\n- Use **negrito** para destacar termos-chave e conceitos importantes."
-                    "\n- Utilize **listas com marcadores (`*` ou `-`)** ou **listas numeradas (`1.`)** para organizar informações complexas, requisitos, responsabilidades ou múltiplos itens."
-                    "\n- Divida a resposta em **parágrafos curtos** e coesos para facilitar a leitura."
-                    "\n- Mantenha a linguagem **direta, concisa e prática**, como em uma conversa de chat."
-                    "\n- Se o contexto for insuficiente ou não contiver a informação de forma clara para uma resposta precisa, admita isso de forma educada e sugira uma nova pergunta ou um tópico relacionado, sem inventar informações."
-        )]
+        # 2. Prepara as mensagens para o LLM com o histórico e o contexto RAG combinado
         
-        # Adiciona o histórico de chat (ignorando a última pergunta, que será adicionada com o contexto)
-        for msg in reversed(chat_history[1:]): 
-            if msg["role"] == "user":
-                messages.append(HumanMessage(content=msg["content"]))
-            elif msg["role"] == "ai":
-                messages.append(AIMessage(content=msg["content"]))
+        # System prompt - aprimorado para enfatizar o uso do histórico e contexto
+        system_prompt_content = """
+        Você é um assistente especializado em Saúde e Segurança do Trabalho (SST) chamado Leo.
+        Sua missão é fornecer respostas claras, precisas e fáceis de entender, baseadas **em todo o contexto fornecido (incluindo NRs e documentos do usuário)**,
+        no **histórico da conversa**, e em seu conhecimento geral de SST.
+        **Instruções para a resposta:**
+        - **Cruze as informações:** Analise todo o contexto e seu conhecimento para sintetizar a melhor resposta possível, priorizando as informações mais relevantes para a pergunta atual e o fluxo da conversa.
+        - **Priorize a clareza e a amigabilidade:**
+            - Use **negrito** para destacar termos-chave e conceitos importantes.
+            - Utilize **listas com marcadores (`*` ou `-`)** ou **listas numeradas (`1.`)** para organizar informações complexas, requisitos, responsabilidades ou múltiplos itens.
+            - Divida a resposta em **parágrafos curtos** e coesos para facilitar a leitura.
+            - Mantenha a linguagem **direta, concisa e prática**, como em uma conversa de chat.
+        - **Seja honesto:** Se o contexto fornecido (incluindo NRs e documentos do usuário) for insuficiente ou não contiver a informação de forma clara para uma resposta precisa, admita isso de forma educada e sugira uma nova pergunta ou um tópico relacionado, **sem inventar informações**.
+        """
+        
+        messages_for_llm = [SystemMessage(content=system_prompt_content)]
 
-        # Adiciona a pergunta atual com o contexto RAG
-        context_str = "\n---\n".join(context_chunks)
-        messages.append(HumanMessage(
-            content=f"Contexto das Normas Regulamentadoras:\n---\n{context_str}\n---\n\nMinha pergunta: {query}"
+        # Adiciona o histórico da conversa para o LLM.
+        # 'chat_history' contém todas as mensagens anteriores MAIS a pergunta atual do usuário (como último item).
+        # Precisamos processar as mensagens ANTES da pergunta atual do usuário, e também filtrar
+        # a mensagem inicial de boas-vindas em HTML que não é relevante para o contexto conversacional do LLM.
+        
+        # Número máximo de mensagens do histórico a incluir (e.g., 6 mensagens = 3 perguntas do usuário, 3 respostas da IA).
+        # Isso atua como uma janela deslizante básica para gerenciar os limites de tokens do modelo. Ajuste conforme necessário.
+        MAX_HISTORY_MESSAGES = 6 
+        
+        # Lista temporária para coletar as mensagens históricas a serem adicionadas ao prompt do LLM
+        history_to_add = []
+        
+        # Itera sobre 'chat_history' de trás para frente, excluindo a pergunta atual do usuário (chat_history[-1]).
+        # Isso garante que pegamos as mensagens mais recentes da conversa anterior.
+        for msg in reversed(chat_history[:-1]):
+            # Para cada mensagem, verifica se já coletamos o número máximo de mensagens históricas desejado.
+            if len(history_to_add) >= MAX_HISTORY_MESSAGES:
+                break # Para se o limite de mensagens históricas for atingido
+            
+            if msg["role"] == "user":
+                history_to_add.insert(0, HumanMessage(content=msg["content"]))
+            elif msg["role"] == "ai":
+                # Filtra a mensagem de boas-vindas em HTML do histórico da IA para o LLM.
+                # Esta mensagem é um elemento de UI e não faz parte do fluxo conversacional natural para o modelo.
+                if not msg.get("is_raw_html", False):
+                    history_to_add.insert(0, AIMessage(content=msg["content"]))
+        
+        # Adiciona as mensagens históricas coletadas ao prompt do LLM, mantendo a ordem cronológica
+        messages_for_llm.extend(history_to_add)
+
+        # Adiciona o contexto RAG combinado (NRs + documentos do usuário)
+        # e a pergunta atual do usuário como um HumanMessage final.
+        context_str = "\n\n--- Contexto de Referência ---\n" + "\n\n".join(all_context_chunks) + "\n--- Fim do Contexto de Referência ---\n\n"
+        
+        messages_for_llm.append(HumanMessage(
+            content=f"{context_str}Pergunta do usuário: {query}"
         ))
         
         # 3. Geração (Generation) - Usar Gemini para responder
         try:
-            response = self.llm.invoke(messages)
+            response = self.llm.invoke(messages_for_llm)
             return response.content.strip()
         except Exception as e:
             print(f"[!] ERRO ao gerar resposta com Gemini API: {e}")
+            # Em caso de erro, fornece uma mensagem útil ao usuário.
             return f"Desculpe, ocorreu um erro ao gerar a resposta. Poderia tentar novamente ou fazer uma pergunta diferente? Detalhes: {e}"
