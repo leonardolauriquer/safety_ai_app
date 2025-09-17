@@ -1,41 +1,27 @@
-# 🤖 safety_ai_app: Apoio Inteligente para Profissionais de SESMT e SSMA
+# Safety AI App 🤖💡
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Python-3.9%2B-blue?logo=python" alt="Python Version">
-  <img src="https://img.shields.io/badge/Google%20Gemma-API-green?logo=google" alt="Google Gemma API">
-  <img src="https://img.shields.io/badge/License-MIT-blue" alt="License">
-</p>
+## Assistente Especializado em Saúde e Segurança do Trabalho (SST) com Inteligência Artificial
 
-## 🌟 Visão Geral do Projeto
+O **Safety AI App** é um chatbot inteligente projetado para ser seu assistente amigável e especializado em Saúde e Segurança do Trabalho (SST), com foco nas Normas Regulamentadoras (NRs) do Brasil. Construído com Python, Streamlit, Google Gemini e ChromaDB, este aplicativo visa facilitar a consulta de informações complexas e aprimorar o conhecimento em SST, tanto para fins de trabalho, estudo ou uso pessoal.
 
-O `safety_ai_app` é uma aplicação inovadora desenvolvida por **Leo, um Engenheiro de Software**, com o objetivo de aplicar a inteligência artificial para atender às complexas necessidades dos profissionais da área de **Medicina e Segurança do Trabalho**, incluindo Engenheiros de Segurança, Técnicos de Segurança e profissionais da saúde que atuam no **SESMT (Serviço Especializado em Engenharia de Segurança e Medicina do Trabalho)**. Este projeto foca em fornecer apoio inteligente baseado nas **Normas Regulamentadoras (NRs) e NBRs (Normas Brasileiras)**, abrangendo também aspectos de **Saúde, Segurança e Meio Ambiente (SSMA)**.
+### ✨ Principais Funcionalidades
 
-A IA, como o **Google Gemma (API gratuita)**, será utilizada para processar e analisar vastos volumes de informações regulatórias e documentação técnica, tornando o conhecimento acessível e prático para o dia a dia desses profissionais. O projeto visa também a criação de **interfaces de usuário intuitivas**, incluindo uma potencial **interface web**, para tornar a poderosa funcionalidade de IA acessível e eficiente.
+*   **Chatbot Inteligente (RAG)**: Interaja com um assistente virtual capaz de responder a perguntas complexas sobre NRs e tópicos de SST. Utiliza a arquitetura Retrieval-Augmented Generation (RAG) para buscar informações em documentos carregados.
+*   **Base de Conhecimento Dinâmica**: Carregue seus próprios documentos (atualmente PDFs) para expandir a base de conhecimento do chatbot. O sistema processa o texto, divide-o em 'chunks' e os armazena em um banco de dados vetorial (ChromaDB) para consulta rápida e relevante.
+*   **Melhoria Contínua da Resposta**: O chatbot foi refinado para fornecer respostas mais claras, concisas, amigáveis e bem formatadas (usando negritos, listas e parágrafos curtos), facilitando a compreensão de informações técnicas.
+*   **Gestão Segura de Credenciais**: Implementação robusta para garantir que chaves de API e outros segredos sensíveis não sejam acidentalmente versionados no controle de código-fonte (Git).
+*   **Fluxo de Trabalho Git Otimizado**: Scripts de automação (`git_push.bat`) com tratamento seguro de credenciais, garantindo pushes eficientes e sem incidentes para o GitHub.
+*   **Interface Intuitiva com Streamlit**: Uma interface de usuário simples e responsiva que permite navegar entre as funcionalidades de Home, Chat e Biblioteca de documentos.
 
-## ✨ Funcionalidades Principais da Aplicação
+### 🚀 Novidades e Destaques Recentes
 
-O `safety_ai_app` oferece as seguintes capacidades para profissionais do SESMT:
+*   **Links de Download para Documentos (Em Breve!)**: Preparação para que o chatbot possa incluir links diretos para os documentos de origem nas suas respostas, permitindo que o usuário consulte a fonte original para mais detalhes. Isso transformará o chatbot em uma ferramenta de referência completa.
+*   **Refinamento da Ingestão de Documentos**: Melhorias na forma como os documentos são processados e armazenados no ChromaDB, garantindo que metadados importantes (como URLs de origem) sejam associados a cada pedaço de informação.
+*   **Melhor Tratamento do Histórico de Conversa**: O sistema agora gerencia de forma mais eficaz o histórico do chat, permitindo que o Gemini mantenha o contexto e forneça respostas mais coerentes ao longo da interação.
 
-*   **Consultoria Inteligente e Dúvidas (NRs/NBRs):** Oferece respostas e orientação baseadas nas Normas Regulamentadoras e NBRs do Brasil, ajudando profissionais a sanar dúvidas complexas sobre legislação e aplicação prática.
-*   **Análise Documental de SSMA:** Utiliza modelos de IA de ponta (através da API gratuita do Google Gemma) para analisar documentos técnicos, laudos, planos e relatórios relacionados a Saúde, Segurança e Meio Ambiente, identificando informações relevantes e conformidades.
-*   **Monitoramento de Atualizações Regulatórias:** Informa proativamente sobre as NRs que estão sendo modificadas, revogadas ou publicadas, mantendo os profissionais atualizados com as últimas exigências legais.
-*   **Abrangência SSMA:** Integra conceitos e informações de Meio Ambiente, garantindo uma abordagem completa para Saúde, Segurança e Meio Ambiente.
-*   **Interface de Linha de Comando (CLI):** Uma interface robusta e amigável para interagir com a aplicação, facilitando a consulta e análise inicial.
-*   **Boas-vindas Personalizadas:** Saudações amigáveis ao iniciar, como "Olá, Leo! Tudo pronto para revolucionar com IA.".
-*   **Mensagens de Status Claras:** Indicações visuais sobre o processo, incluindo "Vamos auxiliar com suas necessidades de SESMT e SSMA utilizando o Google Gemma (API gratuita)!" e "Verificando Modelos Disponíveis com 'generateContent'".
-*   **Encerramento da Interação:** Mensagem de finalização, como "Análise concluída. Até a próxima!".
-*   **Potencial Interface Web:** Projetado para eventualmente incluir uma interface de usuário baseada na web para uma experiência mais visual e interativa.
+### 🛠️ Como Começar
 
-## 🚀 Como Usar e Instalar
-
-Para clonar e executar este projeto, você precisará ter o Git e o Python (versão 3.9 ou superior) instalados em sua máquina.
-
-### Pré-requisitos
-
-*   [**Git**](https://git-scm.com/downloads)
-*   [**Python 3.9+**](https://www.python.org/downloads/)
-
-### Passos de Instalação e Execução
+Para rodar o Safety AI App localmente, siga os passos abaixo:
 
 1.  **Clone o Repositório:**
     ```bash
@@ -43,33 +29,32 @@ Para clonar e executar este projeto, você precisará ter o Git e o Python (vers
     cd safety_ai_app
     ```
 
-2.  **Crie e Ative um Ambiente Virtual (Recomendado):**
+2.  **Configuração do Ambiente Python com Poetry:**
+    Certifique-se de ter o [Poetry](https://python-poetry.org/docs/#installation) instalado. O Poetry gerenciará as dependências do projeto.
+
     ```bash
-    python -m venv venv
-    # No Windows
-    .\venv\Scripts\activate
-    # No macOS/Linux
-    source venv/bin/activate
+    # Instala as dependências do projeto
+    poetry install
+
+    # Ativa o ambiente virtual do Poetry
+    poetry shell
     ```
 
-3.  **Instale as Dependências:**
-    ```bash
-    pip install -r requirements.txt
-    ```
-    *(\*\*Nota:\*\* Se `requirements.txt` não existir, você pode criar um após instalar as bibliotecas necessárias, como `google-generativeai`, usando `pip freeze > requirements.txt`)*
+3.  **Variáveis de Ambiente:**
+    Crie um arquivo `.env` na raiz do projeto (`safety_ai_app/`) e adicione sua chave da API do Google Gemini:
 
-4.  **Configure suas Credenciais (API Key):**
-    A aplicação utiliza a API do Google Gemma. Você precisará de uma chave de API gratuita. Obtenha uma em [Google AI Studio](https://aistudio.google.com/app/apikey) e configure-a como uma variável de ambiente ou em um arquivo de configuração (`.env`) que a aplicação possa ler.
-
-    Exemplo (criando um arquivo `.env` na raiz do projeto):
     ```
-    GOOGLE_API_KEY="SUA_CHAVE_DE_API_AQUI"
+    GOOGLE_API_KEY=SUA_CHAVE_API_DO_GOOGLE
     ```
+    Você pode obter uma chave API em [Google AI Studio](https://aistudio.google.com/app/apikey).
 
-5.  **Execute a Aplicação:**
-    ```bash
-    python src/safety_ai_app/__main__.py
-    ```
-    Siga as instruções na CLI para interagir com a aplicação e obter suporte para suas necessidades de SESMT e SSMA.
+4.  **Configuração de Credenciais do Google Drive (se aplicável):**
+    Para funcionalidades que requerem acesso ao Google Drive, coloque seu arquivo `service_account_key.json` na raiz do projeto. **Este arquivo é ignorado pelo Git** e não será versionado para sua segurança.
 
-## 📂 Estrutura do Projeto
+### ▶️ Como Executar o Aplicativo
+
+Após configurar o ambiente e as variáveis, você pode iniciar o aplicativo Streamlit:
+
+```bash
+# Certifique-se de estar no ambiente virtual do Poetry (poetry shell)
+streamlit run src/safety_ai_app/web_app.py
