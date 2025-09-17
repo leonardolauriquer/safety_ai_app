@@ -1,9 +1,15 @@
+# src/safety_ai_app/nr_rag_qa.py
+
 import os
 import chromadb
 from chromadb.utils import embedding_functions
 import google.generativeai as genai
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
+from typing import List, Dict, Any, Optional
+import logging # Importe o módulo logging para registrar informações
+
+logger = logging.getLogger(__name__)
 
 # Configurações do ChromaDB
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -29,15 +35,16 @@ class NRQuestionAnswering:
                 name=COLLECTION_NAME,
                 embedding_function=self.embedding_function
             )
-            print(f"[*] ChromaDB: Coleção '{COLLECTION_NAME}' carregada ou criada. Documentos: {self.collection.count()}")
+            logger.info(f"[*] ChromaDB: Coleção '{COLLECTION_NAME}' carregada ou criada. Documentos: {self.collection.count()}")
         except Exception as e:
+            logger.error(f"ERRO ao inicializar ChromaDB: {e}. Certifique-se de que vectorize_nrs.py foi executado e que o diretório '{CHROMADB_PERSIST_DIRECTORY}' existe.")
             raise type(e)(f"ERRO ao inicializar ChromaDB: {e}. Certifique-se de que vectorize_nrs.py foi executado e que o diretório '{CHROMADB_PERSIST_DIRECTORY}' existe.")
 
         # 2. Configurar Google Gemini API
         api_key = os.getenv("GOOGLE_API_KEY") 
         
         # --- LINHA DE DIAGNÓSTICO ADICIONADA ---
-        print(f"[*] Diagnóstico API Key: Valor lido do ambiente: '{api_key}'")
+        logger.info(f"[*] Diagnóstico API Key: Valor lido do ambiente: '{api_key}'")
         # --- FIM DA LINHA DE DIAGNÓSTICO ---
 
         if not api_key:
@@ -48,17 +55,48 @@ class NRQuestionAnswering:
             google_api_key=api_key,
             temperature=0.4 # Um pouco mais de flexibilidade para formatação e síntese
         )
-        print(f"[*] Google Gemini: Modelo '{GEMINI_MODEL_NAME}' (via Langchain) configurado.")
+        logger.info(f"[*] Google Gemini: Modelo '{GEMINI_MODEL_NAME}' (via Langchain) configurado.")
+
+    def add_document_to_collection(self, content: str, document_id: str, metadata: Optional[Dict[str, Any]] = None):
+        """
+        Adiciona um documento à coleção ChromaDB.
+        Este método é uma adição para facilitar a ingestão de documentos com metadados,
+        incluindo o 'source_url'.
+        """
+        # Implementação simplificada para adicionar o documento
+        # Você pode adaptar isso para usar seu text_splitter se necessário
+        
+        # Gera embeddings para o conteúdo
+        embedding = self.embedding_function.embed_documents([content])[0] # Apenas um documento por vez aqui
+        
+        # Adiciona à coleção
+        self.collection.add(
+            documents=[content],
+            metadatas=[metadata if metadata is not None else {}],
+            ids=[document_id],
+            embeddings=[embedding]
+        )
+        logger.info(f"Documento '{document_id}' adicionado à coleção ChromaDB com metadados: {metadata}")
+
 
     def answer_question(self, query: str, chat_history: list[dict], dynamic_context_texts: list[str] = None, n_results: int = 7) -> str:
-        print(f"\n[*] Processando pergunta: '{query}'")
+        logger.info(f"\n[*] Processando pergunta: '{query}'")
 
         # Inicializa a lista de chunks de contexto, incluindo os dinâmicos primeiro
         all_context_chunks = []
+        # Conjunto para armazenar URLs de origem únicas
+        source_urls = set()
+
         if dynamic_context_texts:
-            for i, text in enumerate(dynamic_context_texts):
-                all_context_chunks.append(f"### Documento do Usuário {i+1}\n{text}")
-            print(f"[*] Adicionados {len(dynamic_context_texts)} chunks de contexto dinâmico.")
+            for i, text_data in enumerate(dynamic_context_texts):
+                # Se dynamic_context_texts for uma lista de dicionários com 'content' e 'source_url'
+                if isinstance(text_data, dict) and 'content' in text_data:
+                    all_context_chunks.append(f"### Documento do Usuário {i+1}\n{text_data['content']}")
+                    if 'source_url' in text_data and text_data['source_url']:
+                        source_urls.add(text_data['source_url'])
+                else: # Se for apenas texto
+                    all_context_chunks.append(f"### Documento do Usuário {i+1}\n{text_data}")
+            logger.info(f"[*] Adicionados {len(dynamic_context_texts)} chunks de contexto dinâmico.")
 
         # 1. Recuperação (Retrieval) - Busca no ChromaDB
         # Usa apenas a última pergunta para buscar no RAG, evitando poluir a busca com histórico irrelevante
@@ -69,15 +107,35 @@ class NRQuestionAnswering:
         )
 
         if results and results['documents'] and results['documents'][0]:
-            print(f"[*] Recuperados {len(results['documents'][0])} chunks relevantes do ChromaDB.")
+            logger.info(f"[*] Recuperados {len(results['documents'][0])} chunks relevantes do ChromaDB.")
             for i, doc_content in enumerate(results['documents'][0]):
                 metadata = results['metadatas'][0][i]
-                chunk_info = f"NR-{metadata.get('nr_number')} - Item: {metadata.get('item_id')}"
+                
+                # Coleta source_url dos metadados do ChromaDB
+                if 'source_url' in metadata and metadata['source_url']:
+                    source_urls.add(metadata['source_url'])
+
+                chunk_info = ""
+                if metadata.get('nr_number'):
+                    chunk_info += f"NR-{metadata['nr_number']}"
+                if metadata.get('item_id'):
+                    if chunk_info: chunk_info += " - "
+                    chunk_info += f"Item: {metadata['item_id']}"
+                
+                if not chunk_info: # Fallback se não tiver nr_number ou item_id
+                    chunk_info = f"Documento (ID: {metadata.get('document_id', 'N/A')})"
+
                 all_context_chunks.append(f"### {chunk_info}\n{doc_content}")
         else:
-            print("[!] Nenhum chunk relevante encontrado no ChromaDB para a pergunta.")
+            logger.warning("[!] Nenhum chunk relevante encontrado no ChromaDB para a pergunta.")
             if not all_context_chunks: # Se não encontrou no ChromaDB e não tem contexto dinâmico
                 return "Não encontrei informações específicas sobre isso nas Normas Regulamentadoras disponíveis. Posso tentar responder de forma geral ou buscar algo diferente?"
+
+        # Constrói a string de informações de fonte
+        source_info_str = ""
+        if source_urls:
+            source_info_str = "\n\nFontes de informação para esta resposta (consulte para mais detalhes):\n" + \
+                              "\n".join([f"- {url}" for url in sorted(list(source_urls))]) # Ordena para consistência
 
         # 2. Prepara as mensagens para o LLM com o histórico e o contexto RAG combinado
         messages = [SystemMessage(
@@ -90,27 +148,28 @@ class NRQuestionAnswering:
                     "\n- Divida a resposta em **parágrafos curtos** e coesos para facilitar a leitura."
                     "\n- Mantenha a linguagem **direta, concisa e prática**, como em uma conversa de chat."
                     "\n- Se o contexto for insuficiente ou não contiver a informação de forma clara para uma resposta precisa, admita isso de forma educada e sugira uma nova pergunta ou um tópico relacionado, sem inventar informações."
+                    "\n\n**Instrução para fontes:** Se houver 'Fontes de informação' listadas no contexto, adicione um parágrafo final na sua resposta dizendo 'Para mais detalhes, consulte as fontes abaixo:' e liste as URLs. Não reproduza o URL diretamente na sua frase, a menos que seja especificamente solicitado pelo usuário."
         )]
         
-        # Adiciona o histórico de chat (ignorando a última pergunta, que será adicionada com o contexto)
-        # O histórico é adicionado em ordem cronológica inversa para que as mensagens mais recentes fiquem mais perto do final
-        # e, portanto, recebam mais atenção do modelo (se o modelo considerar isso).
+        # Adiciona o histórico de chat
+        # O histórico é adicionado em ordem cronológica para manter o fluxo
         for msg in chat_history:
             if msg["role"] == "user":
                 messages.append(HumanMessage(content=msg["content"]))
             elif msg["role"] == "ai":
                 messages.append(AIMessage(content=msg["content"]))
 
-        # Adiciona a pergunta atual com o contexto RAG combinado
+        # Adiciona a pergunta atual com o contexto RAG combinado e as fontes
         context_str = "\n---\n".join(all_context_chunks)
         messages.append(HumanMessage(
-            content=f"Contexto relevante fornecido:\n---\n{context_str}\n---\n\nMinha pergunta: {query}"
+            content=f"Contexto relevante fornecido:\n---\n{context_str}\n{source_info_str}\n---\n\nMinha pergunta: {query}"
         ))
         
         # 3. Geração (Generation) - Usar Gemini para responder
         try:
             response = self.llm.invoke(messages)
+            logger.info(f"[*] Resposta do Gemini gerada para a pergunta: '{query}'")
             return response.content.strip()
         except Exception as e:
-            print(f"[!] ERRO ao gerar resposta com Gemini API: {e}")
+            logger.error(f"[!] ERRO ao gerar resposta com Gemini API para '{query}': {e}")
             return f"Desculpe, ocorreu um erro ao gerar a resposta. Poderia tentar novamente ou fazer uma pergunta diferente? Detalhes: {e}"
