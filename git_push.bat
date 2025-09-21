@@ -49,39 +49,46 @@ if not exist ".git" (
 echo.
 
 echo ETAPA 2: Adicionando arquivos ao staging area...
-rem O comando 'git add --all' adiciona todos os arquivos novos, modificados e deletados,
-rem respeitando as regras do .gitignore.
-rem O uso de '":!service_account_key.json"' e '":!run.bat"' exclui explicitamente esses arquivos
-rem do comando 'git add --all', mesmo que nao estejam no .gitignore ou se estivessem no cache.
+echo Debug: Definindo TEMP_ADD_OUTPUT.
 set "TEMP_ADD_OUTPUT=!TEMP!\git_add_output.tmp"
+echo Debug: Executando git add.
 git add --all -- ":!service_account_key.json" ":!run.bat" >"!TEMP_ADD_OUTPUT!" 2>&1
+echo Debug: git add finalizado. Errorlevel e !errorlevel!.
 set "add_result=!errorlevel!"
 
-rem Echo do debug apenas se o comando de fato retornou um erro diferente de 0.
 if !add_result! neq 0 (
-    echo Debug: git add output (errolevel !add_result!):
+    echo Debug: git add retornou errorlevel diferente de zero: !add_result!.
+    echo Debug: Conteudo de TEMP_ADD_OUTPUT:
     type "!TEMP_ADD_OUTPUT!"
 )
 
-rem Verificar se o errorlevel 1 e devido a arquivos ignorados (comum quando arquivos ignorados estao presentes e git add . e usado)
-rem Se a saida do 'git add' contiver a mensagem de "ignored files", vamos considerar isso um aviso e nao um erro fatal para o script.
-findstr /i /c:"The following paths are ignored by one of your .gitignore files:" "!TEMP_ADD_OUTPUT!" >nul 2>&1
-if !errorlevel! equ 0 (
-    echo Aviso: Alguns arquivos foram ignorados conforme .gitignore ou exclusao explicita. Nao e um erro fatal.
-    set "add_result=0"
-    rem Forca o add_result para 0 para continuar o script
+echo Debug: Verificando a existencia de TEMP_ADD_OUTPUT.
+if exist "!TEMP_ADD_OUTPUT!" (
+    echo Debug: TEMP_ADD_OUTPUT existe. Tentando findstr.
+    findstr /i /c:"The following paths are ignored by one of your .gitignore files:" "!TEMP_ADD_OUTPUT!" >nul 2>&1
+    echo Debug: findstr completado. Errorlevel e !errorlevel!.
+    if !errorlevel! equ 0 (
+        echo Aviso: Alguns arquivos foram ignorados conforme .gitignore ou exclusao explicita. Nao e um erro fatal.
+        echo Debug: Forcando add_result para 0.
+        set "add_result=0"
+    ) else (
+        echo Debug: findstr nao encontrou o aviso de "ignored files".
+    )
+) else (
+    echo Debug: TEMP_ADD_OUTPUT nao existe apos git add. Pulando verificacao findstr.
 )
+echo Debug: Final add_result antes da verificacao de erro e !add_result!.
 
 if !add_result! neq 0 (
     echo ERRO: Falha ao adicionar arquivos ao staging area. Codigo de saida: !add_result!
     echo Isso pode indicar problemas de permissao, arquivos bloqueados ou uma falha interna do Git.
     echo Verifique o output do comando 'git add' para mais detalhes.
     pause "Pressione qualquer tecla para sair e investigar o erro de 'git add'."
-    del "!TEMP_ADD_OUTPUT!" 2>nul
+    if exist "!TEMP_ADD_OUTPUT!" del "!TEMP_ADD_OUTPUT!" 2>nul
     goto :eof
 )
 echo Arquivos adicionados ao staging area (excluindo service_account_key.json e run.bat).
-del "!TEMP_ADD_OUTPUT!" 2>nul
+if exist "!TEMP_ADD_OUTPUT!" del "!TEMP_ADD_OUTPUT!" 2>nul
 echo.
 
 echo ETAPA 3: Verificando e fazendo o commit das alteracoes...
@@ -89,7 +96,7 @@ rem 'git diff --cached --quiet' verifica se ha alteracoes no staging area pronta
 rem Retorna 0 se nao houver diferencas (nada para commitar) e 1 se houver diferencas.
 git diff --cached --quiet
 set "changes_staged=!errorlevel!"
-echo Debug: git diff --cached --quiet returned !changes_staged!
+echo Debug: git diff --cached --quiet retornou !changes_staged!
 
 rem CORRECAO CRITICA: Se 'changes_staged' for 0, significa que nao ha diferencas no staging area,
 rem entao nao ha nada para commitar e o passo de commit deve ser ignorado para evitar commits vazios.
@@ -117,7 +124,7 @@ echo Sub-etapa 3.1: Tentando commit com a mensagem: "!FULL_COMMIT_MESSAGE!"
 rem 'git commit -F <file>' le a mensagem de commit de um arquivo.
 git commit -F "!TEMP_COMMIT_MSG_FILE!"
 set "commit_result=!errorlevel!"
-echo Debug: commit_result after git commit is !commit_result!
+echo Debug: commit_result apos git commit e !commit_result!
 
 if !commit_result! neq 0 (
     echo ERRO: Falha ao fazer o commit. Codigo de saida: !commit_result!
@@ -177,7 +184,7 @@ rem 'git pull' e um atalho para 'git fetch' seguido por 'git merge'.
 git pull origin main >"!TEMP_PULL_OUTPUT!" 2>&1
 set "pull_result=!errorlevel!"
 
-echo Debug: pull_result after git pull is !pull_result!
+echo Debug: pull_result apos git pull e !pull_result!
 echo Debug: Conteudo completo do pull_output:
 type "!TEMP_PULL_OUTPUT!"
 
