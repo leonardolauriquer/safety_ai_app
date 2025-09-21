@@ -1,4 +1,4 @@
-# Safety AI App 🤖💡
+# Safety AI App 🤖
 
 ## Assistente Especializado em Saúde e Segurança do Trabalho (SST) com Inteligência Artificial
 
