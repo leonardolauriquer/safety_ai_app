@@ -1,14 +1,15 @@
-# src/safety_ai_app/library_page.py
-
 import streamlit as st
 import os
 from pathlib import Path
 import io
 import logging
 from datetime import date
+import pypdf # Adicionado para processamento de PDF local
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+# Configuração de logging, para melhor rastreamento de eventos e erros.
+logger = logging.getLogger(__name__)
 
+# Importações de módulos internos do projeto
 from safety_ai_app.google_drive_integrator import (
     get_google_drive_service_user,
     get_service_account_drive_service,
@@ -22,11 +23,17 @@ from safety_ai_app.google_drive_integrator import (
     DOWNLOAD_FOLDER
 )
 from safety_ai_app.theme_config import THEME # Importado para acessar emojis e frases
+from safety_ai_app.nr_rag_qa import NRQuestionAnswering # Importado para processamento de PDF local para o chatbot
 
 # Constantes para limites de doação
 MAX_DAILY_DONATIONS = 5
 MAX_DONATION_SIZE_MB = 20
 MAX_DONATION_SIZE_BYTES = MAX_DONATION_SIZE_MB * 1024 * 1024
+
+# Diretório temporário para uploads locais
+TEMP_DOCS_DIR = "./temp_docs_local"
+os.makedirs(TEMP_DOCS_DIR, exist_ok=True)
+
 
 # MIME types de arquivos suportados pela aplicação.
 SUPPORTED_MIME_TYPES = list(set([
@@ -112,7 +119,7 @@ def format_file_size(size_bytes):
         else:
             return f"{size_bytes / (1024**3):.2f} GB"
     except (ValueError, TypeError) as e:
-        logging.warning(f"Invalid file size received for formatting: {size_bytes}. Error: {e}")
+        logger.warning(f"Invalid file size received for formatting: {size_bytes}. Error: {e}")
         return "N/A"
 
 
@@ -152,6 +159,8 @@ def display_file_list(drive_service_key_for_display, files, drive_type_prefix):
                 category_match = True
 
         if name_matches and category_match:
+            # Inclui arquivos que são pastas, ou que estão na lista de suportados
+            # ou que são de apps do Google (para serem exportados)
             if is_folder or file_mime_type in SUPPORTED_MIME_TYPES or file_mime_type.startswith('application/vnd.google-apps'):
                 filtered_files_by_search_and_category.append(file_item)
 
@@ -180,9 +189,9 @@ def display_file_list(drive_service_key_for_display, files, drive_type_prefix):
 
         with col1:
             if is_folder:
-                st.markdown(f"**{THEME['emojis']['folder_docs']} Pasta: {file_display_name}**") # Emoji centralizado
+                st.markdown(f"**{THEME['emojis']['folder_docs']} Pasta: {file_display_name}**")
             else:
-                st.markdown(f"**{THEME['emojis']['file_doc']} {file_display_name}**") # Emoji centralizado
+                st.markdown(f"**{THEME['emojis']['file_doc']} {file_display_name}**")
                 st.caption(f"{MIME_TYPE_DISPLAY.get(file_mime_type, MIME_TYPE_DISPLAY['default'])} | Tamanho: {format_file_size(file_size)}")
 
         with col2:
@@ -216,11 +225,11 @@ def display_file_list(drive_service_key_for_display, files, drive_type_prefix):
                                 else:
                                     st.session_state[download_state_key] = 'error'
                                     st.toast(f"{THEME['emojis']['error_x']} Conteúdo do arquivo '{file_display_name}' vazio ou não disponível.", icon=THEME["emojis"]["error_x"])
-                                    logging.warning(f"Empty or unavailable file content: {file_display_name} (ID: {file_id})")
+                                    logger.warning(f"Empty or unavailable file content: {file_display_name} (ID: {file_id})")
                             except Exception as e:
                                 st.session_state[download_state_key] = 'error'
                                 st.toast(f"{THEME['emojis']['error_x']} Erro ao buscar '{file_display_name}': {e}. Tente novamente.", icon=THEME["emojis"]["error_x"])
-                                logging.error(f"Error fetching bytes for {file_display_name} (ID: {file_id}): {type(e).__name__}: {e}")
+                                logger.error(f"Error fetching bytes for {file_display_name} (ID: {file_id}): {type(e).__name__}: {e}")
                             st.rerun()
 
                     elif current_dl_state == 'ready':
@@ -240,7 +249,7 @@ def display_file_list(drive_service_key_for_display, files, drive_type_prefix):
                         else:
                             st.session_state[download_state_key] = 'error'
                             st.toast(f"{THEME['emojis']['error_x']} Erro interno: Dados do arquivo não encontrados para download. Tente novamente.", icon=THEME["emojis"]["error_x"])
-                            logging.error(f"Bytes data for {file_display_name} (ID: {file_id}) not found in 'ready' state.")
+                            logger.error(f"Bytes data for {file_display_name} (ID: {file_id}) not found in 'ready' state.")
                             st.rerun()
 
                     elif current_dl_state == 'completed':
@@ -268,6 +277,16 @@ def library_page():
     st.write("Aqui você pode gerenciar os documentos que servem como base de conhecimento para o SafetyAI.")
     st.markdown("---") # Separador após a descrição inicial
 
+    # Inicializa NR_RAG_QA uma vez e armazena em session_state
+    if 'rag_qa' not in st.session_state:
+        try:
+            st.session_state.rag_qa = NRQuestionAnswering()
+            logger.info("NR_RAG_QA inicializado com sucesso na biblioteca.")
+        except Exception as e:
+            st.error(f"Erro ao inicializar o sistema de QA: {e}. Verifique sua GOOGLE_API_KEY e a existência do ChromaDB.")
+            logger.error(f"Erro ao inicializar NR_RAG_QA: {e}")
+            # Não retorna aqui para permitir que outras abas renderizem, mesmo que o QA não esteja pronto.
+
     if "user_drive_service" not in st.session_state:
         st.session_state["user_drive_service"] = None
     if "app_drive_service" not in st.session_state:
@@ -292,7 +311,7 @@ def library_page():
         if st.session_state["user_drive_service"] is None:
             user_service_status_message = "⚠️ Serviço do Google Drive do usuário não está disponível. Por favor, autentique-se novamente na página inicial para acessar seu Drive pessoal."
     except Exception as e:
-        logging.error(f"Unexpected error initializing user_drive_service: {type(e).__name__}: {e}")
+        logger.error(f"Unexpected error initializing user_drive_service: {type(e).__name__}: {e}")
         user_service_status_message = f"❌ Erro inesperado ao inicializar o serviço do Google Drive do usuário: {e}. Verifique as credenciais e permissões concedidas na página inicial."
 
     app_service_status_message = ""
@@ -304,7 +323,7 @@ def library_page():
         if st.session_state["app_drive_service"] is None:
             app_service_status_message = "⚠️ Serviço da conta de aplicativo não está disponível para listar a Biblioteca. Verifique se o arquivo 'service_account_key.json' está configurado corretamente e se a conta de serviço tem as permissões necessárias."
     except Exception as e:
-        logging.error(f"Unexpected error initializing app_drive_service: {type(e).__name__}: {e}")
+        logger.error(f"Unexpected error initializing app_drive_service: {type(e).__name__}: {e}")
         app_service_status_message = f"❌ Erro inesperado ao inicializar o serviço do Google Drive da conta de serviço: {e}. Verifique se o arquivo 'service_account_key.json' está presente, formatado corretamente e se a conta de serviço foi adicionada como editora na pasta do Drive da biblioteca."
 
     if user_service_status_message:
@@ -312,7 +331,7 @@ def library_page():
     if app_service_status_message:
         st.warning(app_service_status_message)
 
-    tab1, tab2 = st.tabs(["Biblioteca Central", "Doação de Conteúdo"])
+    tab1, tab2, tab3 = st.tabs(["Biblioteca Central", "Doação de Conteúdo", "Processar Local para Chatbot"])
 
     with tab1:
         st.header("Biblioteca Central")
@@ -374,20 +393,143 @@ def library_page():
 
                     with col2:
                         if can_upload_more and not file_too_large:
-                            if st.button(f"{THEME['emojis']['upload_arrow']} Doar Conteúdo", key=f"donate_file_{up_file.name}_{i}"): # Usando emoji centralizado
+                            if st.button(f"{THEME['emojis']['upload_arrow']} Doar Conteúdo", key=f"donate_file_{up_file.name}_{i}"):
                                 try:
                                     upload_file_to_drive(st.session_state["user_drive_service"], up_file, parent_folder_id=OUR_DRIVE_DONATION_FOLDER_ID)
                                     st.session_state['daily_donations_count'] += 1
-                                    st.toast(f"{THEME['emojis']['success_check']} Conteúdo '{up_file.name}' doado com sucesso! Obrigado pela sua contribuição.", icon=THEME["emojis"]["donation_hands"]) # Emoji centralizado
+                                    st.toast(f"{THEME['emojis']['success_check']} Conteúdo '{up_file.name}' doado com sucesso! Obrigado pela sua contribuição.", icon=THEME["emojis"]["donation_hands"])
                                     st.rerun() 
                                 except Exception as e:
                                     st.error(f"{THEME['emojis']['error_x']} Erro ao doar o arquivo '{up_file.name}': {e}. Verifique suas permissões na pasta de destino.")
+                                    logger.error(f"Erro ao doar o arquivo '{up_file.name}': {e}")
                         elif file_too_large:
-                             st.button(f"{THEME['emojis']['upload_arrow']} Doar Conteúdo", key=f"donate_file_{up_file.name}_{i}", disabled=True) # Usando emoji centralizado
+                             st.button(f"{THEME['emojis']['upload_arrow']} Doar Conteúdo", key=f"donate_file_{up_file.name}_{i}", disabled=True)
                         else:
-                            st.button(f"{THEME['emojis']['upload_arrow']} Doar Conteúdo", key=f"donate_file_{up_file.name}_{i}", disabled=True, help="Limite diário de doações atingido.") # Usando emoji centralizado
+                            st.button(f"{THEME['emojis']['upload_arrow']} Doar Conteúdo", key=f"donate_file_{up_file.name}_{i}", disabled=True, help="Limite diário de doações atingido.")
         else:
             st.info("Faça login com seu Google Drive para começar a doar conteúdos!")
+
+    with tab3:
+        st.header(f"{THEME['emojis']['upload_folder']} Processar Documentos Locais para o Chatbot")
+        st.info(
+            "Aqui você pode fazer upload de arquivos PDF do seu computador para que o chatbot os utilize como "
+            "base de conhecimento. Estes documentos serão processados e armazenados localmente no ChromaDB para melhorar as respostas do SafetyAI. "
+            "**Importante:** Estes arquivos não são enviados para o Google Drive de doação."
+        )
+
+        if 'rag_qa' not in st.session_state:
+            st.error("O sistema de QA não está inicializado. Por favor, verifique sua configuração de GOOGLE_API_KEY para habilitar esta funcionalidade.")
+        else:
+            local_uploaded_file = st.file_uploader(
+                "Selecione um arquivo PDF para processar para o chatbot:",
+                type=["pdf"],
+                key="local_pdf_uploader",
+                help="Faça upload de um PDF para que o chatbot possa consultá-lo em suas respostas."
+            )
+
+            if local_uploaded_file is not None:
+                file_path = os.path.join(TEMP_DOCS_DIR, local_uploaded_file.name)
+                
+                # Salva o arquivo uploaded temporariamente
+                with open(file_path, "wb") as f:
+                    f.write(local_uploaded_file.getbuffer())
+                
+                document_id = local_uploaded_file.name # Usando o nome do arquivo como ID do documento
+                source_url = None 
+
+                # Lógica para atribuir source_url com base no nome do arquivo ou outros critérios
+                if "NR-35" in local_uploaded_file.name:
+                    source_url = "https://www.gov.br/trabalho-e-emprego/pt-br/acesso-a-informacao/participacao-social/conselhos-e-orgaos-colegiados/comissao-tripartite-partitaria-permanente/nrs-atualizadas/NR-35%20(1).pdf"
+                elif "NR-1" in local_uploaded_file.name:
+                    source_url = "https://www.gov.br/trabalho-e-emprego/pt-br/acesso-a-informacao/participacao-social/conselhos-e-orgaos-colegiados/comissao-tripartite-partitaria-permanente/nrs-atualizadas/NR-1%20(1).pdf"
+                else:
+                    source_url = f"local_file://{local_uploaded_file.name}"
+                    st.warning(f"Nenhuma URL de origem específica encontrada para '{local_uploaded_file.name}'. Usando um placeholder para o chatbot.")
+
+                st.info(f"Processando documento: {local_uploaded_file.name} para o chatbot...")
+                with st.spinner(f"Extraindo texto e adicionando '{local_uploaded_file.name}' à base de conhecimento..."):
+                    try:
+                        # Extrair texto do PDF
+                        reader = pypdf.PdfReader(file_path)
+                        full_text = ""
+                        for page in reader.pages:
+                            full_text += page.extract_text() or ""
+
+                        # Chunk e adicionar ao ChromaDB com metadados
+                        # ATENÇÃO: Verifique se 'st.session_state.rag_qa.text_splitter' está definido
+                        # Se não estiver, você precisará adicionar um inicializador para ele em NRQuestionAnswering
+                        text_splitter = st.session_state.rag_qa.text_splitter
+                        texts = text_splitter.split_text(full_text)
+                        
+                        metadatas = []
+                        ids = []
+                        for i, text in enumerate(texts):
+                            chunk_metadata = {"document_id": document_id, "chunk_id": f"{document_id}-{i}"}
+                            if source_url:
+                                chunk_metadata["source_url"] = source_url
+                            if "NR-" in local_uploaded_file.name:
+                                try:
+                                    # Extrai o número da NR do nome do arquivo (ex: "NR-35 (1).pdf" -> "35")
+                                    nr_number_str = local_uploaded_file.name.split("NR-")[1].split(".")[0].split(" ")[0].split("(")[0]
+                                    chunk_metadata["nr_number"] = nr_number_str
+                                except Exception:
+                                    pass # Ignora se não conseguir extrair o número da NR
+                            metadatas.append(chunk_metadata)
+                            ids.append(f"{document_id}-{i}")
+
+                        st.session_state.rag_qa.collection.add(
+                            documents=texts,
+                            metadatas=metadatas,
+                            ids=ids
+                        )
+                        st.success(f"Documento '{local_uploaded_file.name}' processado e chunks adicionados à base de conhecimento do chatbot! Total de chunks: {len(texts)}")
+                        logger.info(f"Documento '{local_uploaded_file.name}' chunks added to ChromaDB. Source URL: {source_url if source_url else 'N/A'}")
+                    except Exception as e:
+                        st.error(f"Erro ao processar o PDF para o chatbot: {e}")
+                        logger.error(f"Error processing local PDF '{local_uploaded_file.name}' for chatbot: {e}")
+                    finally:
+                        if os.path.exists(file_path):
+                            os.remove(file_path)
+                            logger.info(f"Temporary file '{file_path}' removed.")
+
+            st.markdown("---")
+            st.subheader(f"{THEME['emojis']['document_icon']} Documentos Processados na Base de Conhecimento (Chatbot)")
+            
+            # Listar documentos processados no ChromaDB
+            try:
+                all_metadatas = st.session_state.rag_qa.collection.get(
+                    include=['metadatas']
+                )['metadatas']
+                
+                unique_documents = {}
+                for md in all_metadatas:
+                    doc_id = md.get('document_id', 'Desconhecido')
+                    if doc_id not in unique_documents:
+                        unique_documents[doc_id] = {
+                            'source_url': md.get('source_url', 'N/A'),
+                            'nr_number': md.get('nr_number', 'N/A'),
+                            'chunk_count': 0
+                        }
+                    unique_documents[doc_id]['chunk_count'] += 1
+
+                if unique_documents:
+                    st.write("Os seguintes documentos foram processados para o chatbot:")
+                    for doc_id, info in unique_documents.items():
+                        display_name = doc_id
+                        if info['nr_number'] != 'N/A':
+                            display_name = f"NR-{info['nr_number']} ({doc_id})"
+                        
+                        st.markdown(f"- **{display_name}** (Chunks: {info['chunk_count']})")
+                        if info['source_url'] and info['source_url'] != 'N/A' and not info['source_url'].startswith('local_file://'):
+                            st.markdown(f"  - Fonte: [{info['source_url']}]({info['source_url']})")
+                        elif info['source_url'].startswith('local_file://'):
+                             st.markdown(f"  - Fonte: Arquivo local ({info['source_url'].replace('local_file://', '')})")
+                else:
+                    st.info("Nenhum documento processado para o chatbot ainda. Faça o upload de um PDF para começar!")
+            except Exception as e:
+                st.error(f"Erro ao carregar documentos processados para o chatbot: {e}")
+                logger.error(f"Error loading processed documents for chatbot: {e}")
+
 
     st.markdown("---") # Separador antes do rodapé padrão
     st.markdown(f"""

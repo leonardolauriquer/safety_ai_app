@@ -1,9 +1,7 @@
-# src/safety_ai_app/nr_rag_qa.py
-
 import os
 import chromadb
 from chromadb.utils import embedding_functions
-import google.generativeai as genai
+import google.genai as genai # ALTERADO: De 'google.generativeai' para 'google.genai'
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
 from typing import List, Dict, Any, Optional

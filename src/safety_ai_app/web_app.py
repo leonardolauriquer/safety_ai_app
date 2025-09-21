@@ -1,6 +1,10 @@
-# src/safety_ai_app/web_app.py
 import streamlit as st
-# import os # Removido, não é mais usado aqui
+import os # Necessário para acessar variáveis de ambiente, como as carregadas pelo dotenv
+from dotenv import load_dotenv # Importa a função para carregar .env
+
+# Carrega as variáveis do arquivo .env no início da aplicação
+load_dotenv()
+
 from safety_ai_app.home_page import home_page
 from safety_ai_app.chat_page import chat_page
 from safety_ai_app.library_page import library_page

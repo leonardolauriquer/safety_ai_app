@@ -1,29 +1,36 @@
 # pyproject.toml
-[project]
+[tool.poetry]
 name = "safety-ai-app"
 version = "0.1.0"
 description = "Safety AI App"
 readme = "README.md"
-authors = [{ name = "Leo" }]
-requires-python = ">=3.12" # Mantendo a compatibilidade com sua versão Python
-dependencies = [
-    "openai (>=1.107.1,<2.0.0)",
-    "google-generativeai (>=0.8.5,<0.9.0)",
-    "streamlit (>=1.35.0,<2.0.0)",
-    "sentence-transformers (>=5.1.0,<6.0.0)",
-    "chromadb (>=1.0.21,<2.0.0)",
-    "pypdf (>=6.0.0,<7.0.0)",
-    "markdown (>=3.9,<4.0)",
-    "google-auth-oauthlib (>=1.2.2,<2.0.0)",
-    "google-api-python-client (>=2.181.0,<3.0.0)",
-    "google-auth-httplib2 (>=0.2.0,<0.3.0)"
-]
-
-[project.scripts]
-safety-ai-app = "safety_ai_app.__main__:main"
-
-[tool.poetry]
+authors = ["Leo <leo@example.com>"]
+license = "MIT"
 packages = [{ include = "safety_ai_app", from = "src" }]
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.13"
+openai = "^1.107.3"
+streamlit = "^1.49.1"
+sentence-transformers = "^5.1.0"
+chromadb = "^1.1.0"
+pypdf = "^6.0.0"
+Markdown = "^3.9"
+google-auth-oauthlib = "^1.2.2"
+google-api-python-client = "^2.182.0"
+google-auth-httplib2 = "^0.2.0"
+requests = "^2.32.5"
+
+langchain-core = "^0.3.76"
+langchain = "^0.3.27"
+langchain-community = "^0.3.29"
+
+# AQUI ESTÃO AS DEPENDÊNCIAS DO GOOGLE ATUALIZADAS:
+# O conector LangChain 2.x usa o NOVO SDK do Google (google-genai)
+langchain-google-genai = "^2.1.12"
+google-genai = ">=1.38.0,<2.0.0" # Esta é a biblioteca para o SDK moderno
+python-docx = "^1.2.0"
+python-dotenv = "^1.1.1"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3"
@@ -31,6 +38,9 @@ ruff = "^0.5"
 black = "^24.8"
 mypy = "^1.11"
 pytest-cov = "^5.0"
+
+[tool.poetry.scripts]
+safety-ai-app = "safety_ai_app.__main__:main"
 
 [build-system]
 requires = ["poetry-core>=1.9.0"]

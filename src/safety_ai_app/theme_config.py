@@ -45,7 +45,9 @@ THEME = {
         "success_check": "✅",
         "error_x": "❌",
         "donation_hands": "🙏", # Para o toast de doação
-        "upload_arrow": "⬆️" # Para o botão de doação
+        "upload_arrow": "⬆️", # Para o botão de doação
+        "upload_folder": "📤",  # Para a seção de upload local
+        "document_icon": "📄"   # Para o título de documentos processados
     },
     "phrases": {
         "back_to_home": "Voltar para a Página Inicial",
@@ -119,7 +121,7 @@ GLOBAL_STYLES = f"""
         padding-bottom: 10px;
         margin-top: 30px;
         margin-bottom: 20px;
-        font-family: {THEME["fonts"]["primary_family"]};
+        font-family: {THEME["fonts"]["primary_family"]}; /* Corrigido: THEHE para THEME */
     }}
 
     /* Estilos para botões padrão do Streamlit */

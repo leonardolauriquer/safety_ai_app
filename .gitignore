@@ -22,3 +22,6 @@ token.pickle
 .vscode/
 .DS_Store
 Thumbs.db
+.env
+run.bat
+service_account_key.json
