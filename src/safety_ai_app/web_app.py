@@ -310,9 +310,9 @@ def get_user_drive_service_wrapper():
         return None
     elif auth_error_message == "REDIRECTING":
         logger.info("Autenticação do Google Drive bem-sucedida, redirecionando...")
-        if st.query_params:
-            logger.info(f"Limpando st.query_params: {st.query_params}")
-            st.query_params.clear()
+        if st.experimental_get_query_params():
+            logger.info(f"Limpando st.experimental_get_query_params(): {st.experimental_get_query_params()}")
+            st.experimental_get_query_params().clear()
         st.rerun()
         return None
     elif auth_error_message:
@@ -356,7 +356,7 @@ def do_logout() -> None:
         if "messages" in st.session_state:
             st.session_state.messages = []
         st.session_state.current_page = "home"
-        st.query_params.clear()
+        st.experimental_get_query_params().clear()
         logger.info("Estado de sessão limpo para logout.")
     except Exception as e:
         logger.error(f"Erro durante o logout: {e}", exc_info=True)
@@ -639,8 +639,8 @@ def main_app_entrypoint() -> None:
 
     # Processamento de navegação via URL
     requested_page_from_url = None
-    if "page" in st.query_params:
-        requested_page_from_url = st.query_params["page"][0] if isinstance(st.query_params["page"], list) else st.query_params["page"]
+    if "page" in st.experimental_get_query_params():
+        requested_page_from_url = st.experimental_get_query_params()["page"][0] if isinstance(st.experimental_get_query_params()["page"], list) else st.experimental_get_query_params()["page"]
         if requested_page_from_url == "logout_action":
             logger.info("Ação de logout detectada via query params. Executando logout.")
             do_logout()
@@ -658,7 +658,7 @@ def main_app_entrypoint() -> None:
         else:
             logger.warning(f"Tentativa de navegar para página inválida via URL: {requested_page_from_url}")
             st.session_state.current_page = "home"
-        st.query_params.clear()
+        st.experimental_get_query_params().clear()
 
     user_drive_service_result = get_user_drive_service_wrapper()
 
