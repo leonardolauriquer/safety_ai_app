@@ -9,10 +9,9 @@ requests==2.31.0
 python-docx==1.1.0
 python-dotenv==1.0.0
 rank-bm25==0.2.2
-# Adicionar langchain_community ao requirements.txt
-"langchain-community==0.3.29" >> requirements.txt
-"chromadb==1.1.0" >> requirements.txt
-"langchain-core==0.3.75" >> requirements.txt
-"langchain==0.3.27" >> requirements.txt
-"langchain-text-splitters==0.3.0" >> requirements.txt
-"langchain-openai==0.3.33" >> requirements.txt
+langchain-community==0.3.29
+chromadb==1.1.0
+langchain-core==0.3.75
+langchain==0.3.27
+langchain-text-splitters==0.3.0
+langchain-openai==0.3.33
