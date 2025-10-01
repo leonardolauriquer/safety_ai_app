@@ -5,7 +5,7 @@ pypdf==3.17.0
 markdown==3.5.1
 google-auth-oauthlib==1.1.0
 google-api-python-client==2.108.0
-requests==2.31.0
+requests>=2.32.5
 python-docx==1.1.0
 python-dotenv==1.0.0
 rank-bm25==0.2.2
