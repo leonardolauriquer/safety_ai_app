@@ -31,7 +31,7 @@ try:
 except Exception as e:
     logger.critical(f"[ERRO CRÍTICO] Falha ao carregar variáveis de ambiente do .env: {e}.")
     st.error(f"Erro crítico: Não foi possível carregar as variáveis de ambiente. Detalhes: {e}")
-    st.stop()
+    # st.stop() # Comentado para permitir funcionamento sem RAG
 
 try:
     from safety_ai_app.theme_config import GLOBAL_STYLES, THEME, _get_material_icon_html_for_button_css, _get_material_icon_html
@@ -39,15 +39,15 @@ try:
 except ImportError as e:
     logger.critical(f"[ERRO CRÍTICO] Falha ao importar theme_config: {e}. Verifique o arquivo.")
     st.error(f"Erro crítico: Não foi possível carregar as configurações de tema. Detalhes: {e}")
-    st.stop()
+    # st.stop() # Comentado para permitir funcionamento sem RAG
 except KeyError as e:
     logger.critical(f"[ERRO CRÍTICO] Chave ausente em THEME ou GLOBAL_STYLES após importação de theme_config: {e}. Verifique se as chaves 'app_title', 'icons', 'phrases' e 'images' existem.")
     st.error(f"Erro crítico: Chave ausente em THEME ou GLOBAL_STYLES. Verifique 'theme_config.py' e se as chaves 'app_title', 'icons', 'phrases' e 'images' existem. Detalhes: {e}")
-    st.stop()
+    # st.stop() # Comentado para permitir funcionamento sem RAG
 except Exception as e:
     logger.critical(f"[ERRO CRÍTICO] Erro inesperado ao importar theme_config: {e}. Tipo: {type(e).__name__}")
     st.error(f"Erro crítico inesperado ao carregar as configurações de tema. Detalhes: {e}")
-    st.stop()
+    # st.stop() # Comentado para permitir funcionamento sem RAG
 
 page_icon_relative_path = THEME["images"]["page_icon"]
 st.set_page_config(
@@ -115,11 +115,11 @@ try:
 except ImportError as e:
     logger.critical(f"[ERRO CRÍTICO] Falha ao importar google_drive_integrator: {e}.")
     st.error(f"Erro crítico: Não foi possível carregar o integrador do Google Drive. Detalhes: {e}")
-    st.stop()
+    # st.stop() # Comentado para permitir funcionamento sem RAG
 except Exception as e:
     logger.critical(f"[ERRO CRÍTICO] Erro inesperado ao importar google_drive_integrator: {e}.")
     st.error(f"Erro crítico inesperado ao carregar o integrador do Google Drive. Detalhes: {e}")
-    st.stop()
+    # st.stop() # Comentado para permitir funcionamento sem RAG
 
 try:
     from safety_ai_app.nr_rag_qa import NRQuestionAnswering
@@ -127,11 +127,11 @@ try:
 except ImportError as e:
     logger.critical(f"[ERRO CRÍTICO] Falha ao importar nr_rag_qa: {e}.")
     st.error(f"Erro crítico: Não foi possível carregar o módulo RAG QA. Detalhes: {e}")
-    st.stop()
+    # st.stop() # Comentado para permitir funcionamento sem RAG
 except Exception as e:
     logger.critical(f"[ERRO CRÍTICO] Erro inesperado ao importar nr_rag_qa: {e}.")
     st.error(f"Erro crítico inesperado ao carregar o módulo RAG QA. Detalhes: {e}")
-    st.stop()
+    # st.stop() # Comentado para permitir funcionamento sem RAG
 
 try:
     from safety_ai_app.web_interface.pages.chat_page import render_page as render_chat_page
@@ -139,7 +139,7 @@ try:
 except ImportError as e:
     logger.critical(f"[ERRO CRÍTICO] Falha ao importar render_page da chat_page: {e}.")
     st.error(f"Erro crítico: Não foi possível carregar a página de chat. Detalhes: {e}")
-    st.stop()
+    # st.stop() # Comentado para permitir funcionamento sem RAG
 
 try:
     from safety_ai_app.web_interface.pages.library_page import render_page as render_library_page
@@ -147,7 +147,7 @@ try:
 except ImportError as e:
     logger.critical(f"[ERRO CRÍTICO] Falha ao importar render_page da library_page: {e}.")
     st.error(f"Erro crítico: Não foi possível carregar a página de biblioteca. Detalhes: {e}")
-    st.stop()
+    # st.stop() # Comentado para permitir funcionamento sem RAG
 
 try:
     from safety_ai_app.web_interface.pages.knowledge_base_page import render_page as render_knowledge_base_page
@@ -155,7 +155,7 @@ try:
 except ImportError as e:
     logger.critical(f"[ERRO CRÍTICO] Falha ao importar render_page da knowledge_base_page: {e}.")
     st.error(f"Erro crítico: Não foi possível carregar a página de base de conhecimento. Detalhes: {e}")
-    st.stop()
+    # st.stop() # Comentado para permitir funcionamento sem RAG
 
 try:
     from safety_ai_app.web_interface.pages.jobs_board_page import render_page as render_jobs_board_page
@@ -163,7 +163,7 @@ try:
 except ImportError as e:
     logger.critical(f"[ERRO CRÍTICO] Falha ao importar render_page da jobs_board_page: {e}.")
     st.error(f"Erro crítico: Não foi possível carregar a página de vagas. Detalhes: {e}")
-    st.stop()
+    # st.stop() # Comentado para permitir funcionamento sem RAG
 
 def render_home_page() -> None:
     """
@@ -260,7 +260,7 @@ def get_qa_instance_cached():
     except Exception as e:
         logger.critical(f"[ERRO CRÍTICO] ERRO ao inicializar NRQuestionAnswering: {e}")
         st.error(f"Erro crítico ao inicializar o serviço de IA. Detalhes: {e}")
-        st.stop()
+        # st.stop() # Comentado para permitir funcionamento sem RAG
 
 @st.cache_resource
 def get_app_drive_service_cached():
@@ -964,7 +964,7 @@ def main_app_entrypoint() -> None:
     except Exception as e:
         logger.critical(f"[ERRO CRÍTICO] Erro inesperado ao renderizar a página '{current_page}': {e}. Tipo: {type(e).__name__}")
         st.error(f"Erro crítico ao renderizar a página '{current_page}'. Detalhes: {e}")
-        st.stop()
+        # st.stop() # Comentado para permitir funcionamento sem RAG
 
 if __name__ == "__main__":
     main_app_entrypoint()
