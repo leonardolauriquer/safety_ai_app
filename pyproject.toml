@@ -1,0 +1,56 @@
+[tool.poetry]
+name = "safety-ai-app"
+version = "0.1.0"
+description = "Safety AI App"
+authors = ["Leo <leo@example.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "safety_ai_app", from = "src"}]
+
+[tool.poetry.dependencies]
+python = ">=3.12,<3.13"
+
+# Core dependencies - Versões que sabemos que funcionam
+openai = "^1.107.3"
+streamlit = "^1.49.1"
+sentence-transformers = "^5.1.0"
+pypdf = "^6.0.0"
+markdown = "^3.9"
+google-auth-oauthlib = "^1.2.2"
+google-api-python-client = "^2.181.0"
+google-auth-httplib2 = "^0.2.0"
+requests = "^2.32.5"
+
+# ChromaDB - VOLTANDO para versão que funcionava (sem problemas de compilação)
+chromadb = "^1.1.0"
+
+# Dependências Langchain - Versões estáveis que funcionam
+langchain-core = "^0.3.75"
+langchain-community = "^0.3.29"
+langchain = "^0.3.27"
+langchain-text-splitters = "^0.3.0"
+
+# Google Gemini via LangChain - Versão que funciona
+langchain-google-genai = "^2.1.12"
+
+# Outras dependências
+python-docx = "^1.2.0"
+python-dotenv = "^1.1.1"
+rank-bm25 = "^0.2.2"
+ddgs = "^9.6.0"
+
+# REMOVIDAS as dependências que causam problemas de compilação:
+# langchain-chroma = "^0.1.4"      # REMOVIDO - causa problemas de build
+# langchain-huggingface = "^0.1.2" # REMOVIDO - pode causar conflitos
+langchain-openai = "^0.3.33"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3"
+ruff = "^0.5"
+black = "^24.8"
+mypy = "^1.11"
+pytest-cov = "^5.0"
+
+[build-system]
+requires = ["poetry-core>=1.9.0"]
+build-backend = "poetry.core.masonry.api"
