@@ -1,1 +1,4 @@
-﻿# Pacotes do sistema se necessario
+﻿build-essential
+python3-dev
+libffi-dev
+libssl-dev
