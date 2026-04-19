@@ -116,8 +116,14 @@ def get_google_drive_user_creds_and_auth_info() -> Tuple[Optional[Any], Optional
     if flow is None:
         return None, None, "Erro interno: Não foi possível inicializar o fluxo de autenticação."
 
+    explicit_redirect = os.environ.get('OAUTH_REDIRECT_URI')
     replit_domain = os.environ.get('REPLIT_DEV_DOMAIN')
-    flow.redirect_uri = f'https://{replit_domain}' if replit_domain else 'http://localhost:8501'
+    if explicit_redirect:
+        flow.redirect_uri = explicit_redirect
+    elif replit_domain:
+        flow.redirect_uri = f'https://{replit_domain}'
+    else:
+        flow.redirect_uri = 'http://localhost:8501'
 
     query_params = st.query_params.to_dict()
     oauth_state = secrets.token_urlsafe(32)

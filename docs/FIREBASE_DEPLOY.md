@@ -44,7 +44,20 @@ done
 
 ---
 
-## 3. Construir e publicar a imagem Docker
+## 3. Configurar URIs de redirecionamento OAuth no Google Cloud Console
+
+> **Passo obrigatório** — sem isso, o login com Google redireciona para `localhost` em produção.
+
+1. Acede a [Google Cloud Console → APIs & Services → Credentials](https://console.cloud.google.com/apis/credentials?project=safetyai-472110)
+2. Clica no teu **OAuth 2.0 Client ID** (o mesmo referenciado em `GOOGLE_CLIENT_CREDENTIALS`)
+3. Em **Authorized redirect URIs**, adiciona:
+   - `https://safety-ai-2026.web.app`
+   - `https://safety-ai-app-710675170484.us-central1.run.app`
+4. Clica **Save**
+
+---
+
+## 4. Construir e publicar a imagem Docker
 
 ```bash
 PROJECT_ID="safetyai-472110"
@@ -65,7 +78,7 @@ gcloud builds submit --tag $IMAGE --project=$PROJECT_ID .
 
 ---
 
-## 4. Conceder acesso ao Secret Manager para o Cloud Run SA
+## 5. Conceder acesso ao Secret Manager para o Cloud Run SA
 
 ```bash
 PROJECT_ID="safetyai-472110"
@@ -80,7 +93,7 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
 
 ---
 
-## 5. Fazer deploy no Cloud Run
+## 6. Fazer deploy no Cloud Run
 
 ```bash
 PROJECT_ID="safetyai-472110"
@@ -97,13 +110,13 @@ gcloud run deploy safety-ai-app \
   --min-instances 1 \
   --max-instances 5 \
   --timeout 3600 \
-  --set-secrets="GOOGLE_API_KEY=GOOGLE_API_KEY:latest,GOOGLE_SERVICE_ACCOUNT_KEY=GOOGLE_SERVICE_ACCOUNT_KEY:latest,GOOGLE_CLIENT_CREDENTIALS=GOOGLE_CLIENT_CREDENTIALS:latest,GOOGLE_DRIVE_CENTRAL_LIBRARY_FOLDER_ID=GOOGLE_DRIVE_CENTRAL_LIBRARY_FOLDER_ID:latest,GOOGLE_DRIVE_DONATION_FOLDER_ID=GOOGLE_DRIVE_DONATION_FOLDER_ID:latest,ICD_API_CLIENT_ID=ICD_API_CLIENT_ID:latest,ICD_API_CLIENT_SECRET=ICD_API_CLIENT_SECRET:latest,ADZUNA_API_KEY=ADZUNA_API_KEY:latest,ADZUNA_APP_ID=ADZUNA_APP_ID:latest,RECAPTCHA_SECRET_KEY=RECAPTCHA_SECRET_KEY:latest,RECAPTCHA_SITE_KEY=RECAPTCHA_SITE_KEY:latest,ADMIN_EMAILS=ADMIN_EMAILS:latest" \
+  --set-secrets="GOOGLE_API_KEY=GOOGLE_API_KEY:latest,GOOGLE_SERVICE_ACCOUNT_KEY=GOOGLE_SERVICE_ACCOUNT_KEY:latest,GOOGLE_CLIENT_CREDENTIALS=GOOGLE_CLIENT_CREDENTIALS:latest,GOOGLE_DRIVE_CENTRAL_LIBRARY_FOLDER_ID=GOOGLE_DRIVE_CENTRAL_LIBRARY_FOLDER_ID:latest,GOOGLE_DRIVE_DONATION_FOLDER_ID=GOOGLE_DRIVE_DONATION_FOLDER_ID:latest,ICD_API_CLIENT_ID=ICD_API_CLIENT_ID:latest,ICD_API_CLIENT_SECRET=ICD_API_CLIENT_SECRET:latest,ADZUNA_API_KEY=ADZUNA_API_KEY:latest,ADZUNA_APP_ID=ADZUNA_APP_ID:latest,RECAPTCHA_SECRET_KEY=RECAPTCHA_SECRET_KEY:latest,RECAPTCHA_SITE_KEY=RECAPTCHA_SITE_KEY:latest,ADMIN_EMAILS=ADMIN_EMAILS:latest,OAUTH_REDIRECT_URI=OAUTH_REDIRECT_URI:latest" \
   --project $PROJECT_ID
 ```
 
 ---
 
-## 6. Activar Firebase Hosting (opcional)
+## 7. Activar Firebase Hosting (opcional)
 
 ```bash
 firebase deploy --only hosting --project safetyai-472110
@@ -121,7 +134,37 @@ Para persistência total, considera migrar o ChromaDB para Cloud Filestore NFS o
 
 ---
 
-## Actualizações futuras
+## Corrigir OAuth em deploy existente (login redireccionava para localhost)
+
+Se o serviço já está no ar mas o login do Google redireccionava para `localhost`, faz isto no **Cloud Shell**:
+
+```bash
+PROJECT_ID="safetyai-472110"
+REGION="us-central1"
+
+# 1. Criar o secret OAUTH_REDIRECT_URI
+echo -n "https://safety-ai-2026.web.app" | \
+  gcloud secrets create OAUTH_REDIRECT_URI \
+    --data-file=- \
+    --project=$PROJECT_ID \
+    --replication-policy=automatic 2>/dev/null || \
+  echo -n "https://safety-ai-2026.web.app" | \
+  gcloud secrets versions add OAUTH_REDIRECT_URI --data-file=- --project=$PROJECT_ID
+
+# 2. Re-deploy o Cloud Run com o novo secret (sem rebuildar a imagem)
+IMAGE="$REGION-docker.pkg.dev/$PROJECT_ID/safety-ai-app/safety-ai-app:latest"
+gcloud run deploy safety-ai-app \
+  --image $IMAGE \
+  --region $REGION \
+  --set-secrets="GOOGLE_API_KEY=GOOGLE_API_KEY:latest,GOOGLE_SERVICE_ACCOUNT_KEY=GOOGLE_SERVICE_ACCOUNT_KEY:latest,GOOGLE_CLIENT_CREDENTIALS=GOOGLE_CLIENT_CREDENTIALS:latest,GOOGLE_DRIVE_CENTRAL_LIBRARY_FOLDER_ID=GOOGLE_DRIVE_CENTRAL_LIBRARY_FOLDER_ID:latest,GOOGLE_DRIVE_DONATION_FOLDER_ID=GOOGLE_DRIVE_DONATION_FOLDER_ID:latest,ICD_API_CLIENT_ID=ICD_API_CLIENT_ID:latest,ICD_API_CLIENT_SECRET=ICD_API_CLIENT_SECRET:latest,ADZUNA_API_KEY=ADZUNA_API_KEY:latest,ADZUNA_APP_ID=ADZUNA_APP_ID:latest,RECAPTCHA_SECRET_KEY=RECAPTCHA_SECRET_KEY:latest,RECAPTCHA_SITE_KEY=RECAPTCHA_SITE_KEY:latest,ADMIN_EMAILS=ADMIN_EMAILS:latest,OAUTH_REDIRECT_URI=OAUTH_REDIRECT_URI:latest" \
+  --project $PROJECT_ID
+```
+
+> **Nota**: Também tens de adicionar `https://safety-ai-2026.web.app` como URI de redirecionamento autorizado no Google Cloud Console (ver Secção 3 acima).
+
+---
+
+## Actualizações futuras (nova versão de código)
 
 ```bash
 PROJECT_ID="safetyai-472110"
