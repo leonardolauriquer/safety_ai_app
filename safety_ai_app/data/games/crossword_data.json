@@ -1,0 +1,106 @@
+[
+    {
+        "grid_size": 10,
+        "words": [
+            { "word": "XXXXXX", "clue": "Palavra aleatória de 6 letras (Horizontal 1).", "start_x": 0, "start_y": 0, "direction": "across", "number": 1 },
+            { "word": "XXXXXXX", "clue": "Palavra aleatória de 7 letras (Horizontal 2).", "start_x": 0, "start_y": 2, "direction": "across", "number": 2 },
+            { "word": "XXXXX", "clue": "Palavra aleatória de 5 letras (Vertical 1).", "start_x": 2, "start_y": 0, "direction": "down", "number": 3 },
+            { "word": "XXXXXXXX", "clue": "Palavra aleatória de 8 letras (Horizontal 3).", "start_x": 0, "start_y": 4, "direction": "across", "number": 4 },
+            { "word": "XXXXXX", "clue": "Palavra aleatória de 6 letras (Vertical 2).", "start_x": 5, "start_y": 2, "direction": "down", "number": 5 }
+        ]
+    },
+    {
+        "grid_size": 12,
+        "words": [
+            { "word": "XXXXX", "clue": "Palavra aleatória de 5 letras (Horizontal 1).", "start_x": 1, "start_y": 1, "direction": "across", "number": 1 },
+            { "word": "XXXXXX", "clue": "Palavra aleatória de 6 letras (Vertical 1).", "start_x": 1, "start_y": 1, "direction": "down", "number": 2 },
+            { "word": "XXXXXXX", "clue": "Palavra aleatória de 7 letras (Horizontal 2).", "start_x": 0, "start_y": 3, "direction": "across", "number": 3 },
+            { "word": "XXXXXXXX", "clue": "Palavra aleatória de 8 letras (Vertical 2).", "start_x": 3, "start_y": 0, "direction": "down", "number": 4 },
+            { "word": "XXXXXXXXX", "clue": "Palavra aleatória de 9 letras (Horizontal 3).", "start_x": 2, "start_y": 5, "direction": "across", "number": 5 }
+        ]
+    },
+    {
+        "grid_size": 10,
+        "words": [
+            { "word": "XXXXXXX", "clue": "Palavra aleatória de 7 letras (Horizontal 1).", "start_x": 0, "start_y": 0, "direction": "across", "number": 1 },
+            { "word": "XXXXXXXX", "clue": "Palavra aleatória de 8 letras (Vertical 1).", "start_x": 0, "start_y": 0, "direction": "down", "number": 2 },
+            { "word": "XXXXXXXXX", "clue": "Palavra aleatória de 9 letras (Horizontal 2).", "start_x": 1, "start_y": 2, "direction": "across", "number": 3 },
+            { "word": "XXXXXX", "clue": "Palavra aleatória de 6 letras (Vertical 2).", "start_x": 4, "start_y": 0, "direction": "down", "number": 4 },
+            { "word": "XXXXXXX", "clue": "Palavra aleatória de 7 letras (Horizontal 3).", "start_x": 0, "start_y": 4, "direction": "across", "number": 5 }
+        ]
+    },
+    {
+        "grid_size": 15,
+        "words": [
+            { "word": "XXXXXXXXXX", "clue": "Palavra aleatória de 10 letras (Horizontal 1).", "start_x": 0, "start_y": 0, "direction": "across", "number": 1 },
+            { "word": "XXXXXXXXXXX", "clue": "Palavra aleatória de 11 letras (Vertical 1).", "start_x": 0, "start_y": 0, "direction": "down", "number": 2 },
+            { "word": "XXXXXXXXXXXX", "clue": "Palavra aleatória de 12 letras (Horizontal 2).", "start_x": 2, "start_y": 2, "direction": "across", "number": 3 },
+            { "word": "XXXXXXXXX", "clue": "Palavra aleatória de 9 letras (Vertical 2).", "start_x": 4, "start_y": 0, "direction": "down", "number": 4 },
+            { "word": "XXXXXXXXXX", "clue": "Palavra aleatória de 10 letras (Horizontal 3).", "start_x": 0, "start_y": 4, "direction": "across", "number": 5 }
+        ]
+    },
+    {
+        "grid_size": 10,
+        "words": [
+            { "word": "XXXX", "clue": "Palavra aleatória de 4 letras (Vertical 1).", "start_x": 0, "start_y": 0, "direction": "down", "number": 1 },
+            { "word": "XXXX", "clue": "Palavra aleatória de 4 letras (Horizontal 1).", "start_x": 0, "start_y": 2, "direction": "across", "number": 2 },
+            { "word": "XXXX", "clue": "Palavra aleatória de 4 letras (Vertical 2).", "start_x": 2, "start_y": 0, "direction": "down", "number": 3 },
+            { "word": "XXXX", "clue": "Palavra aleatória de 4 letras (Horizontal 2).", "start_x": 0, "start_y": 4, "direction": "across", "number": 4 },
+            { "word": "XXXX", "clue": "Palavra aleatória de 4 letras (Vertical 3).", "start_x": 4, "start_y": 0, "direction": "down", "number": 5 }
+        ]
+    },
+    {
+        "grid_size": 10,
+        "words": [
+            { "word": "XXXXX", "clue": "Palavra aleatória de 5 letras (Vertical 1).", "start_x": 0, "start_y": 0, "direction": "down", "number": 1 },
+            { "word": "XXXXX", "clue": "Palavra aleatória de 5 letras (Horizontal 1).", "start_x": 0, "start_y": 2, "direction": "across", "number": 2 },
+            { "word": "XXXXX", "clue": "Palavra aleatória de 5 letras (Vertical 2).", "start_x": 2, "start_y": 0, "direction": "down", "number": 3 },
+            { "word": "XXXXX", "clue": "Palavra aleatória de 5 letras (Horizontal 2).", "start_x": 0, "start_y": 4, "direction": "across", "number": 4 },
+            { "word": "XXXXX", "clue": "Palavra aleatória de 5 letras (Vertical 3).", "start_x": 4, "start_y": 0, "direction": "down", "number": 5 }
+        ]
+    },
+    {
+        "grid_size": 15,
+        "words": [
+            { "word": "XXXXXXXX", "clue": "Palavra aleatória de 8 letras (Horizontal 1).", "start_x": 0, "start_y": 0, "direction": "across", "number": 1 },
+            { "word": "XXXXXXXXX", "clue": "Palavra aleatória de 9 letras (Vertical 1).", "start_x": 0, "start_y": 0, "direction": "down", "number": 2 },
+            { "word": "XXXXXXXXXX", "clue": "Palavra aleatória de 10 letras (Horizontal 2).", "start_x": 2, "start_y": 2, "direction": "across", "number": 3 },
+            { "word": "XXXXXXXXXXX", "clue": "Palavra aleatória de 11 letras (Vertical 2).", "start_x": 4, "start_y": 0, "direction": "down", "number": 4 },
+            { "word": "XXXXXXXXXXXX", "clue": "Palavra aleatória de 12 letras (Horizontal 3).", "start_x": 0, "start_y": 4, "direction": "across", "number": 5 },
+            { "word": "XXXXXXXXXXXXX", "clue": "Palavra aleatória de 13 letras (Vertical 3).", "start_x": 6, "start_y": 0, "direction": "down", "number": 6 }
+        ]
+    },
+    {
+        "grid_size": 10,
+        "words": [
+            { "word": "XXXX", "clue": "Palavra aleatória de 4 letras (Horizontal 1).", "start_x": 0, "start_y": 0, "direction": "across", "number": 1 },
+            { "word": "XXXX", "clue": "Palavra aleatória de 4 letras (Vertical 1).", "start_x": 0, "start_y": 0, "direction": "down", "number": 2 },
+            { "word": "XXXX", "clue": "Palavra aleatória de 4 letras (Horizontal 2).", "start_x": 3, "start_y": 2, "direction": "across", "number": 3 },
+            { "word": "XXXX", "clue": "Palavra aleatória de 4 letras (Vertical 2).", "start_x": 2, "start_y": 0, "direction": "down", "number": 4 },
+            { "word": "XXXX", "clue": "Palavra aleatória de 4 letras (Horizontal 3).", "start_x": 0, "start_y": 4, "direction": "across", "number": 5 },
+            { "word": "XXXX", "clue": "Palavra aleatória de 4 letras (Vertical 3).", "start_x": 4, "start_y": 0, "direction": "down", "number": 6 }
+        ]
+    },
+    {
+        "grid_size": 12,
+        "words": [
+            { "word": "XXXXXXX", "clue": "Palavra aleatória de 7 letras (Horizontal 1).", "start_x": 0, "start_y": 0, "direction": "across", "number": 1 },
+            { "word": "XXXXXXX", "clue": "Palavra aleatória de 7 letras (Vertical 1).", "start_x": 0, "start_y": 0, "direction": "down", "number": 2 },
+            { "word": "XXXXXXX", "clue": "Palavra aleatória de 7 letras (Horizontal 2).", "start_x": 2, "start_y": 2, "direction": "across", "number": 3 },
+            { "word": "XXXXXXX", "clue": "Palavra aleatória de 7 letras (Vertical 2).", "start_x": 4, "start_y": 0, "direction": "down", "number": 4 },
+            { "word": "XXXXXXX", "clue": "Palavra aleatória de 7 letras (Horizontal 3).", "start_x": 0, "start_y": 4, "direction": "across", "number": 5 },
+            { "word": "XXXXXXX", "clue": "Palavra aleatória de 7 letras (Vertical 3).", "start_x": 6, "start_y": 0, "direction": "down", "number": 6 }
+        ]
+    },
+    {
+        "grid_size": 10,
+        "words": [
+            { "word": "XXXXX", "clue": "Palavra aleatória de 5 letras (Horizontal 1).", "start_x": 0, "start_y": 0, "direction": "across", "number": 1 },
+            { "word": "XXXXX", "clue": "Palavra aleatória de 5 letras (Vertical 1).", "start_x": 0, "start_y": 0, "direction": "down", "number": 2 },
+            { "word": "XXXXX", "clue": "Palavra aleatória de 5 letras (Horizontal 2).", "start_x": 2, "start_y": 2, "direction": "across", "number": 3 },
+            { "word": "XXXXX", "clue": "Palavra aleatória de 5 letras (Vertical 2).", "start_x": 4, "start_y": 0, "direction": "down", "number": 4 },
+            { "word": "XXXXX", "clue": "Palavra aleatória de 5 letras (Horizontal 3).", "start_x": 0, "start_y": 4, "direction": "across", "number": 5 },
+            { "word": "XXXXX", "clue": "Palavra aleatória de 5 letras (Vertical 3).", "start_x": 6, "start_y": 0, "direction": "down", "number": 6 }
+        ]
+    }
+]

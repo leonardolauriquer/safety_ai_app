@@ -1,0 +1,13 @@
+{
+  "model": "openai/gpt-4o-mini",
+  "temperature_factual": 0.1,
+  "temperature_document": 0.5,
+  "max_history_tokens": 16000,
+  "max_history_turns": 10,
+  "guardrail_threshold": 0.3,
+  "retriever_top_k": 6,
+  "bm25_weight": 0.3,
+  "semantic_weight": 0.7,
+  "chunk_size": 1000,
+  "chunk_overlap": 150
+}

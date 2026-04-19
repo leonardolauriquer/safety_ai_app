@@ -1,0 +1,64 @@
+{
+  "plans": [
+    {
+      "id": "free",
+      "name": "Gratuito",
+      "price_monthly": 0.0,
+      "price_yearly": 0.0,
+      "currency": "BRL",
+      "description": "Acesso básico às NRs e consultas rápidas.",
+      "features": {
+        "chat_messages_per_day": 10,
+        "knowledge_base_sync": false,
+        "document_generation": false,
+        "job_board": true,
+        "games": true,
+        "quick_queries": true,
+        "dimensioning": true,
+        "news_feed": true,
+        "custom_branding": false,
+        "priority_support": false
+      }
+    },
+    {
+      "id": "pro",
+      "name": "Profissional",
+      "price_monthly": 29.90,
+      "price_yearly": 299.00,
+      "currency": "BRL",
+      "description": "Acesso completo com geração de documentos e sincronização automática.",
+      "features": {
+        "chat_messages_per_day": -1,
+        "knowledge_base_sync": true,
+        "document_generation": true,
+        "job_board": true,
+        "games": true,
+        "quick_queries": true,
+        "dimensioning": true,
+        "news_feed": true,
+        "custom_branding": false,
+        "priority_support": false
+      }
+    },
+    {
+      "id": "enterprise",
+      "name": "Enterprise",
+      "price_monthly": 99.90,
+      "price_yearly": 999.00,
+      "currency": "BRL",
+      "description": "Multi-utilizador, suporte prioritário e personalização completa.",
+      "features": {
+        "chat_messages_per_day": -1,
+        "knowledge_base_sync": true,
+        "document_generation": true,
+        "job_board": true,
+        "games": true,
+        "quick_queries": true,
+        "dimensioning": true,
+        "news_feed": true,
+        "custom_branding": true,
+        "priority_support": true
+      }
+    }
+  ]
+}

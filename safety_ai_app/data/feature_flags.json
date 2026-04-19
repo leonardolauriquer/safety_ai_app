@@ -1,0 +1,12 @@
+{
+  "job_board": true,
+  "news_feed": true,
+  "games": true,
+  "apr_generator": true,
+  "ata_generator": true,
+  "library": true,
+  "quick_queries": true,
+  "dimensioning": true,
+  "knowledge_base": true,
+  "chat": true
+}

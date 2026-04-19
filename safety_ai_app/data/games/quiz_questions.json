@@ -1,0 +1,142 @@
+[
+    {
+        "id": "q1",
+        "question": "Qual Norma Regulamentadora (NR) estabelece os requisitos e condições mínimas para a gestão de segurança e saúde no trabalho na construção civil?",
+        "options": ["NR-18", "NR-10", "NR-33", "NR-35"],
+        "answer": "NR-18",
+        "explanation": "A NR-18 (Condições e Meio Ambiente de Trabalho na Indústria da Construção) estabelece diretrizes de ordem administrativa, de planejamento e de organização, que objetivam a implementação de medidas de controle e sistemas preventivos de segurança nos processos, nas condições e no meio ambiente de trabalho na Indústria da Construção.",
+        "value": 1000,
+        "audience_distribution": {"NR-18": 70, "NR-10": 15, "NR-33": 10, "NR-35": 5},
+        "difficulty_level": "easy"
+    },
+    {
+        "id": "q2",
+        "question": "Qual o principal objetivo do E-social para a Saúde e Segurança do Trabalho (SST)?",
+        "options": ["Reduzir a carga tributária das empresas", "Centralizar o envio de informações fiscais, previdenciárias e trabalhistas, incluindo as de SST", "Substituir o Programa de Prevenção de Riscos Ambientais (PPRA)", "Aumentar a burocracia para pequenas empresas"],
+        "answer": "Centralizar o envio de informações fiscais, previdenciárias e trabalhistas, incluindo as de SST",
+        "explanation": "O E-social visa simplificar e unificar a entrega das obrigações trabalhistas, previdenciárias e fiscais das empresas, incluindo eventos de SST como Comunicação de Acidente de Trabalho (CAT) e monitoramento da saúde do trabalhador.",
+        "value": 2000,
+        "audience_distribution": {"Reduzir a carga tributária das empresas": 5, "Centralizar o envio de informações fiscais, previdenciárias e trabalhistas, incluindo as de SST": 80, "Substituir o Programa de Prevenção de Riscos Ambientais (PPRA)": 10, "Aumentar a burocracia para pequenas empresas": 5},
+        "difficulty_level": "easy"
+    },
+    {
+        "id": "q5",
+        "question": "O que significa a sigla EPI?",
+        "options": ["Equipamento de Proteção Individual", "Equipamento Pessoal de Incêndio", "Estudo de Prevenção de Incidentes", "Exame Periódico de Integridade"],
+        "answer": "Equipamento de Proteção Individual",
+        "explanation": "EPI é todo dispositivo ou produto, de uso individual utilizado pelo trabalhador, destinado à proteção de riscos suscetíveis de ameaçar a segurança e a saúde no trabalho.",
+        "value": 10000,
+        "audience_distribution": {"Equipamento de Proteção Individual": 95, "Equipamento Pessoal de Incêndio": 2, "Estudo de Prevenção de Incidentes": 2, "Exame Periódico de Integridade": 1},
+        "difficulty_level": "easy"
+    },
+    {
+        "id": "q3",
+        "question": "Em caso de incêndio em equipamentos elétricos energizados, qual classe de extintor deve ser utilizada?",
+        "options": ["Classe A (água)", "Classe B (espuma)", "Classe C (CO2 ou pó químico)", "Classe D (metais combustíveis)"],
+        "answer": "Classe C (CO2 ou pó químico)",
+        "explanation": "Incêndios de Classe C envolvem equipamentos elétricos energizados. Extintores de CO2 ou pó químico são os mais indicados, pois não conduzem eletricidade e não danificam os equipamentos como a água.",
+        "value": 3000,
+        "audience_distribution": {"Classe A (água)": 5, "Classe B (espuma)": 5, "Classe C (CO2 ou pó químico)": 85, "Classe D (metais combustíveis)": 5},
+        "difficulty_level": "medium"
+    },
+    {
+        "id": "q4",
+        "question": "Qual a primeira medida a ser tomada ao se deparar com uma vítima inconsciente que não respira e não possui pulso?",
+        "options": ["Chamar a família da vítima", "Iniciar compressões torácicas (RCP)", "Oferecer água", "Esperar a chegada do socorro especializado"],
+        "answer": "Iniciar compressões torácicas (RCP)",
+        "explanation": "Em casos de parada cardiorrespiratória, a Reanimação Cardiopulmonar (RCP) deve ser iniciada imediatamente para manter a circulação sanguínea e oxigenação dos órgãos vitais até a chegada do atendimento médico avançado.",
+        "value": 5000,
+        "audience_distribution": {"Chamar a família da vítima": 2, "Iniciar compressões torácicas (RCP)": 90, "Oferecer água": 3, "Esperar a chegada do socorro especializado": 5},
+        "difficulty_level": "medium"
+    },
+    {
+        "id": "q6",
+        "question": "Qual a finalidade da CIPA (Comissão Interna de Prevenção de Acidentes)?",
+        "options": ["Fiscalizar o cumprimento das leis trabalhistas", "Promover a saúde e segurança dos trabalhadores e prevenir acidentes e doenças decorrentes do trabalho", "Gerenciar o plano de saúde dos funcionários", "Organizar eventos sociais na empresa"],
+        "answer": "Promover a saúde e segurança dos trabalhadores e prevenir acidentes e doenças decorrentes do trabalho",
+        "explanation": "A CIPA, regulamentada pela NR-5, tem como objetivo a prevenção de acidentes e doenças decorrentes do trabalho, de modo a tornar compatível permanentemente o trabalho com a preservação da vida e a promoção da saúde do trabalhador.",
+        "value": 20000,
+        "audience_distribution": {"Fiscalizar o cumprimento das leis trabalhistas": 5, "Promover a saúde e segurança dos trabalhadores e prevenir acidentes e doenças decorrentes do trabalho": 85, "Gerenciar o plano de saúde dos funcionários": 5, "Organizar eventos sociais na empresa": 5},
+        "difficulty_level": "medium"
+    },
+    {
+        "id": "q7",
+        "question": "Em um ambiente de trabalho, qual a importância da sinalização de segurança?",
+        "options": ["Decorar o ambiente", "Indicar rotas de fuga, alertar sobre perigos e orientar sobre o uso de EPIs", "Apenas cumprir uma exigência legal sem impacto prático", "Identificar os funcionários da empresa"],
+        "answer": "Indicar rotas de fuga, alertar sobre perigos e orientar sobre o uso de EPIs",
+        "explanation": "A sinalização de segurança é crucial para alertar os trabalhadores sobre riscos, indicar equipamentos de emergência, rotas de fuga e a necessidade de uso de EPIs, contribuindo para a prevenção de acidentes.",
+        "value": 30000,
+        "audience_distribution": {"Decorar o ambiente": 2, "Indicar rotas de fuga, alertar sobre perigos e orientar sobre o uso de EPIs": 90, "Apenas cumprir uma exigência legal sem impacto prático": 5, "Identificar os funcionários da empresa": 3},
+        "difficulty_level": "hard"
+    },
+    {
+        "id": "q8",
+        "question": "Qual a Norma Regulamentadora que trata da segurança e saúde no trabalho em espaços confinados?",
+        "options": ["NR-10", "NR-12", "NR-33", "NR-35"],
+        "answer": "NR-33",
+        "explanation": "A NR-33 (Segurança e Saúde nos Trabalhos em Espaços Confinados) estabelece os requisitos para identificar, caracterizar, reconhecer, avaliar, monitorar e controlar os riscos existentes em espaços confinados.",
+        "value": 50000,
+        "audience_distribution": {"NR-10": 10, "NR-12": 10, "NR-33": 70, "NR-35": 10},
+        "difficulty_level": "hard"
+    },
+    {
+        "id": "q13",
+        "question": "Em caso de queimaduras de 1º grau, qual a primeira ação a ser tomada?",
+        "options": ["Aplicar pomada", "Perfurar as bolhas", "Resfriar a área com água corrente fria", "Cobrir com algodão"],
+        "answer": "Resfriar a área com água corrente fria",
+        "explanation": "Resfriar a área queimada com água corrente fria por vários minutos ajuda a aliviar a dor e a reduzir a profundidade da queimadura.",
+        "value": 750000,
+        "audience_distribution": {"Aplicar pomada": 15, "Perfurar as bolhas": 5, "Resfriar a área com água corrente fria": 75, "Cobrir com algodão": 5},
+        "difficulty_level": "hard"
+    },
+    {
+        "id": "q9",
+        "question": "O que é um PPRA?",
+        "options": ["Programa de Pagamento de Remuneração Antecipada", "Plano de Prevenção de Riscos Ambientais", "Programa de Produtividade e Resultados Alcançados", "Plano de Proteção Respiratória Avançada"],
+        "answer": "Plano de Prevenção de Riscos Ambientais",
+        "explanation": "O PPRA (Programa de Prevenção de Riscos Ambientais) é um programa que visa à preservação da saúde e da integridade dos trabalhadores, através da antecipação, reconhecimento, avaliação e consequente controle da ocorrência de riscos ambientais existentes ou que venham a existir no ambiente de trabalho.",
+        "value": 100000,
+        "audience_distribution": {"Programa de Pagamento de Remuneração Antecipada": 5, "Plano de Prevenção de Riscos Ambientais": 85, "Programa de Produtividade e Resultados Alcançados": 5, "Plano de Proteção Respiratória Avançada": 5},
+        "difficulty_level": "expert"
+    },
+    {
+        "id": "q10",
+        "question": "Qual a cor padrão para sinalizar equipamentos de combate a incêndio?",
+        "options": ["Amarelo", "Azul", "Vermelho", "Verde"],
+        "answer": "Vermelho",
+        "explanation": "A cor vermelha é universalmente utilizada para identificar e sinalizar equipamentos de combate a incêndio, como extintores, hidrantes e alarmes.",
+        "value": 200000,
+        "audience_distribution": {"Amarelo": 5, "Azul": 5, "Vermelho": 85, "Verde": 5},
+        "difficulty_level": "expert"
+    },
+    {
+        "id": "q11",
+        "question": "A NR-12 trata de segurança no trabalho em:",
+        "options": ["Espaços Confinados", "Máquinas e Equipamentos", "Instalações Elétricas", "Transporte de Cargas"],
+        "answer": "Máquinas e Equipamentos",
+        "explanation": "A NR-12 estabelece medidas de proteção para garantir a saúde e a integridade física dos trabalhadores que interagem com máquinas e equipamentos.",
+        "value": 300000,
+        "audience_distribution": {"Espaços Confinados": 10, "Máquinas e Equipamentos": 75, "Instalações Elétricas": 10, "Transporte de Cargas": 5},
+        "difficulty_level": "expert"
+    },
+    {
+        "id": "q12",
+        "question": "Qual o documento que substituiu o PPRA e o PCMSO, unificando a gestão de riscos ocupacionais?",
+        "options": ["LTCAT", "PPP", "PGR", "GRO"],
+        "answer": "GRO",
+        "explanation": "O Gerenciamento de Riscos Ocupacionais (GRO), estabelecido pela NR-1, integra o Programa de Gerenciamento de Riscos (PGR), que substitui o PPRA e o PCMSO, visando uma abordagem mais abrangente e contínua na gestão de SST.",
+        "value": 500000,
+        "audience_distribution": {"LTCAT": 10, "PPP": 10, "PGR": 30, "GRO": 50},
+        "difficulty_level": "expert"
+    },
+    {
+        "id": "q14",
+        "question": "Qual a principal função do SESMT (Serviços Especializados em Engenharia de Segurança e em Medicina do Trabalho)?",
+        "options": ["Contratar novos funcionários", "Promover a saúde e proteger a integridade do trabalhador no local de trabalho", "Gerenciar o setor financeiro da empresa", "Organizar eventos de confraternização"],
+        "answer": "Promover a saúde e proteger a integridade do trabalhador no local de trabalho",
+        "explanation": "O SESMT, regulamentado pela NR-4, é responsável por promover a saúde e proteger a integridade do trabalhador, atuando na prevenção de acidentes e doenças ocupacionais.",
+        "value": 1000000,
+        "audience_distribution": {"Contratar novos funcionários": 5, "Promover a saúde e proteger a integridade do trabalhador no local de trabalho": 85, "Gerenciar o setor financeiro da empresa": 5, "Organizar eventos de confraternização": 5},
+        "difficulty_level": "expert"
+    }
+]

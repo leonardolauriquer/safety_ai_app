@@ -1,0 +1,252 @@
+{
+  "version": "1.0",
+  "description": "Golden set de avaliação do pipeline RAG SafetyAI — 35 pares pergunta/resposta cobrindo NRs de maior uso e tipos de consulta variados.",
+  "created_at": "2026-04-18",
+  "questions": [
+    {
+      "id": "gs_001",
+      "question": "Quais são as obrigações do empregador segundo a NR-05 em relação à CIPA?",
+      "expected_answer": "O empregador deve constituir a CIPA, proporcionar condições para que a comissão desenvolva seus trabalhos, garantir a realização de reuniões periódicas e fornecer os recursos necessários para o funcionamento da comissão.",
+      "relevant_nr": "NR-05",
+      "query_type": "factual"
+    },
+    {
+      "id": "gs_002",
+      "question": "Qual é o dimensionamento mínimo da CIPA para uma empresa com 100 empregados no Grupo C-3?",
+      "expected_answer": "Para uma empresa com 100 empregados no Grupo C-3, o dimensionamento da CIPA prevê representantes titulares do empregador e empregados conforme o Quadro I da NR-05, geralmente 2 titulares e 2 suplentes para cada lado.",
+      "relevant_nr": "NR-05",
+      "query_type": "factual"
+    },
+    {
+      "id": "gs_003",
+      "question": "O que é EPI segundo a NR-06 e quando é obrigatório seu uso?",
+      "expected_answer": "EPI é o Equipamento de Proteção Individual, dispositivo ou produto de uso individual utilizado pelo trabalhador para proteção contra riscos que ameacem segurança e saúde. Seu uso é obrigatório quando não é possível eliminar ou neutralizar os riscos por meio de EPC ou medidas administrativas.",
+      "relevant_nr": "NR-06",
+      "query_type": "factual"
+    },
+    {
+      "id": "gs_004",
+      "question": "Quais são as obrigações do empregado em relação ao EPI?",
+      "expected_answer": "O empregado deve usar o EPI apenas para a finalidade a que se destina, responsabilizar-se pela guarda e conservação, comunicar ao empregador qualquer alteração que o torne impróprio para uso e cumprir as determinações do empregador sobre o uso adequado.",
+      "relevant_nr": "NR-06",
+      "query_type": "factual"
+    },
+    {
+      "id": "gs_005",
+      "question": "O que é o CA (Certificado de Aprovação) do EPI?",
+      "expected_answer": "O CA é o Certificado de Aprovação emitido pelo Ministério do Trabalho que atesta que o EPI atende aos requisitos técnicos de proteção. Todo EPI adquirido pelo empregador deve possuir CA válido, e o fabricante ou importador é responsável por mantê-lo atualizado.",
+      "relevant_nr": "NR-06",
+      "query_type": "factual"
+    },
+    {
+      "id": "gs_006",
+      "question": "Quais atividades são consideradas insalubres segundo a NR-15?",
+      "expected_answer": "São consideradas insalubres as atividades que expõem o trabalhador a agentes físicos (ruído, calor, frio, pressão, radiações), químicos (poeiras, gases, vapores, fumos) e biológicos (microrganismos) acima dos limites de tolerância estabelecidos nos anexos da NR-15.",
+      "relevant_nr": "NR-15",
+      "query_type": "factual"
+    },
+    {
+      "id": "gs_007",
+      "question": "Quais são os percentuais de adicional de insalubridade previstos na NR-15?",
+      "expected_answer": "O adicional de insalubridade é de 40% para grau máximo, 20% para grau médio e 10% para grau mínimo, calculados sobre o salário mínimo da região.",
+      "relevant_nr": "NR-15",
+      "query_type": "factual"
+    },
+    {
+      "id": "gs_008",
+      "question": "Qual é o limite de tolerância para ruído contínuo conforme a NR-15?",
+      "expected_answer": "O limite de tolerância para ruído contínuo é de 85 dB(A) para jornada de 8 horas. Para níveis maiores, o tempo de exposição máxima permitida diminui progressivamente conforme a tabela do Anexo I da NR-15.",
+      "relevant_nr": "NR-15",
+      "query_type": "factual"
+    },
+    {
+      "id": "gs_009",
+      "question": "Quais são os requisitos ergonômicos para posto de trabalho com computador segundo a NR-17?",
+      "expected_answer": "Segundo a NR-17, os postos de trabalho com computador devem proporcionar ao trabalhador condições de boa postura, visualização e movimentação. Os assentos devem ser ajustáveis, o monitor deve estar na altura dos olhos, deve haver apoio de braços e o teclado deve ser independente da tela.",
+      "relevant_nr": "NR-17",
+      "query_type": "factual"
+    },
+    {
+      "id": "gs_010",
+      "question": "O que é ergonomia e qual o objetivo da NR-17?",
+      "expected_answer": "Ergonomia é a ciência que estuda a adaptação do trabalho às características psicofisiológicas dos trabalhadores. A NR-17 tem por objetivo estabelecer parâmetros que permitam a adaptação das condições de trabalho às características psicofisiológicas dos trabalhadores, de modo a proporcionar máximo conforto, segurança e desempenho eficiente.",
+      "relevant_nr": "NR-17",
+      "query_type": "factual"
+    },
+    {
+      "id": "gs_011",
+      "question": "Quais são os requisitos de treinamento para trabalho em altura segundo a NR-35?",
+      "expected_answer": "A NR-35 exige que os trabalhadores em altura recebam capacitação periódica com carga horária mínima de 8 horas, incluindo teoria e prática. A capacitação deve ser realizada antes do início das atividades e renovada periodicamente ou sempre que houver mudança de procedimentos, condições ou operações.",
+      "relevant_nr": "NR-35",
+      "query_type": "factual"
+    },
+    {
+      "id": "gs_012",
+      "question": "O que é considerado trabalho em altura segundo a NR-35?",
+      "expected_answer": "Segundo a NR-35, considera-se trabalho em altura toda atividade executada acima de 2,0 metros do nível inferior, onde haja risco de queda.",
+      "relevant_nr": "NR-35",
+      "query_type": "factual"
+    },
+    {
+      "id": "gs_013",
+      "question": "Quais EPIs são obrigatórios para trabalho em altura?",
+      "expected_answer": "Para trabalho em altura são obrigatórios: capacete de segurança com jugular, cinturão de segurança tipo paraquedista, talabarte de segurança, trava-quedas e outros EPIs específicos conforme a análise de risco da atividade.",
+      "relevant_nr": "NR-35",
+      "query_type": "factual"
+    },
+    {
+      "id": "gs_014",
+      "question": "O que é espaço confinado segundo a NR-33?",
+      "expected_answer": "Espaço confinado é qualquer área ou ambiente não projetado para ocupação humana contínua que possua meios limitados de entrada e saída, cuja ventilação existente é insuficiente para remover contaminantes ou onde possa existir a deficiência ou enriquecimento de oxigênio.",
+      "relevant_nr": "NR-33",
+      "query_type": "factual"
+    },
+    {
+      "id": "gs_015",
+      "question": "Quais são as funções previstas na NR-33 para trabalho em espaço confinado?",
+      "expected_answer": "A NR-33 prevê as funções de: Vigia (responsável por monitorar o espaço confinado do lado externo), Supervisor de Entrada (responsável por autorizar e coordenar a entrada) e Trabalhador Autorizado (treinado para trabalhar no interior do espaço confinado).",
+      "relevant_nr": "NR-33",
+      "query_type": "factual"
+    },
+    {
+      "id": "gs_016",
+      "question": "O que estabelece a NR-07 sobre o PCMSO?",
+      "expected_answer": "A NR-07 estabelece a obrigatoriedade de elaboração e implementação do Programa de Controle Médico de Saúde Ocupacional (PCMSO) pelas empresas. O PCMSO tem como objetivo a promoção e preservação da saúde dos trabalhadores, incluindo exames médicos admissionais, periódicos, de retorno ao trabalho, de mudança de função e demissionais.",
+      "relevant_nr": "NR-07",
+      "query_type": "factual"
+    },
+    {
+      "id": "gs_017",
+      "question": "Quais exames médicos são obrigatórios conforme a NR-07?",
+      "expected_answer": "São obrigatórios os exames: admissional (antes do início das atividades), periódico (a intervalos definidos pelo médico), de retorno ao trabalho (após afastamento acima de 30 dias), de mudança de função (quando há mudança de posto com exposição diferente) e demissional (até a data da homologação).",
+      "relevant_nr": "NR-07",
+      "query_type": "factual"
+    },
+    {
+      "id": "gs_018",
+      "question": "O que é o PGR e quais são seus componentes principais segundo a NR-01?",
+      "expected_answer": "O PGR (Programa de Gerenciamento de Riscos) é exigido pela NR-01 e deve conter o inventário de riscos (identificação e avaliação dos riscos ocupacionais) e o plano de ação com medidas de prevenção para eliminar, reduzir ou controlar os riscos identificados.",
+      "relevant_nr": "NR-01",
+      "query_type": "factual"
+    },
+    {
+      "id": "gs_019",
+      "question": "Quais são os riscos ocupacionais previstos na NR-01?",
+      "expected_answer": "A NR-01 classifica os riscos ocupacionais em: físicos, químicos, biológicos, de acidentes (mecânicos e estruturais) e ergonômicos/psicossociais. A identificação e avaliação desses riscos compõem o inventário de riscos do PGR.",
+      "relevant_nr": "NR-01",
+      "query_type": "factual"
+    },
+    {
+      "id": "gs_020",
+      "question": "Quais são os requisitos de segurança para máquinas e equipamentos segundo a NR-12?",
+      "expected_answer": "A NR-12 exige que as máquinas e equipamentos possuam dispositivos de partida e parada, proteções fixas e móveis nas zonas de perigo, sinalização de segurança, sistemas de segurança (botão de emergência, dispositivos de bloqueio) e que os trabalhadores sejam capacitados para operar com segurança.",
+      "relevant_nr": "NR-12",
+      "query_type": "factual"
+    },
+    {
+      "id": "gs_021",
+      "question": "Como elaborar uma Análise Preliminar de Risco (APR) para trabalho em altura?",
+      "expected_answer": "A APR para trabalho em altura deve identificar as etapas da tarefa, os perigos presentes (queda, choque elétrico, intempéries), os riscos associados, as medidas preventivas (uso de cinto paraquedista, ponto de ancoragem certificado, sinalização da área), as medidas de controle e os responsáveis. Deve ser preenchida antes de cada atividade.",
+      "relevant_nr": "NR-35",
+      "query_type": "document_generation"
+    },
+    {
+      "id": "gs_022",
+      "question": "Como fazer o dimensionamento do SESMT para uma empresa com 500 empregados no Grupo de Risco 3?",
+      "expected_answer": "Para uma empresa com 500 empregados no Grau de Risco 3, o SESMT deve ser composto conforme o Quadro II da NR-04. Geralmente são necessários: 1 Técnico em Segurança do Trabalho, 1 Engenheiro de Segurança e 1 Médico do Trabalho, com carga horária mínima definida na norma.",
+      "relevant_nr": "NR-04",
+      "query_type": "analysis"
+    },
+    {
+      "id": "gs_023",
+      "question": "Quais são as medidas de controle para exposição ao calor segundo a NR-15?",
+      "expected_answer": "Para controle da exposição ao calor, a NR-15 prevê: avaliação pelo IBUTG (Índice de Bulbo Úmido Termômetro de Globo), rodízio entre atividades quentes e frias, pausas para recuperação térmica em ambientes frescos, uso de EPI adequado (roupas de proteção) e implementação de EPC como climatização e ventilação.",
+      "relevant_nr": "NR-15",
+      "query_type": "analysis"
+    },
+    {
+      "id": "gs_024",
+      "question": "Quais documentos devem compor o prontuário de equipamentos elétricos conforme a NR-10?",
+      "expected_answer": "O prontuário de instalações e serviços em eletricidade conforme a NR-10 deve conter: esquemas unifilares e multifiscos atualizados, especificação dos equipamentos e materiais elétricos, procedimentos de trabalho, relatórios de inspeções periódicas, registro de manutenções e o Sistema de Gestão de Saúde e Segurança Elétrica.",
+      "relevant_nr": "NR-10",
+      "query_type": "document_generation"
+    },
+    {
+      "id": "gs_025",
+      "question": "O que caracteriza uma atividade perigosa segundo a CLT e NR-16?",
+      "expected_answer": "Atividades perigosas são aquelas que, por sua natureza ou método de trabalho, implicam contato permanente com inflamáveis ou explosivos, energia elétrica, radiações ionizantes, materiais bélicos, motocicletas ou segurança pessoal. O adicional de periculosidade é de 30% sobre o salário base.",
+      "relevant_nr": "NR-16",
+      "query_type": "factual"
+    },
+    {
+      "id": "gs_026",
+      "question": "Qual é a periodicidade mínima das reuniões da CIPA?",
+      "expected_answer": "A CIPA deve reunir-se ordinariamente uma vez por mês, em local apropriado e durante o horário de trabalho. Reuniões extraordinárias podem ser convocadas pelo presidente, vice-presidente ou por maioria dos membros em caso de acidente grave ou quando solicitado.",
+      "relevant_nr": "NR-05",
+      "query_type": "factual"
+    },
+    {
+      "id": "gs_027",
+      "question": "O que é o LTCAT e para que serve?",
+      "expected_answer": "O LTCAT (Laudo Técnico das Condições do Ambiente de Trabalho) é um documento elaborado por Médico do Trabalho ou Engenheiro de Segurança que caracteriza as condições ambientais de trabalho para fins previdenciários. Ele serve para verificar se o trabalhador tem direito à aposentadoria especial por exposição a agentes nocivos.",
+      "relevant_nr": "NR-15",
+      "query_type": "factual"
+    },
+    {
+      "id": "gs_028",
+      "question": "Quais são as cores utilizadas na sinalização de segurança segundo a NR-26?",
+      "expected_answer": "A NR-26 define: vermelho para identificar equipamentos de prevenção e combate a incêndio; amarelo para indicar cuidado e risco; branco para indicar áreas de armazenagem e circulação; verde para indicar segurança; azul para indicar obrigatoriedade; laranja para indicar perigo; roxo/púrpura para radiação ionizante.",
+      "relevant_nr": "NR-26",
+      "query_type": "factual"
+    },
+    {
+      "id": "gs_029",
+      "question": "Quais são os requisitos de iluminamento mínimo nos locais de trabalho?",
+      "expected_answer": "A NR-17 e a NBR 5413 estabelecem os valores mínimos de iluminamento. Em geral, áreas de circulação requerem no mínimo 150 lux, trabalhos de escritório 500 lux, e atividades com exigência visual moderada acima de 300 lux, variando conforme o tipo de atividade.",
+      "relevant_nr": "NR-17",
+      "query_type": "factual"
+    },
+    {
+      "id": "gs_030",
+      "question": "O que deve conter uma ata de reunião da CIPA?",
+      "expected_answer": "A ata de reunião da CIPA deve conter: data, hora e local da reunião, nome e cargo dos presentes, pauta dos assuntos tratados, descrição das discussões e deliberações, prazos e responsáveis pelas ações definidas, encaminhamentos, e deve ser assinada pelo presidente, vice-presidente e secretário.",
+      "relevant_nr": "NR-05",
+      "query_type": "document_generation"
+    },
+    {
+      "id": "gs_031",
+      "question": "Quais são os tipos de EPIs para proteção auditiva?",
+      "expected_answer": "Os EPIs para proteção auditiva incluem: protetores auriculares do tipo concha (circum-auricular), que cobrem toda a orelha; protetores do tipo inserção (plugues), inseridos no canal auditivo externo; e protetores de canal semiaural. Todos devem possuir CA válido e ser adequados ao nível de ruído da atividade.",
+      "relevant_nr": "NR-06",
+      "query_type": "factual"
+    },
+    {
+      "id": "gs_032",
+      "question": "Qual é a responsabilidade do empregador em caso de acidente de trabalho?",
+      "expected_answer": "Em caso de acidente de trabalho, o empregador deve: prestar os primeiros socorros ao acidentado, emitir a CAT (Comunicação de Acidente de Trabalho) até o primeiro dia útil seguinte, investigar as causas do acidente, implementar medidas corretivas e preventivas, e notificar os órgãos competentes conforme exigido.",
+      "relevant_nr": "NR-01",
+      "query_type": "factual"
+    },
+    {
+      "id": "gs_033",
+      "question": "Como realizar a análise ergonômica do trabalho (AET) conforme a NR-17?",
+      "expected_answer": "A AET conforme a NR-17 deve incluir: análise da demanda, análise da tarefa (o que é prescrito), análise da atividade real (o que os trabalhadores realmente fazem), identificação das situações de trabalho que causam sobrecarga, avaliação dos postos de trabalho (mobiliário, equipamentos, condições ambientais) e elaboração de recomendações ergonômicas.",
+      "relevant_nr": "NR-17",
+      "query_type": "analysis"
+    },
+    {
+      "id": "gs_034",
+      "question": "Quais são os procedimentos de bloqueio e etiquetagem (LOTO) para manutenção de máquinas segundo a NR-12?",
+      "expected_answer": "O procedimento LOTO conforme a NR-12 exige: identificar todas as fontes de energia, desligar o equipamento, bloquear fisicamente cada fonte de energia com cadeado individual, etiquetar com identificação do responsável, verificar que o equipamento está efetivamente sem energia, realizar a manutenção, e ao concluir, remover bloqueios na ordem inversa.",
+      "relevant_nr": "NR-12",
+      "query_type": "analysis"
+    },
+    {
+      "id": "gs_035",
+      "question": "Qual é o papel do Engenheiro de Segurança do Trabalho nas ações de SST?",
+      "expected_answer": "O Engenheiro de Segurança do Trabalho é responsável por: elaborar programas de prevenção (PGR, PCMSO), realizar inspeções técnicas, elaborar laudos e pareceres técnicos, implementar medidas de controle de riscos, promover treinamentos, investigar acidentes, assinar documentos técnicos de SST e assessorar a CIPA e o SESMT.",
+      "relevant_nr": "NR-04",
+      "query_type": "factual"
+    }
+  ]
+}

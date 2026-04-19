@@ -1,0 +1,84 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+attached_assets/*.env
+
+# Credentials - NEVER commit these!
+*.pem
+*.key
+service_account_key.json
+credentials.json
+token_user.pickle
+token_user.json
+token.pickle
+*_key.json
+*_credentials.json
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Replit
+.replit
+replit.nix
+.cache/
+.upm/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Temp files
+temp_docs_local/
+tmp/
+*.tmp
+*.temp
+
+# Backup files
+*.backup
+*.bak
+
+# ChromaDB local data (optional - may want to keep for persistence)
+# data/chroma_db/
+attached_assets/

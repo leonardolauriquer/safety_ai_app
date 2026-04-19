@@ -1,0 +1,26 @@
+{
+  "accessibility": {
+    "font_size": "large",
+    "high_contrast": false,
+    "reading_mode": false,
+    "keyboard_shortcuts": true
+  },
+  "theme": {
+    "mode": "dark",
+    "accent_color": "#27ae60",
+    "interface_density": "comfortable"
+  },
+  "subscription": {
+    "plan": "premium",
+    "start_date": "2024-01-01",
+    "end_date": "2025-12-31",
+    "status": "active",
+    "auto_renewal": true
+  },
+  "general": {
+    "language": "pt-BR",
+    "notifications": true,
+    "cache_enabled": true,
+    "analytics": true
+  }
+}
