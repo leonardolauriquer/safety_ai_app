@@ -17,6 +17,7 @@ project_root = os.path.abspath(os.path.join(script_dir, '..', '..', '..'))
 
 TOKEN_USER_JSON_FILE = os.path.join(project_root, 'token_user.json')
 _LEGACY_PICKLE_FILE = os.path.join(project_root, 'token_user.pickle')
+_DB_TOKEN_KEY = 'user_oauth_token'
 
 if os.path.exists(_LEGACY_PICKLE_FILE):
     try:
@@ -33,6 +34,112 @@ SCOPES_USER = [
 SCOPES_SERVICE_ACCOUNT = [
     'https://www.googleapis.com/auth/drive.readonly'
 ]
+
+
+def _get_db_connection():
+    """Return a psycopg2 connection using DATABASE_URL, or None if unavailable."""
+    database_url = os.environ.get('DATABASE_URL')
+    if not database_url:
+        return None
+    try:
+        import psycopg2
+        conn = psycopg2.connect(database_url)
+        return conn
+    except Exception as e:
+        logger.warning(f"Não foi possível conectar ao banco de dados: {e}")
+        return None
+
+
+def _ensure_token_table(conn) -> bool:
+    """Create the google_oauth_tokens table if it doesn't exist. Returns True on success."""
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS google_oauth_tokens (
+                    id SERIAL PRIMARY KEY,
+                    token_key VARCHAR(255) NOT NULL UNIQUE,
+                    token_data TEXT NOT NULL,
+                    updated_at TIMESTAMP DEFAULT NOW()
+                )
+            """)
+        conn.commit()
+        return True
+    except Exception as e:
+        logger.warning(f"Não foi possível criar tabela google_oauth_tokens: {e}")
+        conn.rollback()
+        return False
+
+
+def _load_creds_from_db() -> Optional[Credentials]:
+    """Load OAuth credentials from PostgreSQL database."""
+    conn = _get_db_connection()
+    if conn is None:
+        return None
+    try:
+        _ensure_token_table(conn)
+        with conn.cursor() as cur:
+            cur.execute(
+                "SELECT token_data FROM google_oauth_tokens WHERE token_key = %s",
+                (_DB_TOKEN_KEY,)
+            )
+            row = cur.fetchone()
+        if row is None:
+            return None
+        data = json.loads(row[0])
+        return Credentials.from_authorized_user_info(data, SCOPES_USER)
+    except (json.JSONDecodeError, KeyError, ValueError) as e:
+        logger.warning(f"Erro ao deserializar token do banco de dados: {e}. Removendo para re-autenticar.")
+        _delete_creds_from_db()
+        return None
+    except Exception as e:
+        logger.warning(f"Erro ao carregar token do banco de dados: {e}")
+        return None
+    finally:
+        conn.close()
+
+
+def _save_creds_to_db(creds: Credentials) -> None:
+    """Persist OAuth credentials to PostgreSQL database."""
+    conn = _get_db_connection()
+    if conn is None:
+        raise OSError("Banco de dados indisponível — não foi possível salvar o token.")
+    try:
+        _ensure_token_table(conn)
+        with conn.cursor() as cur:
+            cur.execute("""
+                INSERT INTO google_oauth_tokens (token_key, token_data, updated_at)
+                VALUES (%s, %s, NOW())
+                ON CONFLICT (token_key) DO UPDATE
+                    SET token_data = EXCLUDED.token_data,
+                        updated_at = NOW()
+            """, (_DB_TOKEN_KEY, creds.to_json()))
+        conn.commit()
+        logger.info("Token OAuth guardado no banco de dados com sucesso.")
+    except Exception as e:
+        conn.rollback()
+        raise OSError(f"Falha ao guardar token no banco de dados: {e}") from e
+    finally:
+        conn.close()
+
+
+def _delete_creds_from_db() -> None:
+    """Remove OAuth credentials from the database."""
+    conn = _get_db_connection()
+    if conn is None:
+        return
+    try:
+        _ensure_token_table(conn)
+        with conn.cursor() as cur:
+            cur.execute(
+                "DELETE FROM google_oauth_tokens WHERE token_key = %s",
+                (_DB_TOKEN_KEY,)
+            )
+        conn.commit()
+    except Exception as e:
+        logger.warning(f"Erro ao remover token do banco de dados: {e}")
+        conn.rollback()
+    finally:
+        conn.close()
 
 
 def _get_service_account_credentials_from_env() -> Optional[Dict]:
@@ -56,13 +163,24 @@ def _get_client_credentials_from_env() -> Optional[Dict]:
 
 
 def _load_creds_from_json() -> Optional[Credentials]:
-    """Load OAuth credentials from the JSON token file."""
+    """Load OAuth credentials — database first, local file as fallback."""
+    db_creds = _load_creds_from_db()
+    if db_creds is not None:
+        return db_creds
+
     if not os.path.exists(TOKEN_USER_JSON_FILE):
         return None
     try:
         with open(TOKEN_USER_JSON_FILE, 'r', encoding='utf-8') as f:
             data = json.load(f)
-        return Credentials.from_authorized_user_info(data, SCOPES_USER)
+        creds = Credentials.from_authorized_user_info(data, SCOPES_USER)
+        try:
+            _save_creds_to_db(creds)
+            os.remove(TOKEN_USER_JSON_FILE)
+            logger.info("Token migrado do ficheiro local para o banco de dados.")
+        except OSError as migrate_err:
+            logger.warning(f"Não foi possível migrar token para o banco de dados: {migrate_err}")
+        return creds
     except (json.JSONDecodeError, KeyError, ValueError) as e:
         logger.warning(f"Erro ao carregar {TOKEN_USER_JSON_FILE}: {e}. Removendo para re-autenticar.")
         os.remove(TOKEN_USER_JSON_FILE)
@@ -70,13 +188,32 @@ def _load_creds_from_json() -> Optional[Credentials]:
 
 
 def _save_creds_to_json(creds: Credentials) -> None:
-    """Persist OAuth credentials to the JSON token file.
+    """Persist OAuth credentials — database primary, local file as fallback.
 
     Raises OSError / IOError on write failure so callers can handle the
     situation explicitly instead of silently continuing with unsaved tokens.
     """
-    with open(TOKEN_USER_JSON_FILE, 'w', encoding='utf-8') as f:
-        f.write(creds.to_json())
+    try:
+        _save_creds_to_db(creds)
+        if os.path.exists(TOKEN_USER_JSON_FILE):
+            try:
+                os.remove(TOKEN_USER_JSON_FILE)
+            except OSError:
+                pass
+    except OSError:
+        logger.warning("Falha ao guardar no banco de dados; a tentar ficheiro local como fallback.")
+        with open(TOKEN_USER_JSON_FILE, 'w', encoding='utf-8') as f:
+            f.write(creds.to_json())
+
+
+def _delete_creds() -> None:
+    """Remove stored OAuth credentials from all storage locations."""
+    _delete_creds_from_db()
+    if os.path.exists(TOKEN_USER_JSON_FILE):
+        try:
+            os.remove(TOKEN_USER_JSON_FILE)
+        except OSError:
+            pass
 
 
 def get_google_drive_user_creds_and_auth_info() -> Tuple[Optional[Any], Optional[str], Optional[str]]:
@@ -90,14 +227,13 @@ def get_google_drive_user_creds_and_auth_info() -> Tuple[Optional[Any], Optional
             creds.refresh(Request())
         except Exception as e:
             logger.error(f"Erro ao renovar o token do usuário: {e}. Será necessária uma nova autenticação.", exc_info=True)
-            if os.path.exists(TOKEN_USER_JSON_FILE):
-                os.remove(TOKEN_USER_JSON_FILE)
+            _delete_creds()
             creds = None
         if creds:
             try:
                 _save_creds_to_json(creds)
             except OSError as e:
-                logger.warning(f"Token renovado mas não foi possível salvar em disco: {e}. Re-autenticação necessária na próxima sessão.")
+                logger.warning(f"Token renovado mas não foi possível salvar: {e}. Re-autenticação necessária na próxima sessão.")
             return creds, None, None
 
     flow = None
@@ -174,8 +310,7 @@ def get_google_drive_user_creds_and_auth_info() -> Tuple[Optional[Any], Optional
         return None, None, "REDIRECTING_SUCCESS"
     except Exception as e:
         logger.error(f"Erro ao autenticar usuário com o código: {e}.", exc_info=True)
-        if os.path.exists(TOKEN_USER_JSON_FILE):
-            os.remove(TOKEN_USER_JSON_FILE)
+        _delete_creds()
         if 'oauth_state' in st.session_state:
             del st.session_state['oauth_state']
         try:
@@ -183,7 +318,7 @@ def get_google_drive_user_creds_and_auth_info() -> Tuple[Optional[Any], Optional
             log_security_event(SecurityEvent.LOGIN_FAILURE, detail=f"Erro ao trocar código OAuth: {type(e).__name__}")
         except Exception as log_err:
             logger.warning(f"Falha ao registrar evento LOGIN_FAILURE no security_logger: {log_err}")
-        return None, None, f"Erro ao autenticar: {e}. Por favor, exclua '{TOKEN_USER_JSON_FILE}' e tente novamente."
+        return None, None, f"Erro ao autenticar: {e}. Por favor, tente novamente."
 
 
 def get_service_account_service() -> Optional[Any]:

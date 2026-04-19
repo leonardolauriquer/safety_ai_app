@@ -48,6 +48,9 @@ Key data is stored locally:
 - `data/plans/plans.json`: Subscription plans.
 - `data/eval/`: RAG evaluation golden set and results.
 - `data/rag_logs/`: JSONL logs of RAG pipeline activities.
+
+PostgreSQL (Replit built-in database via `DATABASE_URL`) is used for:
+- `google_oauth_tokens`: Persists the Google Drive user OAuth token across container restarts and deployments. The `google_auth.py` module reads/writes tokens here first, falling back to the local `token_user.json` file only if the database is unavailable. An existing `token_user.json` is automatically migrated to the database on first load.
 - `data/games/`: Game-specific data.
 - `logs/app.log` and `logs/security.log`: Application and security logs.
 
