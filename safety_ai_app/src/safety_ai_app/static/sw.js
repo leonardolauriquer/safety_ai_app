@@ -1,19 +1,18 @@
 /* SafetyAI Service Worker
- * Scope: /app/static/ (Streamlit static file serving path)
- * Provides: static-asset caching for performance + install prompt support.
- *
- * Note: navigation-mode fetch interception (offline fallback page) requires
- * the SW to control the app root (/). In Streamlit, static files are served
- * under /app/static/, so the default scope is /app/static/ and navigate
- * events for the main app URL are NOT intercepted here. For full offline
- * navigation support in production, configure the reverse proxy (nginx /
- * Cloud Run) to serve sw.js at / with the Service-Worker-Allowed: / header.
+ * Served at /sw.js by server.py proxy with Service-Worker-Allowed: / header.
+ * Scope: / (controls entire app origin).
+ * Provides: offline navigation fallback + static asset caching.
  */
 
-const CACHE_NAME = 'safetyai-shell-v2';
+const CACHE_NAME = 'safetyai-shell-v3';
+const OFFLINE_URL = '/_safetyai_offline';
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(caches.open(CACHE_NAME).then(() => Promise.resolve()));
+  event.waitUntil(
+    fetch(OFFLINE_URL)
+      .then((res) => caches.open(CACHE_NAME).then((cache) => cache.put(OFFLINE_URL, res)))
+      .catch(() => Promise.resolve())
+  );
   self.skipWaiting();
 });
 
@@ -31,9 +30,23 @@ self.addEventListener('fetch', (event) => {
 
   const url = new URL(event.request.url);
 
+  /* Navigation: network-first, fall back to offline page */
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request).catch(() =>
+        caches.match(OFFLINE_URL).then(
+          (r) => r || new Response('<h1>Offline</h1>', { headers: { 'Content-Type': 'text/html' } })
+        )
+      )
+    );
+    return;
+  }
+
+  /* Same-origin static assets: network-first with cache fallback */
   if (url.hostname !== self.location.hostname) return;
 
-  if (!url.pathname.startsWith('/app/static/')) return;
+  /* Skip Streamlit WebSocket/stream paths */
+  if (url.pathname.startsWith('/stream') || url.pathname.startsWith('/_stcore')) return;
 
   event.respondWith(
     fetch(event.request)

@@ -181,14 +181,14 @@ def get_pwa_injection_html(project_root: str) -> str:
     }}
 
     /* --- Service Worker Registration ---
-       SW is served at /app/static/sw.js (Streamlit static file serving).
-       Scope defaults to /app/static/ to match the script path; no broader
-       scope is requested because Streamlit does not set Service-Worker-Allowed.
-       The SW handles static-asset caching and the install prompt for A2HS.  */
+       /sw.js is served by the aiohttp proxy (server.py) at the root path
+       with the 'Service-Worker-Allowed: /' response header, which allows
+       the SW to claim scope '/' and intercept navigate-mode fetch events
+       for offline fallback. Offline page served at /_safetyai_offline.   */
     if ('serviceWorker' in window.parent.navigator) {{
         window.parent.addEventListener('load', function() {{
             window.parent.navigator.serviceWorker
-                .register('/app/static/sw.js')
+                .register('/sw.js', {{ scope: '/' }})
                 .then(function(reg) {{
                     console.info('[SafetyAI PWA] Service worker registrado:', reg.scope);
                 }})
