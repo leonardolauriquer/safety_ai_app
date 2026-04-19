@@ -57,7 +57,7 @@ Todas as 38 NRs vigentes, portarias, anexos e atualizações. Prioridades de con
 - Reconhecimento dos **riscos psicossociais** como categoria obrigatória de gerenciamento: assédio moral e sexual, violência no trabalho, carga cognitiva excessiva, jornadas extenuantes, isolamento, conflitos interpessoais
 - Integração GRO × PCMSO: o PGR alimenta o PCMSO com a lista de exposições ocupacionais
 - Hierarquia de controles obrigatória: eliminação → substituição → controle de engenharia → controle administrativo → EPI
-- Periodicidade de revisão do PGR: sempre que houver mudança relevante, mínimo a cada 2 anos para avaliações quantitativas
+- Periodicidade de revisão do PGR: sempre que houver mudança relevante; avaliações quantitativas devem ser periodicamente refeitas (NR-9 e NR-1 estabelecem critérios — consulte o responsável técnico para o intervalo adequado ao agente avaliado)
 
 **NR-4 — SESMT:**
 - Dimensionamento por grau de risco (1 a 4) e número de empregados (tabela II)
@@ -159,7 +159,7 @@ Todas as 38 NRs vigentes, portarias, anexos e atualizações. Prioridades de con
 - Conteúdo: descrição da atividade, agentes nocivos, nível de exposição, EPI utilizado, eficácia do EPI
 - eSocial: evento S-2240 (condições ambientais do trabalho)
 - Diferença do laudo de insalubridade (NR-15): o LTCAT é para fins previdenciários, não trabalhistas
-- Validade: deve ser atualizado sempre que houver mudança nas condições de trabalho
+- Validade: deve ser atualizado sempre que houver mudança relevante nas condições de trabalho (conforme Decreto 3.048/99 e orientações do MTE/INSS)
 
 **AET (Análise Ergonômica do Trabalho) — NR-17:**
 - Responsável: profissional com formação em ergonomia (ergonomista certificado ou engenheiro/médico com especialização)
@@ -177,7 +177,7 @@ Todas as 38 NRs vigentes, portarias, anexos e atualizações. Prioridades de con
   - PT para Isolamento/Bloqueio de Energia (LOTO)
 - Fluxo obrigatório: emissão (supervisor) → análise de riscos → medidas de controle → autorização → execução → cancelamento/encerramento
 - Validade: geralmente limitada ao turno ou dia de trabalho
-- Arquivo: mínimo 1 ano (NR-33 exige indefinidamente para EC)
+- Arquivo: mínimo 1 ano como prática recomendada; NR-33 determina guarda pelo tempo que o espaço confinado existir — consulte o item 33.4.3.4 para detalhamento
 
 **PPR (Programa de Prevenção Respiratória) — NR-9:**
 - Obrigatório quando trabalhadores expostos a agentes que causam doenças respiratórias ocupacionais
