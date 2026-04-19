@@ -31,10 +31,11 @@ PROJECT_ID="safetyai-472110"
 gcloud services enable secretmanager.googleapis.com --project=$PROJECT_ID
 
 # Criar cada secret (substituir VALUE pelo valor real)
+# OAUTH_REDIRECT_URI = https://safety-ai-2026.web.app (valor fixo)
 for SECRET in GOOGLE_API_KEY GOOGLE_SERVICE_ACCOUNT_KEY GOOGLE_CLIENT_CREDENTIALS \
   GOOGLE_DRIVE_CENTRAL_LIBRARY_FOLDER_ID GOOGLE_DRIVE_DONATION_FOLDER_ID \
   ICD_API_CLIENT_ID ICD_API_CLIENT_SECRET ADZUNA_API_KEY ADZUNA_APP_ID \
-  RECAPTCHA_SECRET_KEY RECAPTCHA_SITE_KEY ADMIN_EMAILS; do
+  RECAPTCHA_SECRET_KEY RECAPTCHA_SITE_KEY ADMIN_EMAILS OAUTH_REDIRECT_URI; do
   printf "➤ $SECRET: "; read -r VALUE
   gcloud secrets create "$SECRET" --project="$PROJECT_ID" --replication-policy="automatic" 2>/dev/null || true
   printf '%s' "$VALUE" | gcloud secrets versions add "$SECRET" --data-file=- --project="$PROJECT_ID"
