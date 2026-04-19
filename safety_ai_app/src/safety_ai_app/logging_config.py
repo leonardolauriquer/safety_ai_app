@@ -123,9 +123,22 @@ def setup_logging() -> None:
     file_handler.addFilter(suppress_filter)
     root_logger.addHandler(file_handler)
 
-    # Suprime os avisos "missing ScriptRunContext" também no logger do Streamlit
-    logging.getLogger("streamlit").addFilter(suppress_filter)
-    logging.getLogger("streamlit.runtime").addFilter(suppress_filter)
+    # Suprime os avisos "missing ScriptRunContext" nos loggers internos do Streamlit.
+    # O logger correto em versões recentes do Streamlit é scriptrunner_utils (não scriptrunner).
+    for _sc_name in (
+        "streamlit.runtime.scriptrunner_utils.script_run_context",
+        "streamlit.runtime.scriptrunner_utils",
+        "streamlit.runtime.scriptrunner.script_run_context",
+        "streamlit.runtime.scriptrunner",
+        "streamlit.runtime",
+        "streamlit",
+        "streamlit.runtime.caching",
+        "streamlit.runtime.caching.cache_data_api",
+    ):
+        _sc_l = logging.getLogger(_sc_name)
+        _sc_l.addFilter(suppress_filter)
+        for _h in _sc_l.handlers:
+            _h.addFilter(suppress_filter)
 
     logging.getLogger(__name__).info("Logging configurado com sucesso")
 
