@@ -90,6 +90,12 @@ def initialize_quiz_state() -> None:
     # Inicializa todas as flags e variáveis básicas primeiro para evitar AttributeError
     if "quiz_started" not in st.session_state:
         st.session_state.quiz_started = False
+    if "quiz_personal_best" not in st.session_state:
+        st.session_state.quiz_personal_best = 0
+    if "quiz_session_leaderboard" not in st.session_state:
+        st.session_state.quiz_session_leaderboard = []
+    if "quiz_player_name" not in st.session_state:
+        st.session_state.quiz_player_name = ""
     if "quiz_finished" not in st.session_state:
         st.session_state.quiz_finished = False
     if "current_question_index" not in st.session_state:
@@ -225,7 +231,21 @@ def reset_quiz() -> None:
     st.session_state.show_audience_help = False
     st.session_state.question_start_time = time.time() # Reinicia o timer
     st.session_state.current_time_limit = DEFAULT_TIME_LIMIT
+    st.session_state.quiz_score_recorded = False
     logger.info("Quiz resetado e iniciado com perguntas selecionadas por dificuldade e liga.")
+
+
+def record_quiz_score(final_score: int) -> None:
+    """Records the final score into personal best and session leaderboard."""
+    if final_score > st.session_state.quiz_personal_best:
+        st.session_state.quiz_personal_best = final_score
+    for e in st.session_state.quiz_session_leaderboard:
+        e.pop("_last_game", None)
+    player = st.session_state.quiz_player_name.strip() or f"Jogador {len(st.session_state.quiz_session_leaderboard) + 1}"
+    league = LEAGUES.get(st.session_state.current_league, st.session_state.current_league)
+    entry = {"name": player, "score": final_score, "league": league, "_last_game": True}
+    st.session_state.quiz_session_leaderboard.append(entry)
+    st.session_state.quiz_session_leaderboard.sort(key=lambda x: x["score"], reverse=True)
 
 def check_answer(question: Dict[str, Any], selected_option: str) -> None:
     """Verifica a resposta selecionada e atualiza o score e feedback."""
@@ -362,22 +382,50 @@ def render_quiz_game() -> None:
             reset_quiz()
             st.rerun()
     elif st.session_state.quiz_finished:
-        st.markdown(f"<div class='quiz-container'>", unsafe_allow_html=True) # Mantém este div para a tela final
-        
-        # Mensagem de "Perdeu" se o jogo não terminou com uma resposta correta
+        final_score = SCORE_STEPS[st.session_state.quiz_score_index]
+
+        # Record score only once per game (check if leaderboard already has it registered)
+        # Collect player name BEFORE recording score
+        player_name = st.text_input("Seu nome para o placar (opcional):", value=st.session_state.quiz_player_name, key="quiz_player_name_input")
+        st.session_state.quiz_player_name = player_name
+
+        if not st.session_state.get("quiz_score_recorded", False):
+            record_quiz_score(int(final_score))
+            st.session_state.quiz_score_recorded = True
+        else:
+            # Live-update the name in the leaderboard entry for this game as player types
+            current_name = player_name.strip()
+            if current_name:
+                for _e in st.session_state.quiz_session_leaderboard:
+                    if _e.get("_last_game"):
+                        _e["name"] = current_name
+                        break
+
         if st.session_state.feedback_message != "Resposta Correta!":
             st.markdown(f"<h2>{_get_material_icon_html('error_x')} {THEME['phrases'].get('quiz_game_over_lose', 'Fim de Jogo! Você perdeu.')}</h2>", unsafe_allow_html=True)
         else:
             st.markdown(f"<h2>{_get_material_icon_html('trophy')} {THEME['phrases'].get('quiz_final_score', 'Pontuação Final:')}</h2>", unsafe_allow_html=True)
         
-        st.markdown(f"<p style='font-size: 2em; color: {THEME['colors']['accent_green']}; font-weight: bold;'>{currency_unit} {SCORE_STEPS[st.session_state.quiz_score_index]:,.2f}</p>", unsafe_allow_html=True)
+        st.markdown(f"<p style='font-size: 2em; color: {THEME['colors']['accent_green']}; font-weight: bold;'>{currency_unit} {final_score:,.2f}</p>", unsafe_allow_html=True)
         st.markdown(f"<p>Você jogou na {LEAGUES[st.session_state.current_league]}.</p>", unsafe_allow_html=True)
+
+        pb = st.session_state.quiz_personal_best
+        st.markdown(f"<p>🏅 Melhor pontuação pessoal: <b style='color:{THEME['colors']['accent_green']};'>{currency_unit} {pb:,.2f}</b></p>", unsafe_allow_html=True)
+
+        leaderboard = st.session_state.quiz_session_leaderboard
+        if leaderboard:
+            st.markdown("<br>", unsafe_allow_html=True)
+            st.markdown("**🏆 Placar da Sessão (hoje):**")
+            _medals = ["🥇", "🥈", "🥉"]
+            for rank, entry in enumerate(leaderboard[:10], start=1):
+                medal = _medals[rank - 1] if rank <= 3 else f"{rank}.".ljust(3)
+                st.markdown(f"**{medal} {entry['name']}** — {currency_unit} {entry['score']:,.2f} *(Liga {entry['league']})*")
+
         st.markdown("<br>", unsafe_allow_html=True)
-        st.markdown(_get_material_icon_html_for_button_css('restart_quiz_btn', THEME['icons']['refresh']), unsafe_allow_html=True)
         if st.button(f"{THEME['phrases'].get('quiz_play_again', 'Jogar Novamente')}", key="restart_quiz_btn"):
+            st.session_state.quiz_score_recorded = False
             reset_quiz()
             st.rerun()
-        st.markdown("</div>", unsafe_allow_html=True) # Fecha o div da tela final
     else:
         # Injeta CSS para estilizar o st.container que agrupa o conteúdo principal do quiz
         st.markdown(f"""

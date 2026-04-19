@@ -115,6 +115,29 @@ class GoogleDriveIntegrator:
         from safety_ai_app.data_parsers.games_parser import download_and_parse_show_do_milhao
         return download_and_parse_show_do_milhao(self._dl, SHOW_DO_MILHAO_PERGUNTAS_FILE_ID, file_name)
 
+    def _download_game_json_internal(self, file_name: str) -> Optional[List[Dict[str, Any]]]:
+        """Downloads a JSON game data file from the Games Drive folder. Returns None on failure."""
+        import json, tempfile
+        try:
+            folder_id = self._get_games_folder_id()
+            if not folder_id:
+                logger.warning(f"Games folder not found in Drive for file '{file_name}'")
+                return None
+            with tempfile.NamedTemporaryFile(suffix='.json', delete=False) as tmp:
+                tmp_path = tmp.name
+            result = self.download_file_from_folder(folder_id, file_name, tmp_path)
+            if not result:
+                logger.warning(f"File '{file_name}' not found in Drive games folder.")
+                return None
+            with open(tmp_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            import os; os.unlink(tmp_path)
+            logger.info(f"Loaded {len(data)} entries from Drive: {file_name}")
+            return data
+        except Exception as e:
+            logger.warning(f"Could not load '{file_name}' from Drive: {e}")
+            return None
+
     # ------------------------------------------------------------------
     # Cached folder IDs
     # ------------------------------------------------------------------
@@ -279,6 +302,13 @@ def download_and_parse_crossword_excel(file_name: str) -> Optional[List[Dict[str
 def download_and_parse_show_do_milhao_excel(file_name: str) -> Optional[List[Dict[str, Any]]]:
     integrator = get_service_account_drive_integrator_instance()
     return integrator._download_and_parse_show_do_milhao_excel_internal(file_name) if integrator else None
+
+
+@st.cache_data(ttl=3600)
+def download_game_json_from_drive(file_name: str) -> Optional[List[Dict[str, Any]]]:
+    """Downloads a JSON game data file from the Drive Jogos folder. Returns None if Drive unavailable."""
+    integrator = get_service_account_drive_integrator_instance()
+    return integrator._download_game_json_internal(file_name) if integrator else None
 
 
 def upload_file_to_drive(drive_service: Any, uploaded_file_obj: Any, parent_folder_id: Optional[str] = None) -> Optional[str]:

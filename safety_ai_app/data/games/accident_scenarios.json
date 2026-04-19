@@ -1,0 +1,482 @@
+[
+  {
+    "id": "s01",
+    "title": "Queda em Canteiro de Obras",
+    "description": "Um operário realizava trabalhos de acabamento em um andaime a 4 metros de altura. Ele não usava cinto de segurança e o andaime não tinha guarda-corpo. A empresa não havia realizado treinamento de trabalho em altura. O operário escorregou e caiu, sofrendo fratura na perna e cortes no rosto.",
+    "violated_nrs": ["NR-18", "NR-35", "NR-06"],
+    "missing_epis": ["Cinto paraquedista", "Talabarte", "Capacete com jugular", "Bota de segurança"],
+    "explanations": {
+      "NR-18": "A NR-18 exige que andaimes tenham guarda-corpos, rodapés e proteções adequadas na construção civil.",
+      "NR-35": "A NR-35 exige treinamento específico para trabalho em altura, uso obrigatório de cinto paraquedista e ponto de ancoragem.",
+      "NR-06": "A NR-06 exige o fornecimento e uso de EPIs adequados ao risco, incluindo cinto e capacete.",
+      "Cinto paraquedista": "Obrigatório para trabalho em altura acima de 2 metros quando não há proteção coletiva eficaz.",
+      "Talabarte": "Dispositivo de ancoragem que retém o trabalhador em caso de queda.",
+      "Capacete com jugular": "Protege a cabeça em caso de queda e impede que o capacete se solte.",
+      "Bota de segurança": "Protege os pés e melhora a aderência em superfícies instáveis."
+    }
+  },
+  {
+    "id": "s02",
+    "title": "Choque Elétrico em Manutenção",
+    "description": "Um eletricista foi solicitado para trocar um disjuntor em um painel elétrico. Ele não realizou o bloqueio e etiquetagem do painel (LOTO), não usava luvas dielétricas e trabalhava sem supervisão. Ao tocar no barramento energizado, sofreu choque elétrico grave.",
+    "violated_nrs": ["NR-10", "NR-12", "NR-06"],
+    "missing_epis": ["Luva dielétrica", "Botina dielétrica", "Óculos de proteção", "Capacete classe B"],
+    "explanations": {
+      "NR-10": "A NR-10 exige o bloqueio e sinalização das fontes de energia antes de qualquer serviço em instalações elétricas.",
+      "NR-12": "A NR-12 exige procedimento de LOTO (bloqueio e etiquetagem) antes de manutenção em equipamentos.",
+      "NR-06": "A NR-06 exige luvas dielétricas e demais EPIs para trabalhadores expostos a riscos elétricos.",
+      "Luva dielétrica": "Protege contra choque elétrico durante trabalho em circuitos energizados.",
+      "Botina dielétrica": "Isola o trabalhador do solo, evitando a passagem de corrente pelo corpo.",
+      "Óculos de proteção": "Protege os olhos contra arcos elétricos e faíscas.",
+      "Capacete classe B": "Capacete com proteção contra choques elétricos de até 20.000 V."
+    }
+  },
+  {
+    "id": "s03",
+    "title": "Intoxicação em Espaço Confinado",
+    "description": "Dois trabalhadores desceram a um tanque de armazenamento para limpeza interna sem realizar teste de atmosfera. Não havia vigia na entrada, nem plano de resgate. Um deles desmaiou por falta de oxigênio e o outro tentou socorrê-lo sem EPI respiratório, também desmaiando.",
+    "violated_nrs": ["NR-33", "NR-06", "NR-01"],
+    "missing_epis": ["Máscara autônoma (SCBA)", "Detector de gases", "Cinto de resgate", "Rádio comunicador"],
+    "explanations": {
+      "NR-33": "A NR-33 exige: medição da atmosfera, presença de vigia, plano de resgate, treinamento e autorização de entrada em espaços confinados.",
+      "NR-06": "A NR-06 exige fornecimento de equipamentos de proteção respiratória adequados ao risco de atmosfera deficiente.",
+      "NR-01": "A NR-01 exige análise de risco e elaboração de procedimentos de trabalho seguro antes de atividades de risco.",
+      "Máscara autônoma (SCBA)": "Fornece ar comprimido independente da atmosfera do espaço confinado.",
+      "Detector de gases": "Mede os níveis de oxigênio, gases inflamáveis e substâncias tóxicas antes e durante a entrada.",
+      "Cinto de resgate": "Permite içar o trabalhador do espaço confinado sem necessidade de entrada de outro socorrista.",
+      "Rádio comunicador": "Mantém comunicação entre o trabalhador no interior e o vigia externo."
+    }
+  },
+  {
+    "id": "s04",
+    "title": "Acidente com Prensa Industrial",
+    "description": "Um operador de prensa hidráulica realizava ajustes na matriz com a máquina em modo de operação automática, sem bloqueá-la. A prensa acionou automaticamente e esmagou os dedos do trabalhador. Não havia protetor de ponto de operação e o funcionário não havia recebido treinamento para a máquina.",
+    "violated_nrs": ["NR-12", "NR-06", "NR-04"],
+    "missing_epis": ["Luva de malha de aço", "Óculos de segurança", "Calçado de segurança"],
+    "explanations": {
+      "NR-12": "A NR-12 exige proteções em pontos de operação, procedimento LOTO durante manutenção e treinamento dos operadores.",
+      "NR-06": "A NR-06 exige EPIs adequados ao risco de corte e esmagamento para operadores de máquinas.",
+      "NR-04": "A NR-04 exige que o SESMT implante medidas de controle e capacitação dos trabalhadores para operação segura.",
+      "Luva de malha de aço": "Protege as mãos contra cortes e esmagamentos leves em manuseio de peças.",
+      "Óculos de segurança": "Protege os olhos contra lascas e partículas projetadas durante operação.",
+      "Calçado de segurança": "Protege os pés contra quedas de peças e compressão."
+    }
+  },
+  {
+    "id": "s05",
+    "title": "Exposição a Produto Químico",
+    "description": "Um trabalhador de limpeza misturou água sanitária com desinfetante ácido para limpar um banheiro com maior eficiência. A mistura gerou gás cloro. Ele não usava máscara e nem luvas. Após alguns minutos sentiu dificuldades de respirar e queimação nos olhos.",
+    "violated_nrs": ["NR-06", "NR-15", "NR-26"],
+    "missing_epis": ["Máscara respiratória com filtro químico", "Luva nitrílica", "Óculos de proteção", "Avental impermeável"],
+    "explanations": {
+      "NR-06": "A NR-06 exige EPIs adequados ao manuseio de produtos químicos, incluindo máscara, luvas e óculos.",
+      "NR-15": "A NR-15 estabelece limites de tolerância para agentes químicos, incluindo o cloro, e exige avaliação do risco.",
+      "NR-26": "A NR-26 exige sinalização de perigo em produtos químicos e fichas de informações de segurança (FISPQ).",
+      "Máscara respiratória com filtro químico": "Filtra gases e vapores tóxicos, protegendo as vias respiratórias.",
+      "Luva nitrílica": "Resistente a produtos químicos, protege as mãos do contato com substâncias corrosivas.",
+      "Óculos de proteção": "Protege os olhos contra respingos de produtos químicos.",
+      "Avental impermeável": "Evita contato do produto químico com a roupa e a pele do corpo."
+    }
+  },
+  {
+    "id": "s06",
+    "title": "Incêndio por Armazenamento Incorreto",
+    "description": "Um depósito armazenava juntos tintas, solventes e materiais de escritório em local não ventilado, sem sinalização de inflamável. Um curto-circuito iniciou um pequeno incêndio. Os extintores estavam com prazo vencido e os trabalhadores não conheciam o plano de evacuação.",
+    "violated_nrs": ["NR-16", "NR-23", "NR-26"],
+    "missing_epis": ["Luva de raspa", "Bota de segurança", "Máscara de fuga"],
+    "explanations": {
+      "NR-16": "A NR-16 regulamenta atividades com inflamáveis, exigindo armazenamento separado, ventilação e sinalização.",
+      "NR-23": "A NR-23 exige manutenção de extintores, brigada treinada, saídas de emergência e plano de abandono.",
+      "NR-26": "A NR-26 exige sinalização de inflamável, perigo e identificação dos produtos armazenados.",
+      "Luva de raspa": "Protege as mãos durante o manuseio de materiais em situação de emergência.",
+      "Bota de segurança": "Protege os pés durante evacuação em área com risco de queda de objetos.",
+      "Máscara de fuga": "Permite respirar por alguns minutos em atmosfera contaminada por fumaça durante evacuação."
+    }
+  },
+  {
+    "id": "s07",
+    "title": "Lesão por Esforço Repetitivo",
+    "description": "Uma operadora de caixa de supermercado realizava movimentos repetitivos de passagem de produtos pela leitora por 8 horas diárias sem pausa programada. A bancada estava regulada para funcionários mais altos, forçando-a a trabalhar com os braços elevados. Após 6 meses, desenvolveu tendinite nos punhos.",
+    "violated_nrs": ["NR-17", "NR-07"],
+    "missing_epis": ["Munhequeira de suporte", "Apoio de pulso"],
+    "explanations": {
+      "NR-17": "A NR-17 exige adequação do mobiliário, equipamentos e organização do trabalho às características dos trabalhadores, incluindo pausas e alternância de tarefas.",
+      "NR-07": "A NR-07 exige monitoramento da saúde do trabalhador, incluindo avaliações periódicas para detecção precoce de doenças ocupacionais.",
+      "Munhequeira de suporte": "Ajuda a manter o punho em posição neutra, reduzindo a sobrecarga tendínea durante movimentos repetitivos.",
+      "Apoio de pulso": "Dispositivo ergonômico que reduz a pressão sobre o punho durante digitação ou tarefas repetitivas."
+    }
+  },
+  {
+    "id": "s08",
+    "title": "Queda de Objeto em Obra",
+    "description": "Um trabalhador no pavimento superior de uma obra passou uma peça metálica para o colega abaixo sem comunicar. O material escorregou e atingiu um terceiro trabalhador que passava pela área inferior sem capacete. A área não estava sinalizada e não havia rede de proteção.",
+    "violated_nrs": ["NR-18", "NR-06", "NR-26"],
+    "missing_epis": ["Capacete", "Óculos de proteção"],
+    "explanations": {
+      "NR-18": "A NR-18 exige proteção coletiva como redes de segurança e sinalização de área de risco de queda de materiais em canteiros de obras.",
+      "NR-06": "A NR-06 exige uso de capacete por todos os trabalhadores em áreas com risco de queda de objetos.",
+      "NR-26": "A NR-26 exige sinalização de área de risco, proibindo a circulação de pessoas desprotegidas abaixo de trabalhos em altura.",
+      "Capacete": "Protege a cabeça contra impacto de objetos caídos, sendo obrigatório em canteiros de obras.",
+      "Óculos de proteção": "Protege os olhos contra partículas projetadas durante trabalhos de construção."
+    }
+  },
+  {
+    "id": "s09",
+    "title": "Soterramento em Escavação",
+    "description": "Trabalhadores realizavam escavação manual em vala de 1,8 metros para instalação de tubulação. As paredes não tinham escoramento e o solo era argiloso. Após chuva na madrugada, as paredes cederam e soterrou parcialmente um operário que realizava limpeza do fundo da vala.",
+    "violated_nrs": ["NR-18", "NR-01", "NR-06"],
+    "missing_epis": ["Capacete", "Colete salva-vidas tipo resgate", "Bota de borracha"],
+    "explanations": {
+      "NR-18": "A NR-18 exige escoramento de valas com profundidade acima de 1,25 metros ou em terrenos instáveis.",
+      "NR-01": "A NR-01 exige análise de risco antes de atividades perigosas como escavações próximas a encostas ou em solos instáveis.",
+      "NR-06": "A NR-06 exige EPIs adequados para trabalho em valas, incluindo proteção da cabeça e dos pés.",
+      "Capacete": "Protege a cabeça em caso de soterramento parcial ou queda de materiais.",
+      "Colete salva-vidas tipo resgate": "Permite içar o trabalhador soterrado com mais facilidade e segurança.",
+      "Bota de borracha": "Protege os pés do contato com lama, água e superfícies cortantes no fundo da vala."
+    }
+  },
+  {
+    "id": "s10",
+    "title": "Acidente com Solda em Local Fechado",
+    "description": "Um soldador realizava trabalhos de solda em um compartimento de navio sem ventilação adequada. Ele não usava máscara de solda com filtro de fumos metálicos. Após horas de trabalho apresentou sintomas de intoxicação por fumos metálicos: febre, calafrios e dor de cabeça intensa.",
+    "violated_nrs": ["NR-33", "NR-15", "NR-06"],
+    "missing_epis": ["Máscara de solda com filtro P3", "Luva de raspa", "Avental de raspa", "Óculos de solda"],
+    "explanations": {
+      "NR-33": "A NR-33 exige avaliação da atmosfera e ventilação forçada em compartimentos de navios considerados espaços confinados.",
+      "NR-15": "A NR-15 estabelece limites de tolerância para fumos metálicos e exige medidas de controle em soldagem.",
+      "NR-06": "A NR-06 exige máscara de proteção respiratória com filtro adequado a fumos metálicos e demais EPIs de soldagem.",
+      "Máscara de solda com filtro P3": "Protege contra fumos metálicos tóxicos gerados durante a soldagem.",
+      "Luva de raspa": "Protege as mãos do calor e respingos de solda.",
+      "Avental de raspa": "Protege o tronco e as pernas do calor e respingos durante a soldagem.",
+      "Óculos de solda": "Protege os olhos da radiação ultravioleta e infravermelha do arco elétrico."
+    }
+  },
+  {
+    "id": "s11",
+    "title": "Atropelamento em Área Logística",
+    "description": "Um empilhador operava em um corredor de armazém sem sinalização de circulação de veículos. Um funcionário de estoque cruzou o corredor sem verificar a passagem. O operador não avistou o funcionário a tempo e o atingiu de raspão, causando fratura no pé.",
+    "violated_nrs": ["NR-12", "NR-26", "NR-06"],
+    "missing_epis": ["Bota de segurança com biqueira de aço", "Colete refletivo"],
+    "explanations": {
+      "NR-12": "A NR-12 exige delimitação de áreas de circulação de máquinas, sinalização e distância mínima segura entre corredores de pedestres e veículos.",
+      "NR-26": "A NR-26 exige sinalização de piso com cores para separar circulação de pedestres e veículos industriais.",
+      "NR-06": "A NR-06 exige bota com biqueira de aço para proteção em áreas com risco de queda de objetos e atropelamento.",
+      "Bota de segurança com biqueira de aço": "Protege os pés contra esmagamento por cargas e veículos.",
+      "Colete refletivo": "Torna o pedestre visível para operadores de empilhadeiras e outros veículos."
+    }
+  },
+  {
+    "id": "s12",
+    "title": "Queimadura com Vapor de Caldeira",
+    "description": "Durante inspeção rotineira em uma caldeira, um operador abriu uma válvula de purga sem aguardar a equalização de pressão. Uma descarga de vapor atingiu seu rosto e braços, causando queimaduras de segundo grau. Não havia registro de treinamento específico para caldeiras.",
+    "violated_nrs": ["NR-13", "NR-06", "NR-04"],
+    "missing_epis": ["Luva térmica de alta temperatura", "Protetor facial (visor)", "Avental de couro", "Bota de segurança"],
+    "explanations": {
+      "NR-13": "A NR-13 exige treinamento para operadores de caldeiras, procedimentos operacionais escritos e inspeções periódicas.",
+      "NR-06": "A NR-06 exige EPIs de proteção térmica para trabalhadores expostos a vapor e superfícies quentes.",
+      "NR-04": "A NR-04 exige que o SESMT elabore e implante programas de capacitação para atividades de risco.",
+      "Luva térmica de alta temperatura": "Protege as mãos do contato com vapor e superfícies quentes.",
+      "Protetor facial (visor)": "Protege o rosto inteiro contra jatos de vapor e líquidos quentes.",
+      "Avental de couro": "Protege o tronco contra respingos de vapor e materiais quentes.",
+      "Bota de segurança": "Protege os pés contra respingos de vapor e líquidos quentes derramados."
+    }
+  },
+  {
+    "id": "s13",
+    "title": "Corte com Serra Circular",
+    "description": "Um marceneiro operava uma serra circular sem protetor de disco e sem óculos de proteção. Ao cortar uma peça de madeira úmida, a lâmina travou e projetou fragmentos, cortando a mão do operador e lesionando seu olho esquerdo. A máquina também não possuía freio automático.",
+    "violated_nrs": ["NR-12", "NR-06"],
+    "missing_epis": ["Óculos de proteção", "Luva de malha de aço", "Protetor auditivo"],
+    "explanations": {
+      "NR-12": "A NR-12 exige protetor de disco em serras circulares, freio automático e treinamento do operador.",
+      "NR-06": "A NR-06 exige óculos de proteção e luvas para operadores de serras e equipamentos similares.",
+      "Óculos de proteção": "Protege os olhos contra projeção de fragmentos e serragem.",
+      "Luva de malha de aço": "Reduz a gravidade de cortes superficiais no manuseio de peças próximas à lâmina.",
+      "Protetor auditivo": "Reduz a exposição ao ruído gerado pela serra, prevenindo perda auditiva."
+    }
+  },
+  {
+    "id": "s14",
+    "title": "Explosão de Recipiente Pressurizado",
+    "description": "Durante o enchimento de um compressor de ar, um técnico elevou a pressão acima do limite seguro por falha no manômetro. A válvula de segurança estava inoperante por falta de manutenção. O vaso rompeu, causando onda de choque e lançando fragmentos metálicos na oficina.",
+    "violated_nrs": ["NR-13", "NR-06", "NR-12"],
+    "missing_epis": ["Óculos de proteção", "Protetor facial", "Luva de raspa", "Calçado de segurança"],
+    "explanations": {
+      "NR-13": "A NR-13 exige inspeção periódica de vasos de pressão, calibração de manômetros e funcionamento das válvulas de segurança.",
+      "NR-06": "A NR-06 exige proteção facial e ocular para trabalhadores em áreas com risco de explosão ou projeção.",
+      "NR-12": "A NR-12 exige manutenção preventiva de equipamentos e procedimentos de segurança documentados.",
+      "Óculos de proteção": "Protege os olhos de fragmentos projetados pela explosão.",
+      "Protetor facial": "Protege o rosto inteiro contra impacto de estilhaços.",
+      "Luva de raspa": "Protege as mãos do contato com fragmentos metálicos aquecidos.",
+      "Calçado de segurança": "Protege os pés contra fragmentos e impactos de materiais projetados."
+    }
+  },
+  {
+    "id": "s15",
+    "title": "Intoxicação por Agrotóxico",
+    "description": "Um trabalhador rural aplicava herbicida em lavoura de soja sem usar máscara respiratória, luva ou avental. A temperatura era elevada, o que aumentou a volatilização do produto. Após 2 horas de trabalho, apresentou tontura, náuseas e formigamento nos membros.",
+    "violated_nrs": ["NR-31", "NR-06", "NR-07"],
+    "missing_epis": ["Máscara respiratória com filtro de vapores orgânicos", "Luva nitrílica longa", "Óculos de proteção", "Avental impermeável", "Bota de borracha"],
+    "explanations": {
+      "NR-31": "A NR-31 regulamenta a segurança na agricultura, exigindo treinamento, EPIs e receituário agronômico para aplicação de agrotóxicos.",
+      "NR-06": "A NR-06 exige EPIs específicos para aplicação de agrotóxicos conforme risco toxicológico do produto.",
+      "NR-07": "A NR-07 exige monitoramento da saúde de trabalhadores expostos a agrotóxicos com exames periódicos de colinesterase.",
+      "Máscara respiratória com filtro de vapores orgânicos": "Protege contra inalação de vapores e aerossóis de agrotóxicos.",
+      "Luva nitrílica longa": "Protege as mãos e os antebraços do contato dérmico com o produto.",
+      "Óculos de proteção": "Protege os olhos de respingos durante o manuseio e aplicação.",
+      "Avental impermeável": "Protege o tronco e o colo de respingos do produto.",
+      "Bota de borracha": "Protege os pés e as pernas do contato com o produto no solo."
+    }
+  },
+  {
+    "id": "s16",
+    "title": "Acidente com Trabalho Noturno em Via Pública",
+    "description": "Uma equipe de manutenção de pavimento trabalhava de madrugada em via pública sem sinalização luminosa adequada. Os trabalhadores não usavam coletes refletivos e o cone de sinalização estava posicionado apenas a 10 metros dos trabalhadores. Um veículo invadiu a área de trabalho e atingiu dois operários.",
+    "violated_nrs": ["NR-21", "NR-26", "NR-06"],
+    "missing_epis": ["Colete refletivo classe II", "Capacete com faixa refletiva", "Bota de segurança"],
+    "explanations": {
+      "NR-21": "A NR-21 exige condições mínimas de segurança para trabalho a céu aberto, incluindo sinalização adequada para trabalho em vias públicas.",
+      "NR-26": "A NR-26 exige sinalização luminosa e refletiva com distância mínima para proteção de equipes em trabalho noturno.",
+      "NR-06": "A NR-06 exige colete refletivo para trabalhadores expostos ao risco de atropelamento em vias públicas.",
+      "Colete refletivo classe II": "Aumenta a visibilidade do trabalhador a 300 metros em condições de pouca luz.",
+      "Capacete com faixa refletiva": "Protege a cabeça e melhora a visibilidade do trabalhador.",
+      "Bota de segurança": "Protege os pés contra impactos e objetos cortantes no leito da via."
+    }
+  },
+  {
+    "id": "s17",
+    "title": "Dermatite de Contato em Galvanização",
+    "description": "Um operador de linha de galvanoplastia trabalhava sem luvas ou avental ao manipular banhos ácidos de cromo hexavalente. Após semanas, desenvolveu ulcerações nas mãos e desvio do septo nasal. A empresa não realizava o PPRA e os trabalhadores não eram monitorados por exames periódicos.",
+    "violated_nrs": ["NR-09", "NR-07", "NR-06"],
+    "missing_epis": ["Luva de PVC cano longo", "Óculos de proteção hermético", "Avental de PVC", "Protetor respiratório PFF2"],
+    "explanations": {
+      "NR-09": "A NR-09 exige o Programa de Prevenção de Riscos Ambientais (PPRA) para identificar, avaliar e controlar riscos químicos como o cromo hexavalente.",
+      "NR-07": "A NR-07 exige o PCMSO com exames específicos para trabalhadores expostos a cromo, incluindo dosagem urinária.",
+      "NR-06": "A NR-06 exige EPIs impermeáveis e resistentes a ácidos para manipulação de banhos de galvanização.",
+      "Luva de PVC cano longo": "Protege mãos e antebraços do contato com ácidos e cromo hexavalente.",
+      "Óculos de proteção hermético": "Protege os olhos de respingos de ácido durante o mergulho de peças.",
+      "Avental de PVC": "Protege o tronco e as pernas do contato com os banhos ácidos.",
+      "Protetor respiratório PFF2": "Filtra névoas ácidas e partículas de cromo durante o processo."
+    }
+  },
+  {
+    "id": "s18",
+    "title": "Perda Auditiva Induzida por Ruído",
+    "description": "Um operador de estamparia trabalhava há 10 anos em ambiente com nível de ruído de 95 dB sem protetor auditivo. A empresa nunca realizou audiometria e não havia programa de conservação auditiva. Na avaliação anual, foi constatada perda auditiva bilateral irreversível.",
+    "violated_nrs": ["NR-15", "NR-07", "NR-06"],
+    "missing_epis": ["Protetor auditivo tipo concha", "Protetor auditivo tipo plug"],
+    "explanations": {
+      "NR-15": "A NR-15 estabelece limites de tolerância para ruído de 85 dB(A) em 8 horas diárias, exigindo proteção acima desse limite.",
+      "NR-07": "A NR-07 exige audiometrias periódicas para trabalhadores expostos a ruído acima dos limites de tolerância.",
+      "NR-06": "A NR-06 exige o fornecimento e a fiscalização do uso de protetores auditivos em ambientes com ruído excessivo.",
+      "Protetor auditivo tipo concha": "Reduz a exposição ao ruído até 35 dB, indicado para ambientes com ruído muito elevado.",
+      "Protetor auditivo tipo plug": "Dispositivo descartável inserido no canal auditivo, com atenuação de 20 a 30 dB."
+    }
+  },
+  {
+    "id": "s19",
+    "title": "Queda de Nível em Plataforma",
+    "description": "Um técnico de manutenção subiu em uma plataforma de acesso temporária mal fixada para verificar um motor. A plataforma deslizou e o trabalhador caiu de 2,5 metros de altura, fraturando o tornozelo. Não havia corrimão e o trabalhador não estava usando cinto.",
+    "violated_nrs": ["NR-35", "NR-06", "NR-01"],
+    "missing_epis": ["Cinto paraquedista", "Talabarte com absorvedor de impacto", "Bota de segurança com solado antiderrapante"],
+    "explanations": {
+      "NR-35": "A NR-35 exige análise de risco, capacitação e uso de sistemas de proteção para trabalho em altura acima de 2 metros.",
+      "NR-06": "A NR-06 exige cinto paraquedista e talabarte para trabalho em altura sem proteção coletiva eficaz.",
+      "NR-01": "A NR-01 exige que plataformas temporárias sejam inspecionadas e fixadas de forma segura antes do uso.",
+      "Cinto paraquedista": "Distribui a força de queda pelo tronco, impedindo lesões fatais em queda livre.",
+      "Talabarte com absorvedor de impacto": "Limita a força de impacto sobre o corpo em caso de queda.",
+      "Bota de segurança com solado antiderrapante": "Aumenta a aderência em superfícies metálicas e lisas."
+    }
+  },
+  {
+    "id": "s20",
+    "title": "Contaminação Biológica em Coleta de Lixo",
+    "description": "Um coletor de lixo hospitalar foi perfurado por uma agulha descartada incorretamente em saco de lixo comum. O material perfurocortante deveria ter sido descartado em coletor rígido. O trabalhador não usava luva resistente a perfuração e não havia sinalização no saco.",
+    "violated_nrs": ["NR-32", "NR-06"],
+    "missing_epis": ["Luva de raspa de porco", "Óculos de proteção", "Avental de PVC"],
+    "explanations": {
+      "NR-32": "A NR-32 exige descarte de perfurocortantes em caixas rígidas e treinamento de todos os envolvidos no manejo de resíduos de saúde.",
+      "NR-06": "A NR-06 exige luvas resistentes a perfuração para manuseio de resíduos com risco de material biológico.",
+      "Luva de raspa de porco": "Oferece proteção contra perfurações por agulhas e objetos cortantes no lixo.",
+      "Óculos de proteção": "Protege os olhos de respingos de fluidos biológicos durante a coleta.",
+      "Avental de PVC": "Protege o corpo do contato com fluidos corporais presentes no lixo hospitalar."
+    }
+  },
+  {
+    "id": "s21",
+    "title": "Acidente com Guindaste em Obra",
+    "description": "Um guindaste estava içando uma carga de 5 toneladas quando o cabo de aço se rompeu. A carga caiu sobre uma área onde trabalhadores circulavam sem capacete. O cabo de aço não havia sido inspecionado e estava com desgaste acima do permitido. A área de içamento não estava isolada.",
+    "violated_nrs": ["NR-11", "NR-18", "NR-06"],
+    "missing_epis": ["Capacete com jugular", "Bota de segurança", "Colete de identificação"],
+    "explanations": {
+      "NR-11": "A NR-11 exige inspeção periódica de cabos de aço, ganchos e demais componentes de equipamentos de içamento.",
+      "NR-18": "A NR-18 exige isolamento e sinalização da área de içamento proibindo a circulação de pessoas.",
+      "NR-06": "A NR-06 exige capacete com jugular em áreas de obra com risco de queda de objetos.",
+      "Capacete com jugular": "Protege a cabeça e permanece fixo mesmo em queda ou impacto lateral.",
+      "Bota de segurança": "Protege os pés de impactos e esmagamentos por cargas caídas.",
+      "Colete de identificação": "Facilita a identificação de trabalhadores autorizados e a gestão de acesso à área de içamento."
+    }
+  },
+  {
+    "id": "s22",
+    "title": "Transtorno Mental por Assédio Moral",
+    "description": "Um funcionário de call center era submetido a metas inatingíveis, humilhações públicas pelo supervisor e ameaças de demissão. Após 8 meses, desenvolveu síndrome de burnout com episódios de pânico. A empresa não possuía canal de denúncia de assédio e o RH ignorou as reclamações.",
+    "violated_nrs": ["NR-17", "NR-07", "NR-01"],
+    "missing_epis": [],
+    "explanations": {
+      "NR-17": "A NR-17 exige que a organização do trabalho em teleatendimento preserve a saúde mental, proibindo pressão excessiva e metas abusivas.",
+      "NR-07": "A NR-07 exige avaliação e acompanhamento da saúde mental dos trabalhadores expostos a fatores psicossociais de risco.",
+      "NR-01": "A NR-01 exige que as empresas gerenciem riscos psicossociais como assédio moral e burnout no ambiente de trabalho."
+    }
+  },
+  {
+    "id": "s23",
+    "title": "Explosão por Gás Inflamável",
+    "description": "Em uma cozinha industrial, um gás GLP acumulou-se no ambiente por vazamento em mangueira deteriorada. Um funcionário acendeu o fogão sem verificar o odor de gás. A explosão causou queimaduras graves em dois cozinheiros e destruiu parte da cozinha.",
+    "violated_nrs": ["NR-16", "NR-23", "NR-06"],
+    "missing_epis": ["Avental de raspa", "Luva térmica", "Óculos de proteção"],
+    "explanations": {
+      "NR-16": "A NR-16 exige inspeção regular de instalações de gás inflamável, ventilação adequada e treinamento dos usuários.",
+      "NR-23": "A NR-23 exige extinção de possíveis fontes de ignição antes de operações com gás, além de detecção e alarme.",
+      "NR-06": "A NR-06 exige EPIs de proteção térmica para trabalhadores em ambientes com risco de fogo ou explosão.",
+      "Avental de raspa": "Protege o tronco contra calor e chamas em cozinhas industriais.",
+      "Luva térmica": "Protege as mãos do calor em atividades próximas a fontes de fogo.",
+      "Óculos de proteção": "Protege os olhos de partículas e chamas em acidentes com explosão."
+    }
+  },
+  {
+    "id": "s24",
+    "title": "Afogamento em Drenagem de Esgoto",
+    "description": "Uma equipe realizava desobstrução de galeria de águas pluviais. O trabalho foi iniciado sem análise do histórico meteorológico e uma chuva forte inesperada encheu rapidamente a galeria. Não havia plano de emergência e um trabalhador foi arrastado pela correnteza dentro do duto.",
+    "violated_nrs": ["NR-33", "NR-01", "NR-06"],
+    "missing_epis": ["Cinto de resgate com linha de segurança", "Colete flutuante", "Rádio comunicador"],
+    "explanations": {
+      "NR-33": "A NR-33 exige plano de resgate, vigia externo e monitoramento contínuo de condições em espaços confinados como galerias.",
+      "NR-01": "A NR-01 exige análise de risco com previsão de condições climáticas antes de trabalho em locais inundáveis.",
+      "NR-06": "A NR-06 exige EPIs de resgate e flutuação para trabalho em galerias com risco de inundação.",
+      "Cinto de resgate com linha de segurança": "Permite resgatar o trabalhador do interior da galeria sem entrada de socorrista.",
+      "Colete flutuante": "Mantém o trabalhador na superfície em caso de inundação súbita.",
+      "Rádio comunicador": "Mantém comunicação entre equipe interna e vigia, permitindo evacuação imediata."
+    }
+  },
+  {
+    "id": "s25",
+    "title": "Silicose em Mineração",
+    "description": "Trabalhadores de pedreira realizavam perfurações em rocha de granito com compressor a ar comprimido sem sistema de captação de pó. Não usavam máscaras respiratórias PFF3 e não havia avaliação periódica da concentração de sílica no ar. Após 5 anos, três trabalhadores foram diagnosticados com silicose.",
+    "violated_nrs": ["NR-22", "NR-09", "NR-06"],
+    "missing_epis": ["Máscara respiratória PFF3", "Óculos de proteção", "Protetor auditivo"],
+    "explanations": {
+      "NR-22": "A NR-22 regulamenta a segurança em mineração, exigindo controle de poeiras, ventilação e monitoramento contínuo do ar.",
+      "NR-09": "A NR-09 exige o PPRA com avaliação quantitativa de sílica e implantação de medidas de controle.",
+      "NR-06": "A NR-06 exige máscara PFF3 para trabalhadores expostos a sílica livre cristalina acima do limite de tolerância.",
+      "Máscara respiratória PFF3": "Filtra 99% das partículas de sílica, protegendo contra silicose.",
+      "Óculos de proteção": "Protege os olhos de partículas geradas na perfuração de rochas.",
+      "Protetor auditivo": "Protege contra o ruído elevado gerado pelo compressor e perfuratriz."
+    }
+  },
+  {
+    "id": "s26",
+    "title": "Acidente com Manipulação de Resíduos Radioativos",
+    "description": "Um técnico em radiologia manipulou cápsulas de material radioativo sem dosímetro e sem aventais de chumbo, alegando que 'seria rápido'. A atividade estava fora do período de inspeção e o equipamento de monitoramento estava inoperante. A dose recebida foi superior ao limite anual em uma única sessão.",
+    "violated_nrs": ["NR-29", "NR-06"],
+    "missing_epis": ["Dosímetro individual", "Avental de chumbo", "Luva de chumbo", "Protetor de tireoide"],
+    "explanations": {
+      "NR-29": "A NR-29 exige controle de exposição à radiação ionizante, uso de dosímetro, EPIs de blindagem e monitoramento contínuo.",
+      "NR-06": "A NR-06 exige EPIs de proteção contra radiação ionizante, incluindo aventais, luvas e colares de chumbo.",
+      "Dosímetro individual": "Registra a dose de radiação acumulada pelo trabalhador para controle e ação preventiva.",
+      "Avental de chumbo": "Atenua a radiação X e gama, protegendo órgãos vitais.",
+      "Luva de chumbo": "Protege as mãos durante manipulação de fontes radioativas.",
+      "Protetor de tireoide": "Protege a glândula tireoide, especialmente sensível à radiação."
+    }
+  },
+  {
+    "id": "s27",
+    "title": "Incidente com Trabalho em Telhado",
+    "description": "Um pedreiro realizava impermeabilização em telhado de fibrocimento sem linha de vida. O telhado não possuía guarda-corpo e a empresa não havia elaborado a APR (Análise Preliminar de Risco). Ao pisar em área fragilizada, o trabalhador atravessou a telha e caiu 5 metros, sofrendo traumatismo craniano.",
+    "violated_nrs": ["NR-35", "NR-01", "NR-06"],
+    "missing_epis": ["Cinto paraquedista", "Talabarte", "Capacete com jugular", "Bota com solado antiderrapante"],
+    "explanations": {
+      "NR-35": "A NR-35 exige APR, capacitação, linha de vida e sistema de ancoragem para trabalhos em telhados e coberturas.",
+      "NR-01": "A NR-01 exige elaboração de Análise Preliminar de Risco antes de atividades em superfícies frágeis como fibrocimento.",
+      "NR-06": "A NR-06 exige cinto paraquedista e demais EPIs para trabalho em altura com risco de queda.",
+      "Cinto paraquedista": "Retém o trabalhador em caso de queda, distribuindo a força pelo tronco.",
+      "Talabarte": "Conecta o trabalhador ao ponto de ancoragem impedindo a queda livre.",
+      "Capacete com jugular": "Protege a cabeça e permanece fixo durante o trabalho em superfícies inclinadas.",
+      "Bota com solado antiderrapante": "Melhora a aderência em telhas inclinadas e evita deslizamentos."
+    }
+  },
+  {
+    "id": "s28",
+    "title": "Intoxicação por Monóxido de Carbono",
+    "description": "Um grupo de trabalhadores utilizava um gerador a gasolina dentro de uma tenda fechada durante evento de shows. O local não tinha ventilação e os trabalhadores não tinham detector de CO. Três pessoas desmaiaram por intoxicação e uma foi hospitalizada em estado grave.",
+    "violated_nrs": ["NR-33", "NR-06", "NR-01"],
+    "missing_epis": ["Detector de monóxido de carbono", "Máscara autônoma (SCBA)"],
+    "explanations": {
+      "NR-33": "A NR-33 exige monitoramento da atmosfera em ambientes fechados com risco de geração de gases tóxicos como o CO.",
+      "NR-06": "A NR-06 exige equipamentos de proteção respiratória em ambientes com risco de exposição a gases tóxicos.",
+      "NR-01": "A NR-01 exige análise de risco antes de operar motores a combustão em ambientes fechados ou semissufocantes.",
+      "Detector de monóxido de carbono": "Alarma quando o CO atinge concentrações perigosas, permitindo evacuação a tempo.",
+      "Máscara autônoma (SCBA)": "Fornece ar respigável independente da atmosfera contaminada por CO."
+    }
+  },
+  {
+    "id": "s29",
+    "title": "Acidente com Trabalho em Frigorífico",
+    "description": "Um trabalhador de câmara fria em frigorífico permanecia até 6 horas por dia em temperaturas de -18°C sem jaleco térmico completo. A empresa não concedia as pausas de recuperação térmica exigidas pela NR-36. Após semanas, desenvolveu síndrome de Raynaud e lesões por frio nas extremidades.",
+    "violated_nrs": ["NR-36", "NR-06", "NR-07"],
+    "missing_epis": ["Jaleco térmico", "Luva térmica", "Touca balaclava", "Bota térmica"],
+    "explanations": {
+      "NR-36": "A NR-36 exige pausas de recuperação térmica, limite de exposição ao frio e EPIs térmicos para trabalhadores em câmaras frias de abatedouros.",
+      "NR-06": "A NR-06 exige EPIs de proteção ao frio extremo, incluindo jaleco, luva, touca e bota térmica.",
+      "NR-07": "A NR-07 exige monitoramento de saúde dos trabalhadores expostos ao frio, com exames periódicos de circulação periférica.",
+      "Jaleco térmico": "Protege o tronco do frio extremo em câmaras frigoríficas.",
+      "Luva térmica": "Protege as mãos do contato com superfícies congeladas e do frio extremo.",
+      "Touca balaclava": "Protege a cabeça, o pescoço e o rosto da perda de calor em câmaras frias.",
+      "Bota térmica": "Protege os pés do frio do piso congelado da câmara frigorífica."
+    }
+  },
+  {
+    "id": "s30",
+    "title": "Atropelamento em Estacionamento Industrial",
+    "description": "Um veículo leve entrou em marcha ré em área de estacionamento compartilhada com pedestres. A área não tinha espelho de segurança na curva cega e o motorista não acionou a buzina. Um trabalhador que saía do refeitório foi atingido nas pernas e sofreu fratura exposta.",
+    "violated_nrs": ["NR-01", "NR-26", "NR-06"],
+    "missing_epis": ["Colete refletivo", "Bota de segurança"],
+    "explanations": {
+      "NR-01": "A NR-01 exige análise de risco e implantação de medidas preventivas em áreas compartilhadas entre veículos e pedestres.",
+      "NR-26": "A NR-26 exige sinalização visual, espelhos convexos e demarcação de faixas de pedestres em áreas de estacionamento.",
+      "NR-06": "A NR-06 exige colete refletivo para trabalhadores que circulam em áreas com tráfego de veículos.",
+      "Colete refletivo": "Torna o trabalhador visível para motoristas, especialmente em períodos de baixa visibilidade.",
+      "Bota de segurança": "Protege os pés e pernas de impactos e esmagamentos por veículos."
+    }
+  },
+  {
+    "id": "s31",
+    "title": "Fratura em Carregamento Manual",
+    "description": "Um auxiliar de depósito realizava o transporte manual de sacos de cimento de 50 kg sem treinamento em ergonomia e sem cinto lombar. Após meses de sobrecarga, sofreu hérnia de disco lombar L4-L5 que o incapacitou permanentemente. A empresa não possuía o PPRA e nunca avaliou os riscos ergonômicos.",
+    "violated_nrs": ["NR-17", "NR-09", "NR-06"],
+    "missing_epis": ["Cinto lombar", "Luva de raspa"],
+    "explanations": {
+      "NR-17": "A NR-17 exige que o peso máximo de cargas manipuladas manualmente não comprometa a saúde dos trabalhadores, prevendo mecanizações e pausas.",
+      "NR-09": "A NR-09 exige identificação e avaliação de riscos ergonômicos e implantação de medidas de controle como o uso de equipamentos mecânicos.",
+      "NR-06": "A NR-06 exige cinto lombar como EPI complementar para trabalhadores que realizam levantamento de cargas pesadas.",
+      "Cinto lombar": "Oferece suporte à coluna lombar durante o levantamento de cargas, reduzindo o risco de hérnia.",
+      "Luva de raspa": "Protege as mãos de cortes e abrasões durante o carregamento de sacos e materiais pesados."
+    }
+  },
+  {
+    "id": "s32",
+    "title": "Acidente em Linha de Alta Tensão",
+    "description": "Uma equipe de podadores de árvores trabalhava próxima a uma linha de transmissão de 13,8 kV sem Permissão de Trabalho (PT) e sem comunicação com a concessionária para desligamento. Um galho atingiu o cabo energizado e a corrente percorreu o corpo de dois trabalhadores, causando parada cardiorrespiratória em um deles.",
+    "violated_nrs": ["NR-10", "NR-06", "NR-01"],
+    "missing_epis": ["Luva dielétrica de borracha classe 2", "Capacete classe B", "Botina dielétrica", "Bastão detector de tensão"],
+    "explanations": {
+      "NR-10": "A NR-10 exige PT com análise de risco, distâncias de segurança e bloqueio da energia antes de qualquer trabalho próximo a redes elétricas.",
+      "NR-06": "A NR-06 exige EPIs dielétricos completos para trabalho em proximidade de instalações elétricas energizadas.",
+      "NR-01": "A NR-01 exige comunicação formal à concessionária e elaboração de procedimento específico para trabalho próximo a redes de alta tensão.",
+      "Luva dielétrica de borracha classe 2": "Protege contra choques de até 17.000 V em trabalhos próximos a linhas de média tensão.",
+      "Capacete classe B": "Protege a cabeça de impactos e de choques elétricos de até 20.000 V.",
+      "Botina dielétrica": "Isola o trabalhador do solo impedindo a descarga elétrica pelo corpo.",
+      "Bastão detector de tensão": "Verifica a ausência de tensão antes de qualquer intervenção próxima a condutores."
+    }
+  }
+]

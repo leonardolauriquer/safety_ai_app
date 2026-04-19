@@ -248,6 +248,9 @@ def initialize_crossword_state() -> None:
     if "show_solution" not in st.session_state:
         st.session_state.show_solution = False
 
+    if "crossword_hints_remaining" not in st.session_state:
+        st.session_state.crossword_hints_remaining = 3
+
     # Initialize button flags for Streamlit rerun management
     if 'crossword_check_clicked' not in st.session_state:
         st.session_state.crossword_check_clicked = False
@@ -293,10 +296,17 @@ def reset_crossword() -> None:
     st.session_state.crossword_clue_numbers = clue_numbers
     st.session_state.crossword_user_inputs = {f"cell_{r}_{c}": "" for r in range(grid_size) for c in range(grid_size)}
     st.session_state.crossword_feedback = {f"cell_{r}_{c}": None for r in range(grid_size) for c in range(grid_size)}
+    # Clear widget-level session-state keys so text_input widgets reset properly
+    for _r in range(grid_size):
+        for _c in range(grid_size):
+            _k = f"cell_{_r}_{_c}"
+            if _k in st.session_state:
+                del st.session_state[_k]
     st.session_state.crossword_started = True
     st.session_state.crossword_finished = False # Ensure game is not finished on new game
     st.session_state.crossword_message = ""
     st.session_state.show_solution = False # Ensure solution is hidden on new game
+    st.session_state.crossword_hints_remaining = 3
     logger.info("Palavras Cruzadas resetadas e iniciadas.")
     logger.info("Grid de Palavras Cruzadas Gerado (Solução) no reset:\n")
     for row in st.session_state.crossword_grid_state:
@@ -628,7 +638,33 @@ def render_crossword_game() -> None:
                 color: #17a2b8;
                 border: 1px solid #17a2b8;
             }}
-            /* NEW: Styles for confirmation dialog */
+            /* --- Responsive: narrow viewports --- */
+            @media (max-width: 768px) {{
+                div[data-testid="stColumn"].crossword-cell {{
+                    width: 28px !important;
+                    height: 28px !important;
+                }}
+                div[data-testid="stColumn"].crossword-cell .stTextInput > div > div > input {{
+                    font-size: 0.9em !important;
+                }}
+                .clues-section-wrapper > div {{
+                    flex-direction: column !important;
+                }}
+                div[data-testid="stHorizontalBlock"] {{
+                    flex-wrap: wrap !important;
+                }}
+            }}
+            @media (max-width: 480px) {{
+                div[data-testid="stColumn"].crossword-cell {{
+                    width: 22px !important;
+                    height: 22px !important;
+                }}
+                div[data-testid="stColumn"].crossword-cell .stTextInput > div > div > input {{
+                    font-size: 0.75em !important;
+                }}
+            }}
+
+            /* --- NEW: Styles for confirmation dialog --- */
             .confirmation-dialog {{
                 background-color: {THEME['colors'].get('background_secondary', '#1a1a1a')};
                 border-radius: 10px;
@@ -798,6 +834,31 @@ def render_crossword_game() -> None:
                 st.session_state.show_solution = not st.session_state.show_solution
                 st.rerun()
             
+        # Hint button - reveals one random unfilled correct letter (max 3 uses)
+        hints_left = st.session_state.get("crossword_hints_remaining", 3)
+        if not st.session_state.crossword_finished and hints_left > 0:
+            if st.button(f"💡 Dica ({hints_left} restantes)", key="crossword_hint_btn"):
+                grid_size = st.session_state.crossword_data.get("grid_size", 10)
+                import random as _random
+                candidates = []
+                for r in range(grid_size):
+                    for c in range(grid_size):
+                        key = f"cell_{r}_{c}"
+                        sol_char = st.session_state.crossword_grid_state[r][c]
+                        user_input = st.session_state.crossword_user_inputs.get(key, "").strip().upper()
+                        if sol_char not in ("#", "_") and user_input != sol_char:
+                            candidates.append((key, sol_char))
+                if candidates:
+                    chosen_key, chosen_char = _random.choice(candidates)
+                    st.session_state.crossword_user_inputs[chosen_key] = chosen_char
+                    # Also set the widget's own session-state key so text_input picks it up
+                    st.session_state[chosen_key] = chosen_char
+                    st.session_state.crossword_hints_remaining = hints_left - 1
+                    st.success(f"Dica revelada! (Letra colocada na posição {chosen_key.replace('cell_', '').replace('_', ',')})")
+                    st.rerun()
+                else:
+                    st.info("Não há células para revelar.")
+
         # Process clicks and rerun outside the button creation
         if st.session_state.crossword_check_clicked:
             check_crossword_answers()
