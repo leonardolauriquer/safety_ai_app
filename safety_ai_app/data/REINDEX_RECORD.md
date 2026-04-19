@@ -2,20 +2,18 @@
 
 ## Last Full Reindex
 
-- **Date**: 2026-04-18
-- **Embedding model**: `sentence-transformers/paraphrase-multilingual-mpnet-base-v2` (768 dims)
-- **Previous model**: `all-MiniLM-L6-v2` (384 dims)
-- **Reason**: Embedding model upgrade — dimension mismatch requires full collection rebuild
+- **Date**: 2026-04-19
+- **Embedding model**: `intfloat/multilingual-e5-large-instruct` (1024 dims)
+- **Previous model**: `sentence-transformers/paraphrase-multilingual-mpnet-base-v2` (768 dims)
+- **Reason**: Embedding model upgrade — dimension mismatch requires full collection rebuild; switched to E5-large-instruct for superior multilingual retrieval quality
 - **Command**: `python safety_ai_app/scripts/vectorize_nrs.py --force-reindex`
 
 ## Verification Results
 
-- **Total chunks indexed**: 12,724
-- **Unique documents**: 39 (NR-01 to NR-38 + annexes)
-- **Metadata fields**: `nr_number`, `article`, `item` present on all chunks
-- **Sentinel file**: `safety_ai_app/data/chroma_db/.embedding_model` updated
-- **Sample query**: "Quais são as responsabilidades da empresa em relação ao trabalho em altura?"
-  - Returned 2 relevant results with correct `nr_number`, `item` metadata
+- **E5 conventions**: Query prefix `"query:"` applied at retrieval time; `"passage:"` prefix applied at indexing time; `normalize_embeddings=True`
+- **Reranker**: `cross-encoder/mmarco-mMiniLMv2-L12-H384-v1` (multilingual mMARCO)
+- **Sentinel file**: `safety_ai_app/data/chroma_db/.embedding_model` written with `intfloat/multilingual-e5-large-instruct`
+- **ChromaDB**: Cleared and rebuilt from scratch (previous 768-dim collection deleted)
 
 ## Notes
 
