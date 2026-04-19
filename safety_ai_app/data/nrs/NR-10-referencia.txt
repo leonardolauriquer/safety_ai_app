@@ -1,0 +1,46 @@
+=== NR-10 - SEGURANÇA EM INSTALAÇÕES E SERVIÇOS EM ELETRICIDADE ===
+Portaria MTE nº 3.214/78 | Última atualização: Portaria SEPRT nº 915/2019
+
+1. OBJETIVO E CAMPO DE APLICAÇÃO
+1.1. Esta norma estabelece os requisitos e condições mínimas objetivando a implementação de medidas de controle e sistemas preventivos para garantir a segurança e saúde dos trabalhadores que interagem nas instalações elétricas.
+1.2. Aplica-se às fases de geração, transmissão, distribuição e consumo, incluindo as etapas de projeto, construção, montagem, operação, manutenção, reforma e ampliação.
+
+2. MEDIDAS DE CONTROLE DO RISCO ELÉTRICO
+2.1. Desenergização: desligar o circuito, bloquear e sinalizar antes de qualquer trabalho.
+2.2. Bloqueio e sinalização: uso de cadeados e etiquetas de bloqueio (lockout/tagout).
+2.3. Aterramento temporário: obrigatório em linhas de alta tensão.
+2.4. Verificação da ausência de tensão com equipamento adequado antes de iniciar o trabalho.
+
+3. SEGURANÇA EM INSTALAÇÕES ENERGIZADAS
+3.1. Trabalhar em instalações energizadas somente quando estritamente necessário.
+3.2. Exige autorização formal, profissional qualificado e EPI adequado.
+3.3. Zona controlada: distância mínima de 0,05 m a 3,60 m dependendo da tensão (BT a AT).
+3.4. Zona de risco: distância inferior ao limite estabelecido para cada nível de tensão.
+
+4. QUALIFICAÇÃO E HABILITAÇÃO
+4.1. Trabalhador qualificado: treinamento específico em curso NR-10 (carga horária mínima de 40h).
+4.2. Trabalhador habilitado: qualificação + autorização formal da empresa.
+4.3. Trabalhador autorizado: habilitado com autorização por escrito para executar o serviço.
+4.4. Requalificação: a cada 2 anos (em BT) ou a cada 2 anos (em AT).
+
+5. EQUIPAMENTOS DE PROTEÇÃO INDIVIDUAL
+5.1. Os EPIs para trabalho em eletricidade incluem:
+   - Luvas de borracha isolantes (classe 0 a 4 conforme tensão);
+   - Capacetes com propriedade dielétrica;
+   - Óculos de proteção;
+   - Calçados de segurança dielétricos;
+   - Vestimentas de proteção contra arco elétrico (CAL específica).
+
+6. EQUIPAMENTOS DE PROTEÇÃO COLETIVA (EPC)
+6.1. Ferramentas isoladas, dispositivos de bloqueio, barreiras, sinalizações.
+6.2. Proibição de instalações provisórias sem proteção adequada.
+
+7. PROJETOS, INSTALAÇÕES E MANUTENÇÃO
+7.1. Toda instalação elétrica deve ter projeto elaborado por profissional legalmente habilitado.
+7.2. Manutenção preventiva deve ser realizada conforme cronograma e documentada.
+7.3. Prontuário da instalação: documentação técnica que deve ser mantida atualizada.
+
+8. TRABALHO EM ALTA TENSÃO (SEP)
+8.1. Requer treinamento específico SEP (Sistema Elétrico de Potência), com carga horária mínima de 40h adicionais.
+8.2. Exige Autorização Especial de Trabalho (AET/PT).
+8.3. Procedimentos de trabalho documentados e seguidos rigorosamente.

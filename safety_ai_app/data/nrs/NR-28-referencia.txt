@@ -1,0 +1,34 @@
+=== NR-28 - FISCALIZAÇÃO E PENALIDADES ===
+Portaria MTE nº 3.214/78 | Última atualização: Portaria SEPRT nº 915/2019
+
+1. CAMPO DE APLICAÇÃO
+1.1. Esta norma regulamenta as penalidades para as infrações às disposições das Normas Regulamentadoras de Segurança e Saúde no Trabalho.
+
+2. COMPETÊNCIA DE FISCALIZAÇÃO
+2.1. A fiscalização das NRs é exercida pelos Auditores Fiscais do Trabalho (AFT).
+2.2. Os AFTs têm poder de acesso irrestrito ao estabelecimento.
+2.3. Podem notificar, autuar, embargar e interditar, conforme a NR-3.
+
+3. AUTO DE INFRAÇÃO
+3.1. As infrações às NRs são registradas em Auto de Infração.
+3.2. O empregador tem prazo para apresentar defesa administrativa.
+3.3. As multas são calculadas com base na Unidade de Referência Previdenciária (UFIR/RS) ou outro índice atualizado.
+
+4. GRADUAÇÃO DAS MULTAS
+4.1. As multas são graduadas de acordo com:
+   - Natureza da infração (leve, grave, gravíssima);
+   - Número de empregados afetados;
+   - Reincidência.
+4.2. Infração leve: menor potencial de dano.
+4.3. Infração grave: descumprimento de normas com risco imediato à saúde e segurança.
+4.4. Infração gravíssima: descumprimento resultando em óbito ou lesão grave.
+
+5. TABELA DE MULTAS DA NR-28
+5.1. Conforme Tabela I do Anexo da NR-28, as multas variam de valores mínimos a máximos.
+5.2. Cada NR tem seus próprios grupamentos de infrações e valores de multa.
+5.3. Reincidência: dobro do valor aplicado na primeira infração.
+
+6. RECURSOS
+6.1. Recurso de 1ª instância: Seção de Multas e Recursos (SEMUR) da Superintendência Regional do Trabalho.
+6.2. Recurso de 2ª instância: Conselho de Recursos do Trabalho (CRTR).
+6.3. Prazo para recurso administrativo: 10 dias da ciência da decisão de 1ª instância.

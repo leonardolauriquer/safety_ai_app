@@ -1,7 +1,6 @@
 import os
 import sys
 
-# Adiciona o diretório 'src' ao sys.path para que 'safety_ai_app' seja importável
 script_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.abspath(os.path.join(script_dir, '..'))
 src_path = os.path.join(project_root, 'src')
@@ -10,6 +9,7 @@ if src_path not in sys.path:
 
 import logging
 import argparse
+import re
 
 from safety_ai_app.google_drive_integrator import (
     get_service_account_drive_integrator_instance,
@@ -23,17 +23,22 @@ logger = logging.getLogger(__name__)
 
 CHROMADB_PERSIST_DIRECTORY = os.path.join(project_root, "data", "chroma_db")
 COLLECTION_NAME = "nrs_collection"
+LOCAL_NRS_DIR = os.path.join(project_root, "data", "nrs")
 
-# Modelo de embeddings multilíngue — 1024 dimensões, SOTA para português (E5-large-instruct)
 EMBEDDING_MODEL_NAME = 'intfloat/multilingual-e5-large-instruct'
 
-# Arquivo sentinela que registra o modelo de embeddings usado na última indexação.
-# Se o modelo mudar, uma re-indexação completa é disparada automaticamente.
 _EMBEDDING_SENTINEL_FILE = os.path.join(CHROMADB_PERSIST_DIRECTORY, ".embedding_model")
+
+SUPPORTED_LOCAL_TYPES = {
+    ".pdf": "application/pdf",
+    ".txt": "text/plain",
+    ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+}
+
+SKIP_LOCAL_FILES = {"nr_35_chunks.json"}
 
 
 def _read_indexed_model() -> str:
-    """Return the embedding model name recorded in the sentinel file, or empty string."""
     try:
         with open(_EMBEDDING_SENTINEL_FILE, "r", encoding="utf-8") as f:
             return f.read().strip()
@@ -42,30 +47,17 @@ def _read_indexed_model() -> str:
 
 
 def _write_indexed_model(model_name: str) -> None:
-    """Persist the current embedding model name to the sentinel file."""
     os.makedirs(CHROMADB_PERSIST_DIRECTORY, exist_ok=True)
     with open(_EMBEDDING_SENTINEL_FILE, "w", encoding="utf-8") as f:
         f.write(model_name)
 
 
 def _needs_reindex() -> bool:
-    """
-    Return True if a full collection reindex is required.
-
-    A reindex is needed when:
-    - The sentinel file is missing (unknown state — may be a post-upgrade first run).
-    - The sentinel records a different embedding model than the current one (dimension mismatch).
-
-    Treating a missing sentinel as "unknown → reindex" is safe: recreating an empty
-    or legacy collection is cheap, while a dimension mismatch causes runtime failures.
-    """
     indexed = _read_indexed_model()
     if not indexed:
         logger.warning(
             "MIGRATION GUARD: Arquivo sentinela de modelo não encontrado. "
-            "Estado do modelo de embeddings é desconhecido — pode ser uma primeira "
-            "execução pós-upgrade. Forçando re-indexação completa para garantir "
-            f"compatibilidade com o modelo atual '{EMBEDDING_MODEL_NAME}'."
+            "Estado do modelo de embeddings é desconhecido — forçando re-indexação completa."
         )
         return True
     if indexed != EMBEDDING_MODEL_NAME:
@@ -78,108 +70,222 @@ def _needs_reindex() -> bool:
     return False
 
 
-def main(force_reindex: bool = False):
+def _infer_nr_metadata(filename: str) -> dict:
     """
-    Inicia o processo de vetorização e indexação das NRs e outros documentos
-    da pasta do Google Drive 'SafetyAI - Conhecimento Base/Base de dados IA' no ChromaDB.
+    Infer NR number and document type from filename.
 
-    Pipeline:
-    - Modelo de embeddings multilíngue (multilingual-e5-large-instruct, 1024 dims)
-    - Chunking estrutural para NRs (chunk_size=1000, overlap=200)
-    - Metadados enriquecidos: nr_number, article, item extraídos por parsing estrutural
+    Metadata fields produced:
+      - nr_number  : formatted as "NR-X" (e.g. "NR-35") or "" for guides/portarias
+      - doc_type   : "norma_regulamentadora" | "guia_tecnico" | "portaria"
+      - source     : "local_nrs_dir"
+      - source_file: original filename
+      - section    : inferred section label (e.g. "NR-35" or guide name)
+      - page       : "1" (text files have no real page; PDFs set per-page later)
+    """
+    base = os.path.splitext(filename)[0].upper()
+    nr_match = re.search(r'NR[-_\s]?(\d{1,2})', base, re.IGNORECASE)
+    if nr_match:
+        nr_num = nr_match.group(1)
+        nr_number = f"NR-{nr_num}"
+        doc_type = "norma_regulamentadora"
+        section = nr_number
+    else:
+        nr_number = ""
+        doc_type = "guia_tecnico"
+        section = base.split("-")[0].strip()
+        if "PORTARIA" in base:
+            doc_type = "portaria"
+
+    if any(kw in base for kw in ["PGR", "PCMSO", "LTCAT", "AET", "GUIA"]):
+        doc_type = "guia_tecnico"
+
+    return {
+        "nr_number": nr_number,
+        "doc_type": doc_type,
+        "source": "local_nrs_dir",
+        "source_file": filename,
+        "section": section,
+        "page": "1",
+    }
+
+
+def index_local_nrs(qa: NRQuestionAnswering, force: bool = False) -> int:
+    """
+    Index all supported files in LOCAL_NRS_DIR into ChromaDB.
+
+    Returns the number of files newly indexed.
+    """
+    if not os.path.isdir(LOCAL_NRS_DIR):
+        logger.warning(f"Diretório de NRs locais não encontrado: {LOCAL_NRS_DIR}")
+        return 0
+
+    files = sorted(os.listdir(LOCAL_NRS_DIR))
+    indexed = 0
+    skipped = 0
+    errors = 0
+
+    for fname in files:
+        if fname in SKIP_LOCAL_FILES:
+            continue
+        ext = os.path.splitext(fname)[1].lower()
+        if ext not in SUPPORTED_LOCAL_TYPES:
+            continue
+
+        filepath = os.path.join(LOCAL_NRS_DIR, fname)
+        mime_type = SUPPORTED_LOCAL_TYPES[ext]
+        meta = _infer_nr_metadata(fname)
+
+        if not force:
+            try:
+                existing = qa.vector_db._collection.get(
+                    where={"source_file": fname},
+                    include=["metadatas"],
+                )
+                if existing and existing.get("ids"):
+                    logger.info(
+                        f"SKIP '{fname}' — já indexado ({len(existing['ids'])} chunks). "
+                        "Use --force-reindex para re-indexar."
+                    )
+                    skipped += 1
+                    continue
+            except Exception:
+                pass
+
+        try:
+            logger.info(f"Indexando arquivo local: {fname}")
+            qa.process_document_to_chroma(
+                file_path=filepath,
+                document_name=fname,
+                source="NRs Locais",
+                file_type=mime_type,
+                additional_metadata=meta,
+            )
+            indexed += 1
+        except Exception as e:
+            logger.error(f"ERRO ao indexar '{fname}': {e}", exc_info=True)
+            errors += 1
+
+    logger.info(
+        f"Arquivos locais — Indexados: {indexed}, Pulados: {skipped}, Erros: {errors}"
+    )
+    return indexed
+
+
+def main(force_reindex: bool = False, local_only: bool = False):
+    """
+    Pipeline completo de vetorização e indexação de NRs.
+
+    Etapas:
+      1. Indexa todos os arquivos locais em data/nrs/ (NRs 1-38 + guias).
+      2. Sincroniza documentos do Google Drive (se --local-only não estiver ativo).
 
     Args:
-        force_reindex: Se True, deleta e recria a coleção nrs_collection no ChromaDB
-                       e re-indexa todos os documentos do Drive.
-                       OBRIGATÓRIO ao trocar o modelo de embeddings.
+        force_reindex: Se True, deleta e recria a coleção ChromaDB antes de indexar.
+        local_only:    Se True, pula a sincronização com Google Drive.
     """
-    logger.info("Iniciando processo de vetorização e indexação dos documentos do Google Drive...")
+    logger.info("Iniciando pipeline de vetorização e indexação das NRs...")
     logger.info(f"Modelo de embeddings: {EMBEDDING_MODEL_NAME}")
 
-    # Auto-detect model change and force reindex when needed
     if not force_reindex and _needs_reindex():
         force_reindex = True
         logger.warning("Re-indexação forçada automaticamente por mudança de modelo de embeddings.")
 
     qa_system = NRQuestionAnswering(chroma_persist_directory=CHROMADB_PERSIST_DIRECTORY)
     if not qa_system:
-        logger.critical("Falha ao inicializar NRQuestionAnswering. Encerrando o processo de vetorização.")
-        return
-
-    drive_integrator = get_service_account_drive_integrator_instance()
-    if not drive_integrator:
-        logger.critical("Falha ao inicializar GoogleDriveIntegrator. Verifique as credenciais da conta de serviço.")
-        return
-
-    ai_chat_sync_folder_id = drive_integrator._get_ai_chat_sync_folder_id()
-    if not ai_chat_sync_folder_id:
-        logger.critical(
-            f"Pasta '{SAFETY_AI_ROOT_FOLDER_NAME}/{AI_CHAT_SYNC_SUBFOLDER_NAME}' não encontrada no Google Drive."
-        )
-        logger.critical("Certifique-se de que a estrutura de pastas está correta e que a conta de serviço tem acesso.")
+        logger.critical("Falha ao inicializar NRQuestionAnswering. Encerrando.")
         return
 
     if force_reindex:
         logger.info(
-            "Opção --force-reindex ativada. Deletando e recriando a coleção "
-            f"'{COLLECTION_NAME}' no ChromaDB para garantir compatibilidade de dimensão..."
+            f"--force-reindex ativo: deletando e recriando a coleção '{COLLECTION_NAME}'..."
         )
         try:
-            # Full collection delete + recreate: required when embedding dimension changes.
-            # clear_docs_by_source_type() only removes by filter and does not reset dimension.
             qa_system.clear_chroma_collection()
-            logger.info(f"Coleção '{COLLECTION_NAME}' deletada e recriada com sucesso.")
+            logger.info(f"Coleção '{COLLECTION_NAME}' recriada com sucesso.")
         except Exception as e:
             logger.error(f"ERRO ao recriar a coleção ChromaDB: {e}", exc_info=True)
-            logger.warning(
-                "Tentando continuar, mas pode haver inconsistências se a coleção não foi recriada corretamente."
-            )
 
+    # ── Etapa 1: arquivos locais ──────────────────────────────────────────────
+    initial_count = qa_system.vector_db._collection.count()
     logger.info(
-        f"Iniciando sincronização incremental da pasta '{AI_CHAT_SYNC_SUBFOLDER_NAME}' "
-        "do Google Drive para o ChromaDB."
+        f"[Etapa 1] Indexando arquivos locais em '{LOCAL_NRS_DIR}' "
+        f"(chunks antes: {initial_count})..."
+    )
+    local_indexed = index_local_nrs(qa_system, force=force_reindex)
+    after_local = qa_system.vector_db._collection.count()
+    logger.info(
+        f"[Etapa 1] Concluída. Novos chunks: {after_local - initial_count} "
+        f"(total: {after_local})"
     )
 
-    processed_count = drive_integrator.synchronize_app_central_library_to_chroma(
-        qa_system=qa_system,
-        progress_callback=None,
+    # ── Etapa 2: Google Drive ─────────────────────────────────────────────────
+    drive_count = 0
+    if not local_only:
+        logger.info("[Etapa 2] Sincronizando documentos do Google Drive...")
+        drive_integrator = get_service_account_drive_integrator_instance()
+        if not drive_integrator:
+            logger.warning(
+                "GoogleDriveIntegrator indisponível — pulando sincronização com Drive."
+            )
+        else:
+            ai_chat_sync_folder_id = drive_integrator._get_ai_chat_sync_folder_id()
+            if not ai_chat_sync_folder_id:
+                logger.warning(
+                    f"Pasta '{SAFETY_AI_ROOT_FOLDER_NAME}/{AI_CHAT_SYNC_SUBFOLDER_NAME}' "
+                    "não encontrada no Drive — pulando sincronização."
+                )
+            else:
+                drive_count = drive_integrator.synchronize_app_central_library_to_chroma(
+                    qa_system=qa_system,
+                    progress_callback=None,
+                )
+                logger.info(
+                    f"[Etapa 2] Concluída. Drive: {drive_count} documentos processados."
+                )
+    else:
+        logger.info("[Etapa 2] Pulada (--local-only ativo).")
+
+    final_count = qa_system.vector_db._collection.count()
+    logger.info(
+        f"\n{'='*60}\n"
+        f"RESUMO FINAL:\n"
+        f"  Arquivos locais indexados: {local_indexed}\n"
+        f"  Documentos do Drive processados: {drive_count}\n"
+        f"  Chunks totais no ChromaDB: {final_count}\n"
+        f"{'='*60}"
     )
 
-    logger.info(f"Sincronização concluída. {processed_count} novos/atualizados documentos processados.")
-
-    # Record the current model after successful indexing
     _write_indexed_model(EMBEDDING_MODEL_NAME)
     logger.info(f"Sentinela de modelo atualizado: '{EMBEDDING_MODEL_NAME}'")
 
-    # Demonstration query
+    # Demonstração de busca
     logger.info("\n--- Demonstração de Busca ---")
-    query_text = "Quais são as responsabilidades da empresa em relação ao trabalho em altura?"
-    logger.info(f"Buscando por: '{query_text}'")
+    query_text = "Quais são os requisitos de segurança para trabalho em altura?"
+    logger.info(f"Query: '{query_text}'")
     try:
-        docs = qa_system.vector_db.similarity_search(query_text, k=2)
-        if docs:
-            for i, doc in enumerate(docs):
-                meta = doc.metadata
-                logger.info(f"\nResultado {i+1}:")
-                logger.info(f"  NR: {meta.get('nr_number', 'N/A')}, Item: {meta.get('item', 'N/A')}, Artigo: {meta.get('article', 'N/A')}")
-                logger.info(f"  Documento: {meta.get('document_name', 'N/A')}")
-                logger.info(f"  Conteúdo: {doc.page_content[:300]}...")
-        else:
-            logger.info("Nenhum resultado encontrado para a busca de demonstração.")
+        docs = qa_system.vector_db.similarity_search(query_text, k=3)
+        for i, doc in enumerate(docs):
+            meta = doc.metadata
+            logger.info(
+                f"Resultado {i+1}: NR={meta.get('nr_number','?')} | "
+                f"section={meta.get('section','?')} | "
+                f"doc={meta.get('document_name','?')[:40]} | "
+                f"texto: {doc.page_content[:120]}..."
+            )
     except Exception as e:
-        logger.error(f"ERRO durante a demonstração de busca: {e}", exc_info=True)
+        logger.error(f"ERRO na demonstração de busca: {e}", exc_info=True)
 
-    logger.info("Processo de vetorização e indexação concluído!")
+    logger.info("Pipeline de vetorização concluído!")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description=(
-            "Vetoriza e indexa NRs e outros documentos do Google Drive no ChromaDB.\n"
+            "Pipeline completo de vetorização das NRs Brasileiras no ChromaDB.\n"
             f"Modelo: {EMBEDDING_MODEL_NAME} (multilíngue, 1024 dims).\n\n"
-            "IMPORTANTE: Use --force-reindex ao trocar o modelo de embeddings.\n"
-            "O script detecta automaticamente mudanças de modelo via arquivo sentinela "
-            f"em {_EMBEDDING_SENTINEL_FILE}."
+            "Etapa 1: indexa todos os arquivos em data/nrs/ (NRs 1-38 + guias).\n"
+            "Etapa 2: sincroniza documentos do Google Drive.\n\n"
+            "IMPORTANTE: Use --force-reindex ao trocar o modelo de embeddings."
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
@@ -187,12 +293,15 @@ if __name__ == "__main__":
         "--force-reindex",
         action="store_true",
         help=(
-            "Deleta e recria a coleção nrs_collection no ChromaDB, garantindo compatibilidade "
-            "de dimensão, e re-indexa todos os documentos do Drive com o pipeline atualizado "
-            "(modelo multilíngue 768 dims + chunking estrutural NR). "
-            "Obrigatório após troca de modelo de embeddings. "
-            "Também é acionado automaticamente se o script detectar mudança de modelo."
+            "Deleta e recria a coleção nrs_collection no ChromaDB e re-indexa "
+            "todos os documentos (locais + Drive). "
+            "Obrigatório após troca de modelo de embeddings."
         ),
     )
+    parser.add_argument(
+        "--local-only",
+        action="store_true",
+        help="Indexa apenas os arquivos locais em data/nrs/, sem sincronizar com o Drive.",
+    )
     args = parser.parse_args()
-    main(force_reindex=args.force_reindex)
+    main(force_reindex=args.force_reindex, local_only=args.local_only)

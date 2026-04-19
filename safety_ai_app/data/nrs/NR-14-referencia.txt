@@ -1,0 +1,29 @@
+=== NR-14 - FORNOS ===
+Portaria MTE nº 3.214/78
+
+1. CAMPO DE APLICAÇÃO
+1.1. Esta norma estabelece requisitos mínimos de segurança para instalação e utilização de fornos industriais.
+
+2. DEFINIÇÃO
+2.1. Forno: equipamento utilizado para aquecimento de materiais a temperaturas elevadas, utilizado em processos industriais (siderurgia, cerâmica, vidro, fundição, tratamento térmico, etc.).
+
+3. REQUISITOS GERAIS
+3.1. Os fornos devem ser instalados em locais que proporcionem condições seguras de trabalho para os operadores.
+3.2. Devem ser tomadas as medidas necessárias para a redução da exposição ao calor radiante.
+3.3. Sistemas de ventilação e exaustão adequados devem ser instalados.
+
+4. PROTEÇÃO CONTRA CALOR E RADIAÇÃO
+4.1. Os trabalhadores próximos a fornos devem ter proteção adequada contra calor irradiante.
+4.2. EPI específico: aventais refletivos, luvas de proteção térmica, máscaras de soldador ou capacetes com viseiras reflexivas.
+4.3. Pausas programadas e locais frescos para recuperação dos trabalhadores.
+4.4. O IBUTG (Índice de Bulbo Úmido Termômetro de Globo) deve ser monitorado e respeitar os limites da NR-15.
+
+5. PROCEDIMENTOS DE SEGURANÇA
+5.1. Procedimentos escritos para operação, manutenção e emergência.
+5.2. Pessoal treinado para reconhecer sintomas de estresse térmico.
+5.3. Controles de engenharia: blindagem térmica, isolamento, resfriamento por água.
+
+6. DISPOSITIVOS DE SEGURANÇA
+6.1. Sistemas de controle de temperatura com alarmes.
+6.2. Dispositivos de parada de emergência.
+6.3. Purga e ventilação de fornos a gás antes da ignição (prevenir explosões).

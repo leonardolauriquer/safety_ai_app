@@ -1,0 +1,33 @@
+=== NR-26 - SINALIZAÇÃO DE SEGURANÇA ===
+Portaria MTE nº 3.214/78 | Última atualização: Portaria SEPRT nº 871/2015
+
+1. CAMPO DE APLICAÇÃO
+1.1. Esta norma estabelece as cores a serem utilizadas como sinalização de segurança nos locais de trabalho para identificar e advertir sobre riscos.
+
+2. CORES PADRÃO DE SEGURANÇA
+2.1. Vermelho: proibição; combate a incêndio; sinalização de extintores, alarmes, hidrantes, interruptores de emergência.
+2.2. Laranja: partes de máquinas e equipamentos que podem causar dano ao trabalhador; interior de painéis elétricos.
+2.3. Amarelo: atenção; cuidado; sinalização de pisos, escadas, parapeitos, partes baixas de andaimes.
+2.4. Verde: segurança; saídas de emergência; caixas de primeiros socorros; sinais de permissão.
+2.5. Azul: informação; obrigatoriedade de uso de EPI; instrução.
+2.6. Branco: limpeza; organização; sinais de trânsito interno.
+2.7. Preto: utilizado para contraste com o branco; demarcação de áreas de armazenagem.
+2.8. Roxo/Lilás: radiações ionizantes (câmaras de raios X, materiais radioativos).
+
+3. SINALIZAÇÃO DE SEGURANÇA
+3.1. A sinalização deve ser clara, objetiva e visível.
+3.2. Pictogramas e sinais conforme as normas ABNT ISO 7010 e ISO 3864.
+3.3. Tipos de sinais: proibição (círculo com barra vermelha), obrigação (círculo azul), advertência (triângulo amarelo), emergência (verde).
+
+4. ROTULAGEM DE SUBSTÂNCIAS PERIGOSAS
+4.1. Substâncias químicas perigosas devem ter rótulos com:
+   - Nome do produto;
+   - Pictograma de risco (GHS);
+   - Palavra de advertência (Perigo ou Atenção);
+   - Frases de perigo (H) e precaução (P);
+   - Informações do fabricante/importador.
+4.2. Fichas de Informações de Segurança de Produtos Químicos (FISPQ) devem estar disponíveis.
+
+5. MANUTENÇÃO DA SINALIZAÇÃO
+5.1. A sinalização deve ser mantida em bom estado de conservação e legibilidade.
+5.2. Sinais danificados ou ilegíveis devem ser substituídos imediatamente.

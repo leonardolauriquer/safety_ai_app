@@ -1,0 +1,35 @@
+=== NR-4 - SERVIÇOS ESPECIALIZADOS EM SEGURANÇA E EM MEDICINA DO TRABALHO - SESMT ===
+Portaria MTE nº 3.214/78 | Última atualização: Portaria MTE nº 1.007/2010
+
+1. OBRIGATORIEDADE
+1.1. As empresas privadas e públicas, órgãos governamentais, que possuam empregados regidos pela CLT manterão, obrigatoriamente, Serviços Especializados em Segurança e Medicina do Trabalho (SESMT).
+1.2. O SESMT tem a finalidade de promover a saúde e proteger a integridade do trabalhador no local de trabalho.
+
+2. COMPOSIÇÃO DO SESMT
+O SESMT pode ser composto pelos seguintes profissionais:
+- Médico do Trabalho (MT)
+- Engenheiro de Segurança do Trabalho (EST)
+- Enfermeiro do Trabalho (ET)
+- Auxiliar/Técnico de Enfermagem do Trabalho (TET)
+- Técnico de Segurança do Trabalho (TST)
+
+3. DIMENSIONAMENTO
+3.1. O dimensionamento do SESMT é feito com base no grau de risco da atividade principal da empresa e no número de empregados.
+3.2. Graus de risco: 1 (mínimo), 2, 3, 4 (máximo), conforme Quadro I da NR-4.
+3.3. Quadro II da NR-4 estabelece o número de profissionais conforme o porte e o risco.
+3.4. Empresas com até 50 empregados e grau de risco 1 ou 2 ficam desobrigadas de manter SESMT, podendo contratar serviço externo.
+
+4. ATRIBUIÇÕES DO SESMT
+4.1. Aplicar os conhecimentos de engenharia de segurança e de medicina do trabalho ao ambiente de trabalho e a todos os seus componentes.
+4.2. Determinar, quando esgotados todos os recursos técnicos que eliminem o risco, a adoção de medidas de proteção coletiva ou individual.
+4.3. Colaborar nos projetos e na implantação de novas instalações físicas e tecnológicas da empresa.
+4.4. Responsabilizar-se tecnicamente pela orientação quanto ao cumprimento das NRs.
+4.5. Manter permanente relacionamento com a CIPA.
+4.6. Promover treinamentos específicos.
+
+5. DEDICAÇÃO E CARGA HORÁRIA
+5.1. Os profissionais do SESMT podem ser empregados da empresa ou prestadores de serviço externo.
+5.2. A carga horária varia de 3h a 6h por semana (parcial) a 8h diárias (exclusivos), conforme o Quadro II.
+
+6. SERVIÇO ESPECIALIZADO EXTERNO
+6.1. Empresas que não atingem o número mínimo de empregados para SESMT próprio devem contratar serviço especializado externo ou cooperar com o SESMT de outras empresas.

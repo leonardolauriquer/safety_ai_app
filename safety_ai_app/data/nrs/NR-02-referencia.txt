@@ -1,0 +1,5 @@
+=== NR-2 - INSPEÇÃO PRÉVIA (REVOGADA) ===
+A NR-2 foi revogada pela Portaria MTE nº 99, de 19 de outubro de 2012.
+Esta norma estabelecia a obrigatoriedade de inspeção prévia das instalações das empresas antes do início de suas atividades, visando assegurar condições adequadas de segurança e medicina do trabalho.
+Com a revogação, as empresas passaram a declarar o cumprimento das normas no próprio Registro no CNPJ, sem necessidade de vistoria prévia.
+Para fins históricos: a inspeção prévia era realizada pelo Ministério do Trabalho antes da empresa iniciar suas atividades.

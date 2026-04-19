@@ -1,0 +1,28 @@
+=== NR-34 - CONDIÇÕES E MEIO AMBIENTE DE TRABALHO NA INDÚSTRIA DA CONSTRUÇÃO, REPARAÇÃO E DESMONTE NAVAL ===
+Portaria MTE nº 3.214/78 | Última atualização: Portaria SIT nº 198/2011
+
+1. CAMPO DE APLICAÇÃO
+1.1. Esta norma estabelece os requisitos mínimos de segurança e saúde para os trabalhadores da indústria naval: construção, reforma, manutenção, reparo e desmonte de embarcações.
+
+2. GERENCIAMENTO DE RISCOS
+2.1. PGR obrigatório específico para a construção naval.
+2.2. Análise de riscos em espaços confinados (porões, tanques de navios).
+2.3. Riscos específicos: trabalho em altura, espaços confinados, trabalho em ambientes com baixo nível de oxigênio, contato com amianto em reparos de navios antigos.
+
+3. TRABALHO EM ESPAÇO CONFINADO
+3.1. Aplicam-se os requisitos da NR-33 para trabalho em tanques, porões e estruturas fechadas de navios.
+3.2. Medição de atmosfera antes da entrada.
+3.3. Supervisor, Vigia e Entrante com treinamentos específicos obrigatórios.
+
+4. TRABALHO EM ALTURA
+4.1. Trabalhos em docas, convés, estruturas e andaimes devem atender à NR-35.
+4.2. Andaimes e plataformas de trabalho com guarda-corpo e rodapé.
+
+5. PREVENÇÃO CONTRA INCÊNDIO
+5.1. Brigada de incêndio treinada e equipada, dada a alta presença de inflamáveis e gás em embarcações.
+5.2. Controle de trabalho a quente (solda e corte) em embarcações com tanques de combustível.
+
+6. AMIANTO/ASBESTO
+6.1. Para navios construídos antes de 1990, pode haver presença de amianto nas estruturas.
+6.2. Diagnóstico obrigatório antes de qualquer reforma ou demolição.
+6.3. Remoção por empresa especializada com trabalhadores treinados e EPI específico (P3).

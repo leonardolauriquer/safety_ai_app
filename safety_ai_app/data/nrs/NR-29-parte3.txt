@@ -1,0 +1,421 @@
+=== NR-29 - NORMA REGULAMENTADORA DE SEGURANÇA E SAÚDE NO TRABALHO PORTUÁRIO ===
+Fonte: https://www.gov.br/trabalho-e-emprego/pt-br/acesso-a-informacao/participacao-social/conselhos-e-orgaos-colegiados/comissao-tripartite-partitaria-permanente/normas-regulamentadora/normas-regulamentadoras-vigentes/norma-regulamentadora-no-29-nr-29
+============================================================
+29.6.3.6 - Cabe ao trabalhador: 
+a) habilitar-se por meio de cursos específicos, oferec idos pelo OGMO, titular de instalação portuária de uso privativo ou 
+empregador, para operações com carga perigosa; 
+b) comunicar ao responsável pela operação as irregularidades observadas com as cargas perigosas; 
+c) participar da elaboração e execução do PCE e PAM; 
+d) zelar pela integridade dos equipamentos fornecidos e instalações; 
+e) fazer uso adequado dos EPI e EPC fornecidos. 
+29.6.4 – Nas operções com cargas perigosas devem ser obedecidas as seguintes medidas gerais de segurança: 
+a) somente devem ser manipuladas, armazenadas e estiva das as substâncias perigosas que estiverem embalada s, sinalizadas e 
+rotuladas de acordo com o código marítimo internacional de cargas perigosas (IMDG); 
+b) as cargas relacionadas abaixo devem permanecer o te mpo mínimo necessário próximas às áreas de operação de carga e 
+descarga: 
+I. explosivos em geral; 
+II. gases inflamáveis ( classe 2.1 ) e venenosos ( classe 2.3 ); 
+III. radioativos; 
+IV. chumbo tetraetila; 
+V. poliestireno expansível; 
+VI. perclorato de amônia, e 
+VII. mercadorias perigosas acondicionadas em contêineres refrigerados; 
+c) as cargas perigosas devem ser submetidas a cuidados especiais, sendo observadas, dentre outras, as pro vidências para 
+adoção das medidas constantes das fichas de emergên cias a que se refere o subitem 29.6.3.1.1 línea “b” desta NR, 
+inclusive aquelas cujas embalagens estejam avariadas ou que estejam armazenadas próximas a cargas nessas condições; 
+d) é vedado lançar na água, direta ou indiretamente, p oluentes resultantes dos serviços de limpeza e trat o de vazamento de 
+carga perigosa 
+29.6.4.1 - Nas operações com explosivos - Classe 1: 
+a) limitar a permanência de explosivos nos portos ao tempo mínimo necessário; 
+b) evitar a exposição dos explosivos aos raios solares; 
+c) manipular em separado as distintas divisões de explosivos, salvo nos casos de comprovada compatibilidade; 
+d) adotar medidas de proteção contra incêndio e explosões no local de operação, incluindo proibição de fu mar e o controle de 
+qualquer fonte de ignição ou de calor; 
+e) impedir o abastecimento de combustíveis na embarcação, durante essas operações; 
+f) proibir a operação com explosivos sob condições atmosféricas adversas à carga; 
+g) utilizar somente aparelhos e equipamentos cujas especificações sejam adequadas ao risco; 
+h) estabelecer zona de silêncio na área de manipulação - proibição do uso de transmissor de rádio, telefo ne celular e radar - 
+exceto por permissão de pessoa responsável; 
+i) proibir a realização de trabalhos de reparos nas em barcações atracadas, carregadas com explosivos ou e m outras, a menos 
+de 40 m (quarenta metros) dessa embarcação; e 
+j) determinar que os explosivos sejam as últimas cargas a embarcar e as primeiras a desembarcar . 
+29.6.4.2 - Operações com gases e líquidos inflamáveis - Classes 2 e 3. 
+a) adotar medidas de proteção contra incêndio e explos ões, incluindo especialmente a proibição de fumar, o controle de 
+qualquer fonte de ignição e de calor, os aterrament os elétricos necessários, bem como a utilização dos equipamentos 
+elétricos adequados à área classificada; 
+b) depositar os recipientes de gases em lugares arejados e protegidos dos raios solares; 
+c) utilizar os capacetes protetores das válvulas dos c ilindros durante, a movimentação afim de protegê-la s contra impacto ou 
+tensão; 
+d) prevenir impactos e quedas dos recipientes nas plataformas do cais, nos armazéns e porões; 
+e) segregar, em todas as etapas das operações, os gase s, líquidos inflamáveis e tóxicos dos produtos alim entícios e das 
+demais classes incompatíveis; 
+f) observar as seguintes recomendações, nas operações com gases e líquidos inflamáveis, sem prejuízo do d isposto na NR 16 
+atividades e operações perigosas e NR 20 líquidos combustíveis e inflamáveis: 
+I. isolar a área a partir do ponto de descarga durante as operações; 
+II. manter a fiação e terminais elétricos com isolament o perfeito e com os respectivos tampões, inclusive os instalados 
+nos guindastes; 
+ 
+ 
+14 
+ 
+III. manter os guindastes totalmente travados, tanto no solo como nas superestruturas; 
+IV. realizar inspeções visuais e testes periódicos nos mangotes, mantendoas em boas condições de uso operacional; 
+V. fiscalizar permanentemente a operação, paralisando-a sob qualquer condição de anormalidade operacional; 
+VI. alojar, nos abrigos de material de combate a incêndio, os equipamentos necessários ao controle de emergências; 
+VII. instalar na área delimitada, durante a operação e e m locais de fácil visualização, placas em fundo bra nco, com os 
+seguintes dizeres pintados em vermelho refletivo: N ÃO FUME - NO SMOKING; NÃO USE LÂMPADAS 
+DESPROTEGIDAS - NO OPEN LIGHTS; 
+VIII. instalar na área delimitada da faixa do cais, onde se encontram as tomadas e válvulas de gases e líqui dos inflamáveis, 
+placa com fundo branco, pintadas em vermelho reflet ivo e em local de fácil visualização, com os dizere s: NÃO 
+FUME - NO SMOKING; NÃO USE LÂMPADAS DESPROTEGIDAS - NO OPEN LIGHTS. 
+g) manter os caminhões-tanques usados nas operações co m inflamáveis líquidos a granel em conformidade com a legislação 
+sobre transporte de produtos perigosos. 
+29.6.4.3 - Operações com sólidos e outras substâncias inflamáveis - Classe 4. 
+a) adotar medidas preventivas para controle não soment e do risco principal, como também dos riscos secund ários, como 
+toxidez e corrosividade, encontrados em algumas substâncias desta classe; 
+b) adotar as práticas de segurança, relativas as cargas sólidas a granel, que constam do suplemento ao código IMDG; 
+c) utilizar medidas de proteção contra incêndio e expl osões, incluindo especialmente a proibição de fumar e o controle de 
+qualquer fonte de ignição e de calor; 
+d) adotar medidas que impeçam o contato da água com su bstâncias das subclasses 4.2 - substâncias sujeitas a combustão 
+espontânea e 4.3- substâncias perigosas em contato com a água; 
+e) adotar medidas que evitem a fricção e impactos com a carga; 
+f) ventilar o local de operação que contém ou conteve substâncias da classe 4, antes dos trabalhadores te rem acesso ao 
+mesmo. No caso de concentração de gases, os trabalh adores que adentrem neste espaço devem portar apare lhos de 
+respiração autônoma, cintos de segurança com dispositivos de engate, travamento e cabo de arrasto; 
+g) monitorar, antes e durante a operação de descarga d e carvão ou pré-reduzidos de ferro, a temperatura d o porão e a 
+presença de hidrogênio ou outros gases no mesmo, para as providências devidas. 
+29.6.4.4 - Operações com substâncias oxidantes e peróxidos orgânicos - Classe 5. 
+a) adotar medidas de segurança contra os riscos especí ficos desta classe e os secundários, como corrosão e toxidez, que ela 
+possa apresentar; 
+b) adotar medidas que impossibilitem o contato das sub stâncias dessa classe com os materiais ácidos, óxid os metálicos e 
+aminas; 
+c) monitorar e controlar a temperatura externa, até seu limite máximo, dos tanques que contenham peróxidos orgânicos; 
+d) adotar medidas de proteção contra incêndio e explos ões, incluindo especialmente a proibição de fumar e o controle de 
+qualquer fonte de ignição e de calor. 
+29.6.4.5 - Nas operações com substâncias tóxicas e infectantes - Classe 6. 
+a) segregar substâncias desta classe dos produtos alimentícios; 
+b) manipular cuidadosamente as cargas, especialmente aquelas simultaneamente tóxicas e inflamáveis; 
+c) restringir o acesso à área operacional e circunvizinhas, somente ao pessoal envolvido nas operações; 
+d) dispor de conjuntos adequados de EPC e EPI, para o caso de avarias ou na movimentação de graneis da Classe 6 ; 
+e) dispor, no local das operações, de sacos com areia limpa e seca ou similares, para absorver e conter derramamentos; 
+f) proibir a participação de trabalhadores, na manipul ação destas cargas, principalmente da Classe 6.2 - substâncias 
+infectantes, quando portadores de erupções, úlceras ou cortes na pele; 
+g) proibir comer, beber ou fumar na área operacional e nas proximidades; 
+29.6.4..6 - Nas operações com materiais radioativos - Classe 7: 
+a) exigir que as embarcações de bandeira estrangeira q ue transportem materiais radioativos apresentem, pa ra a admissão no 
+porto, a documentação fixada no "Regulamento para o Transporte com Segurança de Materiais Radioativos" , da Agência 
+Internacional de Energia Atômica. No caso de embarc ações de bandeira brasileira, deverá ser atendida a "Norma de 
+Transporte de Materiais Radioativos" - Resolução da Comissão Nacional de Energia Nuclear - CNEN 13/80 e Norma 
+CNEN-NE 5.01/88 e alterações posteriores; 
+b) obedecer as normas de segregação desses materiais, constantes no IMDG, com as distâncias de afastamento aplicáveis; 
+c) a autorização para a atracação de embarcação com ca rga da Classe 7 - materiais radioativos, deve ser p recedida de adoção 
+de medidas de segurança indicadas por pessoa compet ente em proteção radiológica. Entende-se por pessoa competente, 
+neste caso, o Supervisor de Proteção Radiológica - SPR conforme a Norma 3.03 da CNEN e alterações posteriores; 
+d) monitorar e controlar a exposição de trabalhadores às radiações conforme critérios estabelecidos pela NE-3.01 e NE-5.01- 
+Diretrizes Básicas de Radioproteção da CNEN e alterações posteriores; 
+e) adotar medidas de segregação e isolamento com relaç ão a pessoas e outras cargas, estabelecendo uma zon a de segurança 
+para o trabalho, por meio de placas de segurança, s inalização, cordas e dispositivos luminosos, defini dos pelo SPR, 
+conforme o caso. 
+29.6.4.7 - Nas operações com substâncias corrosivas - Classe 8: 
+a) adotar medidas de segurança que impeçam o contato de substâncias dessa classe com a água ou com temperatura elevada; 
+b) utilizar medidas de proteção contra incêndio e expl osões, incluindo especialmente a proibição de fumar e o controle de 
+qualquer fonte de ignição e de calor; 
+c) dispor, no local das operações, de sacos com areia limpa e seca ou similares, para absorver e conter e ventuais 
+ 
+ 
+15 
+ 
+derramamentos. 
+29. 6.4.8 - Nas operações com substâncias perigosas diversas - Classe 9 
+a) adotar medidas preventivas dos riscos dessas substâ ncias, que podem ser inflamáveis, irritantes e, afo ra outros riscos, 
+passíveis de uma decomposição ou alteração durante o transporte; 
+b) rotular as embalagens e contêineres com o nome técnico dessas substâncias, marcados de forma indelével; 
+c) utilizar medidas de proteção contra incêndio e expl osões, incluindo especialmente a proibição de fumar e o controle de 
+qualquer fonte de ignição e de calor; 
+d) dispor, no local das operações, de sacos com areia limpa e seca ou similares, para absorver e conter derramamentos; 
+e) adotar medidas de controle de aerodispersóides. 
+29.6.5 - Armazenamento de cargas perigosas. 
+29.6.5.1 - A administração portuária, em conjunto c om o SESSTP, deve fixar em cada porto, a quantidade máxima total por 
+classe e subclasse de substâncias a serem armazenad as na zona portuária, obedecendo-se as recomendaçõe s contidas na tabela 
+de segregação, Anexo IX. 
+29.6.5.2 - Os depósitos de cargas perigosas devem ser compatíveis com as características dos produtos a serem armazenados. 
+29.6.5.3 - Não serão armazenadas cargas perigosas em embalagens inadequadas ou avariadas. 
+29.6.5.4 - Deve ser realizada vigilância permanente e inspeção diária da carga armazenada, adotando-se , nos casos de avarias, 
+os procedimentos previstos na respectiva ficha de emergência referida no subitem 29.6.3.1 alínea “b” desta norma. 
+29.6.5.6 - Armazenamento de explosivos 
+29.6.5.6.1 - Não é permitido o armazenamento de exp losivos na área portuária, e a sua movimentação ser á efetuada conforme 
+o disposto na NR-19 explosivos. 
+29.6.5.7 - Armazenamento de gases e de líquidos inflamáveis. 
+29.6.5.7.1 - No armazenamento de gases e de líquido s inflamáveis será observada a NR 20 combustíveis l íquidos e 
+inflamáveis, a NBR 7505 - armazenamento de petróleo e seus derivados líquidos e as seguintes prescrições gerais: 
+a) os gases inflamáveis ou tóxicos devem ser depositad os em lugares adequadamente ventilados e protegidos contra as 
+intempéries, incidência dos raios solares e água do mar, longe de habitações e de qualquer fonte de ig nição e calor que não 
+esteja sob controle; 
+b) no caso de suspeita de vazamento de gases, devem se r adotadas as medidas de segurança constantes do PC E, a que se 
+refere o item 29.6.6 desta NR; 
+c) os gases inflamáveis serão armazenados, adequadamen te segregados de outras cargas perigosas, conforme tabela de 
+segregação (anexo IX) e completamente isolados de alimentos; 
+d) os armazéns e os tanques de inflamáveis a granel de vem ser providos de instalações e equipamentos de c ombate a 
+incêndio. 
+29.6.5.8 - Armazenamento de inflamáveis sólidos 
+29.6.5.8.1 - No armazenamento de inflamáveis sólido s devem ser utilizados depósitos especiais e observ adas as seguintes 
+prescrições gerais: 
+a) os recipientes devem ser armazenados em compartimen tos bem ventilados ou ao ar livre, protegidos de in tempéries, água 
+do mar, bem como de fontes de calor e de ignição que não estejam sob controle; 
+b) os sólidos inflamáveis da subclasse 4.1 podem ser armazenados em lugares abertos ou fechados; 
+c) os da subclasses 4.2 e 4.3 devem ser depositados em lugares abertos rigorosamente protegidos do contat o com a água e a 
+umidade; 
+d) no caso de substâncias tóxicas, isolar rigorosamente dos gêneros alimentícios; 
+e) as substâncias desta classe devem ser armazenadas de conformidade com a tabela de segregação no Anexo IX. 
+29.6.5.9 - Armazenamento de oxidantes e peróxidos. 
+29.6.5.9.1 - O armazenamento de produtos da classe 5 será feito em depósitos específicos. 
+29.6.5.9.2 - Antes de armazenar estes produtos, ver ificar se o local está limpo, sem a presença de mat erial combustível ou 
+inflamável. 
+29.6.5.9.3 - Obedecer a segregação das cargas desta classe 5, com outras incompatíveis, de conformidad e com a tabela de 
+segregação (Anexo IX). 
+29.6.5.9.4 - Durante o armazenamento, os peróxidos orgânicos devem ser mantidos refrigerados e longe d e qualquer fonte 
+artificial de calor ou ignição. 
+29.6.5.10 - Armazenamento de substâncias tóxicas e infectantes. 
+29.6.5.10.1 - Substâncias tóxicas devem ser armazen adas em depósitos especiais, espaços bem ventilados e em recipientes que 
+poderão ficar ao ar livre, desde que protegidos do sol, de intempéries ou da água do mar. 
+29.6.5.10.2 - Quando as substâncias tóxicas forem a rmazenadas em recintos fechados, estes locais devem dispor de ventilação 
+forçada. O armazenamento dessas substâncias deve se r feito mantendo sob controle o risco das fontes de calor, incluindo 
+faíscas, chamas ou canalização de vapor. 
+29.6.5.10.3 - Para evitar contaminação, as substânc ias desta classe devem ser armazenadas em ambientes distintos dos de 
+gêneros alimentícios. 
+29.6.5.10.4 - No armazenamento será observada a tabela de segregação, constante do anexo IX. 
+29.6.5.10.5 - As substâncias da subclasse 6.2 só po derão ser armazenadas em caráter excepcional e medi ante autorização da 
+vigilância sanitária. 
+29.6.5.11 - Armazenamento de substâncias radioativas. 
+29.6.5.11.1 - O armazenamento de substâncias radioa tivas será feito em depósitos especiais, de acordo com as recomendações 
+ 
+ 
+16 
+ 
+da CNEN; 
+29.6.5.11.2 - No armazenamento destas cargas, será obedecida a tabela de segregação do anexo IX. 
+29.6.5.12 - Armazenamento de substâncias corrosivas. 
+29.6.5.12.1 - As substâncias corrosivas devem ser armazenadas em locais abertos ou em recintos fechados bem ventilados. 
+29.6.5.12.2 - Quando a céu aberto, as embalagens de vem ficar protegidas de intempéries ou de água, man tendo sob controle os 
+riscos das fontes de calor, chamas, faíscas ou canalizações de vapor. 
+29.6.5.12.3 - No armazenamento destas cargas, deve ser obedecida a tabela de segregação do anexo IX. 
+29.6.5.13 - Armazenamento de substâncias perigosas diversas. 
+29.6.5.13.1 - As substâncias desta classe, armazena das em lugares abertos ou fechados, devem receber o s cuidados preventivos 
+aos seus riscos principal e secundários. 
+29.6.5.13.2 - No armazenamento destas cargas, aplic a-se a tabela de segregação, conforme anexo IX, fic ando segregadas de 
+alimentos. 
+29.6.6 - Plano de Controle de Emergência – PCE e Plano de Ajuda Mútua – PAM. 
+29.6.6.1 - Devem ser adotados procedimentos de emer gência, primeiros socorros e atendimento médico, co nstando para cada 
+classe de risco a respectiva ficha, nos locais de operação dos produtos perigosos. 
+29.6.6.2 - Os trabalhadores devem ter treinamento específico em relação às operações com produtos perigosos. 
+29.6.6.3 - O plano de atendimento às situações de e mergência deve ser abrangente, permitindo o control e dos sinistros 
+potenciais, como explosão, contaminação ambiental p or produto tóxico, corrosivo, radioativo e outros a gentes agressivos, 
+incêndio, abalroamento e colisão de embarcação com o cais. 
+29.6.6.4 - Os PCE e PAM devem prever ações em terra e a bordo, e deverá ser exibido aos agentes da ins peção do trabalho, 
+quando solicitado. 
+ 
+ANEXO I – MODELO MAPA I 
+Acidente com Vítima _________________________________________ Data do Mapa ____/___/___ 
+Responsável ________________________________________________ Assinatura ______________ 
+Local N.º 
+Absoluto 
+(Abs) 
+N.º 
+Abs 
+c/afast 
+≤ 15 
+dias 
+N.º 
+Abs 
+c/afast 
+> 15 
+dias 
+N.º 
+Abs 
+s/afast 
+Índice relativo 
+total de 
+Trabalhadores 
+Dias/Homem 
+pedidos 
+Taxa de 
+Freqüência 
+Óbitos Índice 
+avaliação 
+da 
+gravidade 
+ 
+Total 
+do 
+Setor 
+ 
+ 
+ANEXO I – MODELO MAPA II 
+Doenças Ocupacionais ________________________________________ Data do Mapa ____/___/___ 
+Responsável ________________________________________________ Assinatura ______________ 
+Tipo de 
+Doença 
+N.º 
+Absoluto 
+de caso 
+Setores de 
+atividades dos 
+portadores 
+N.º relativo 
+de casos 
+N.º de 
+Óbitos 
+N.º de 
+trabalhadores 
+transferidos p/ 
+outra atividade 
+N.º de 
+Trabalhadores 
+definitivamente 
+incapacitados 
+ 
+ 
+ 
+ 
+ 
+ 
+(*) codificar no verso. Por exemplo 1- Serviço de estiva, 2- Conserto de Carga, 3- Capatazia. 
+ 
+ANEXO I - MODELO MAPA III 
+INSALUBRIDADE ___________________________________ D ATA ____/___/___ 
+Responsável _________________________________________ Assinatura ______________ 
+Setor / Atividade Agentes Identificados Intensidade ou Concentração N.º Trabalhadores 
+Expostos 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ANEXO I – MODELO MAPA IV 
+ACIDENTES SEM VÍTIMA_______________________________ _____ Data do Mapa ___/___/___ 
+Responsável ________________________________________________ Assinatura _____________ 
+ 
+ 
+ 
+Total do Estabelecimento 
+ 
+ 
+ 
+ 
+17 
+ 
+ 
+ 
+ANEXO II 
+MINISTÉRIO DO TRABALHO 
+Ficha de Identificação 
+NR-29 
+Anexo 
+ 
+Identificação 
+ 
+01. Razão Social _____________________________________________________________________ 
+02. Endereço: _______________________________________________________________________ 
+Bairro:_____________________________ Município ____________________________ UF: _______ 
+CEP: __________ Telefone: ( ) ____________ Fax: _____________ E –Mail _____________________ 
+ 
+03. Número do CGC: _________________ 04. CNAE: _____________ 05. No Registro: ___________ 
+Data do Início da Atividade: ___________ 
+ 
+Dados Gerais Quant. Informações Gerais Sim Não 
+07. N° de Reuniões Ordinárias no 
+Trimestre 
+08. N° de representantes na CPATP 
+09. N° de Trabalhadores capacidatos em 
+prevenção de acidentes 
+10. N° total de horas empregadas em 
+capacitação 
+11. N° de investigações e inspeções 
+reailzadas 
+pela CPATP 
+12. N.º de reuniões extraordinárias no 
+semestre 
+ 
+ 13. O responsável pelo setor do 
+acidentes 
+compareceu a reunião extraordinária ? 
+14. A CPATP tem recebido sugestões 
+dos 
+trabalhadores ? 
+15. Existe SESTP ? 
+16. A CPATP foi orientada pelo SESTP 
+? 
+17. A CPATP recebeu orientação da 
+DRT 
+ou Fundacentro ? 
+18. Todos os representantes da CPATP 
+foram capacitados em Prevenção de 
+Acidentes ? 
+ 
+ 
+ 
+Informações Estatísticas Ano Base: _________ Semestre: __________ 
+ 
+19. N° médio de trabalhadores no semestre: ____________ 
+20. N° de homens horas trabalhadas no semestre: _______ 
+ 
+Número Acidente Típico Doença Profissional Acidente de Trajeto 
+Mortes 21 22 23 
+Acidentes 24 25 26 
+Dias Perdidos 27 28 29 
+Dias Debitados 30 31 32 
+ 
+33. Resumo das Recomendações 
+ 
+ 
+ 
+ 
+A presente declaração é a expressão da verdade 
+Local: _________________ Data: ____/____/____ 
+Nome: ___________________________________ 
+ 
+________________________________ 
+Assinatura do Representante da CPATP 
+Carimbo da DRT (Recibo) 
+ 
+ 
+_______________________________________ 
+Assinatura do Recebedor 
+Matrícula 
+ 
+Instruções de preenchimento do anexo II 
+ 
+1 - Razão social ou denominação do empregador, do operador portuário ou OGMO. 
+2 - Dados referentes a localização do estabelecimento (Porto, Instalação Portuária de uso privativo e retroportuária. 
+3 - numero de inscrição no cadastro geral de contri buintes do Ministério da Fazenda - CGC da empresa, incluindo 
+complemento e digito de controle do estabelecimento 
+4 - CNAE - Código Nacional de Atividade Econômica 
+5 - Numero do registro da CPATP na DRT. 
+6 - Mês e ano do inicio da atividade da empresa. 
+ 
+ 
+18 
+ 
+ 
+Dados Gerais 
+ 
+7 - Número de reuniões ordinárias no semestre realizadas pela CPATP 
+8 - Número de representantes na CPATP (empregadores + trabalhadores) 
+9 - Número de trabalhadores capacitados em prevenção de acidentes do trabalho no semestre. 
+10 - Número de horas utilizados para a capacitação dos trabalhadores indicados no item 9. 
+11 - Número de investigações e inspeções realizadas pelos representantes da CPATP durante o semestre. 
+12 - Número de reuniões realizadas no semestre, em caráter extraordinário, face a ocorrência de morte ou de acidentes que 
+tenham ocasionado graves prejuízos pessoais ou materiais. 
+ 
+Informações Gerais 
+ 
+De 13 a 18, assinalar com “X” a resposta conveniente. 
+ 
+Informações Estatísticas 
+ 
+19- Número médio de Trabalhadores no semestre: é a soma total dos trabalhadores Portuários (por mês) c om contrato por 
+tempo indeterminado mais os avulsos tomados no semestre divididos por seis. 
+20- Horas Homem trabalhadas no semestre (HHT): é o numero total de horas efetivamente trabalhadas no s emestre, incluídas 
+as horas extraordinárias. 

@@ -1,0 +1,25 @@
+=== NR-16 - ATIVIDADES E OPERAÇÕES PERIGOSAS ===
+Portaria MTE nº 3.214/78 | Última atualização: Portaria SEPRT nº 1.357/2019
+
+1. CAMPO DE APLICAÇÃO
+1.1. Esta norma estabelece os requisitos para caracterização de atividades e operações perigosas, que dão direito ao adicional de periculosidade de 30% sobre o salário base.
+
+2. ADICIONAIS DE PERICULOSIDADE
+2.1. O adicional de periculosidade é de 30% sobre o salário base, sem acréscimos resultantes de gratificações, prêmios ou participações nos lucros da empresa.
+2.2. As atividades perigosas são aquelas que expõem o trabalhador de forma permanente a condições de risco acentuado.
+
+3. ATIVIDADES E OPERAÇÕES PERIGOSAS
+São consideradas perigosas:
+3.1. Trabalho com explosivos (Anexo 1): fabricação, manipulação, armazenagem, manuseio ou transporte de explosivos.
+3.2. Trabalho com inflamáveis (Anexo 2): trabalho em locais com inflamáveis ou líquidos combustíveis acima de seu ponto de fulgor.
+3.3. Trabalho com eletricidade (Anexo 4): trabalhadores que exercem atividades de manutenção elétrica em sistema elétrico de potência.
+3.4. Trabalhadores em motocicletas (Anexo 5): trabalhadores que usam motocicleta no trabalho (excluídos motociclistas de entrega já cobertos por legislação específica).
+3.5. Trabalho em roubos/violência (Anexo 3): segurança pessoal ou patrimonial; vigilância com valores; caixas de banco.
+
+4. CARACTERIZAÇÃO E VERIFICAÇÃO
+4.1. A caracterização da periculosidade é feita por Engenheiro de Segurança do Trabalho ou Médico do Trabalho.
+4.2. Laudo Técnico de Periculosidade (LTPP) deve ser emitido.
+
+5. ELIMINAÇÃO OU NEUTRALIZAÇÃO
+5.1. A empresa pode eliminar o risco com medidas de controle, caso em que o adicional deixa de ser devido.
+5.2. Uso de EPI não elimina a caracterização de atividade perigosa, mas pode contribuir para a segurança.

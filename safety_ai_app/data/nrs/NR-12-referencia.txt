@@ -1,0 +1,47 @@
+=== NR-12 - SEGURANÇA NO TRABALHO EM MÁQUINAS E EQUIPAMENTOS ===
+Portaria MTE nº 3.214/78 | Última atualização: Portaria SEPRT nº 916/2019
+
+1. OBJETIVO E CAMPO DE APLICAÇÃO
+1.1. Esta norma define referências técnicas, princípios fundamentais e medidas de proteção para garantir a saúde e a integridade física dos trabalhadores que interagem com máquinas e equipamentos.
+1.2. Aplica-se a todas as fases: projeto, fabricação, importação, comercialização, exposição, cessão, aquisição, instalação, operação, manutenção e reforma de máquinas.
+
+2. ARRANJO FÍSICO E INSTALAÇÕES
+2.1. Os locais onde máquinas e equipamentos são instalados devem ter espaço suficiente para execução das tarefas, circulação e manutenção.
+2.2. Vias de circulação demarcadas e desobstruídas.
+2.3. Piso nivelado, resistente e sem irregularidades.
+
+3. SISTEMAS DE SEGURANÇA
+3.1. As máquinas devem ter sistema de segurança compatível com o risco gerado.
+3.2. Proteções físicas (fixas ou móveis com intertravamento) para partes perigosas.
+3.3. Dispositivos de intertravamento: impedem o acionamento com a proteção aberta.
+3.4. Dispositivos de parada de emergência (cogumelo vermelho) acessíveis.
+3.5. Sistemas de controle: start, stop, reset claramente identificados.
+
+4. DISTÂNCIAS DE SEGURANÇA
+4.1. Conforme NBR 13861 e ABNT ISO 13857, as distâncias de segurança são calculadas para impedir que membros corporais alcancem zonas de perigo.
+4.2. Abertura máxima de grades e telas protetoras conforme a zona de perigo.
+
+5. DISPOSITIVOS DE PARTIDA, ACIONAMENTO E PARADA
+5.1. Dispositivos de acionamento devem ser de difícil acionamento acidental.
+5.2. Máquinas com mais de um ponto de acionamento devem ter sistema que impeça a partida sem que todos os operadores estejam em posição segura.
+5.3. Partida: exige ação intencional (dois botões simultâneos para prensas, por exemplo).
+
+6. MANUTENÇÃO, INSPEÇÃO E PREPARAÇÃO
+6.1. Procedimentos de bloqueio (lockout/tagout) antes de qualquer manutenção.
+6.2. O trabalhador que executar a manutenção coloca seu próprio cadeado no ponto de energia.
+6.3. Ordens de serviço para manutenção devem ser emitidas.
+6.4. Máquinas devem ter inventário com identificação e registro de manutenções.
+
+7. CAPACITAÇÃO E TREINAMENTO
+7.1. Os operadores devem ser capacitados para operar as máquinas com segurança.
+7.2. Treinamento inclui: riscos, medidas de proteção, procedimentos de emergência, uso de EPIs.
+7.3. Registro de treinamentos arquivado.
+
+8. SINALIZAÇÃO
+8.1. As zonas de perigo devem ser sinalizadas com cores-padrão e símbolos da ABNT/ISO.
+8.2. Identificação de comandos de parada de emergência em cor vermelha.
+
+9. REQUISITOS ADICIONAIS PARA EQUIPAMENTOS ESPECÍFICOS
+9.1. Prensas e similares: proteção adicional (cortina de luz, mesas de segurança).
+9.2. Serras circulares: coifa de proteção, cutelo divisor, proteção inferior.
+9.3. Talhas e guindastes: documentação de inspeção obrigatória.

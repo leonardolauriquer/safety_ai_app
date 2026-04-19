@@ -1,0 +1,37 @@
+=== NR-22 - SEGURANÇA E SAÚDE OCUPACIONAL NA MINERAÇÃO ===
+Portaria MTE nº 3.214/78 | Última atualização: Portaria SEPRT nº 915/2019
+
+1. CAMPO DE APLICAÇÃO
+1.1. Esta norma estabelece os requisitos mínimos de segurança e saúde aplicáveis às atividades de mineração, incluindo lavra a céu aberto, subterrânea, garimpo e beneficiamento de minerais.
+
+2. PROGRAMA DE GERENCIAMENTO DE RISCOS (PGR) NA MINERAÇÃO
+2.1. Toda empresa de mineração deve elaborar e implementar o PGR específico para o setor de mineração.
+2.2. O PGR inclui o gerenciamento de riscos de escorregamento, desmoronamento, explosões, poeiras, ruído, calor e outros agentes.
+
+3. MINA SUBTERRÂNEA
+3.1. Ventilação adequada para manter a qualidade do ar.
+3.2. Sistema de comunicação entre superfície e interior da mina.
+3.3. Sistema de iluminação de emergência.
+3.4. Saídas de emergência em número suficiente.
+3.5. Plano de resgate e emergência com equipe treinada.
+3.6. Responsável técnico de mineração obrigatório.
+
+4. LAVRA A CÉU ABERTO
+4.1. Taludes devem ser projetados e mantidos com ângulo de repouso seguro.
+4.2. Plano de gerenciamento de estabilidade de taludes.
+4.3. Drenagem superficial e controle de água.
+
+5. EXPLOSIVOS NA MINERAÇÃO
+5.1. Plano de fogo aprovado pelo responsável técnico.
+5.2. Área de exclusão durante a detonação.
+5.3. Procedimentos para dud shots.
+
+6. PROTEÇÃO RESPIRATÓRIA
+6.1. Controle de poeira de sílica (silicose) é prioritário.
+6.2. Umidificação, ventilação e uso de máscaras PFF2 ou PFF3.
+6.3. Monitoramento de exposição à sílica cristalina.
+
+7. SAÚDE OCUPACIONAL
+7.1. PCMSO específico para riscos de mineração.
+7.2. Exames admissional, periódico (anual) e demissional com audiometria e espirometria.
+7.3. Cadastro dos casos de pneumoconiose obrigatório.

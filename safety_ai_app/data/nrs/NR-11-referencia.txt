@@ -1,0 +1,36 @@
+=== NR-11 - TRANSPORTE, MOVIMENTAÇÃO, ARMAZENAGEM E MANUSEIO DE MATERIAIS ===
+Portaria MTE nº 3.214/78 | Última atualização: Portaria SEPRT nº 916/2019
+
+1. CAMPO DE APLICAÇÃO
+1.1. Esta norma regulamenta as condições de segurança na operação de elevadores, guindastes, transportadores industriais e máquinas transportadoras.
+
+2. OPERAÇÃO DE ELEVADORES E GUINDASTES
+2.1. Somente trabalhadores qualificados e designados podem operar equipamentos de içamento.
+2.2. A capacidade máxima de carga deve ser afixada em local visível no equipamento.
+2.3. Proibido transportar pessoas em equipamentos destinados somente à carga.
+2.4. Manutenção preventiva periódica é obrigatória, com registros documentados.
+2.5. Inspeção obrigatória antes do início de cada jornada de trabalho.
+
+3. EMPILHADEIRAS E VEÍCULOS DE MOVIMENTAÇÃO
+3.1. Operadores devem ser qualificados e habilitados (CNH categoria específica para empilhadeiras elétricas a combustão em vias públicas; treinamento para uso interno).
+3.2. Velocidade máxima deve ser regulamentada internamente.
+3.3. Sinalização adequada nas áreas de tráfego.
+3.4. Separação física de pedestres e veículos onde possível.
+3.5. Proibido transportar passageiros nas empilhadeiras.
+
+4. MANUSEIO MANUAL DE CARGAS
+4.1. Limite máximo de peso para levantamento manual: 60 kg para homens e 25 kg para mulheres, em condições ideais.
+4.2. Treinamento em técnicas de levantamento seguro de cargas.
+4.3. Avaliação ergonômica necessária para tarefas repetitivas de movimentação.
+4.4. Mecanização preferencial sempre que possível.
+
+5. ARMAZENAGEM DE MATERIAIS
+5.1. Os materiais devem ser estocados e empilhados de forma segura.
+5.2. Observar resistência do piso e altura máxima de empilhamento.
+5.3. Corredores de acesso devem ser mantidos desobstruídos.
+5.4. Materiais inflamáveis em local específico, com ventilação e afastado de fontes de calor.
+
+6. TRANSPORTADORES INDUSTRIAIS
+6.1. Partes móveis dos transportadores de correia, roscas transportadoras e similares devem ser devidamente protegidas.
+6.2. Sistemas de parada de emergência facilmente acessíveis.
+6.3. Proibido limpar ou fazer manutenção em partes móveis com o equipamento em funcionamento.

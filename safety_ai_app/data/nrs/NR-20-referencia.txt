@@ -1,0 +1,33 @@
+=== NR-20 - SEGURANÇA E SAÚDE NO TRABALHO COM INFLAMÁVEIS E COMBUSTÍVEIS ===
+Portaria MTE nº 3.214/78 | Última atualização: Portaria SEPRT nº 144/2014
+
+1. CAMPO DE APLICAÇÃO
+1.1. Esta norma estabelece requisitos mínimos de segurança e saúde no trabalho nas atividades, instalações e operações que envolvam inflamáveis líquidos e combustíveis.
+1.2. Aplica-se a postos de serviço, refinarias, terminais, dutos, instalações industriais que armazenam ou processam inflamáveis.
+
+2. CLASSIFICAÇÃO DOS LÍQUIDOS INFLAMÁVEIS E COMBUSTÍVEIS
+2.1. Classe I: ponto de fulgor abaixo de 23°C e ponto de ebulição abaixo de 35°C (ex: éter etílico).
+2.2. Classe II: ponto de fulgor entre 23°C e 60°C (ex: querosene, diesel leve).
+2.3. Classe IIIA: ponto de fulgor entre 60°C e 93°C (ex: óleo diesel comum).
+2.4. Classe IIIB: ponto de fulgor acima de 93°C (ex: óleos lubrificantes pesados).
+
+3. CLASSIFICAÇÃO DE ÁREAS
+3.1. Área de risco: local com possibilidade de acúmulo de vapor inflamável em quantidade suficiente para criar mistura explosiva.
+3.2. Zona 0: presença contínua de atmosfera explosiva.
+3.3. Zona 1: presença provável em condições normais de operação.
+3.4. Zona 2: presença improvável ou de curta duração.
+3.5. O mapa de classificação de áreas deve ser elaborado por profissional habilitado.
+
+4. INSTALAÇÕES
+4.1. Equipamentos elétricos em áreas classificadas devem ser do tipo "à prova de explosão" (Ex-d) ou intrinsecamente seguros (Ex-i).
+4.2. Aterramento elétrico e proteção contra estática em todos os recipientes e tubulações.
+4.3. Ventilação natural ou forçada para evitar acúmulo de vapores.
+
+5. POSTOS DE COMBUSTÍVEIS
+5.1. Trabalhadores devem receber treinamento inicial de 20h e reciclagem de 16h.
+5.2. Proibido fumar ou usar fogo aberto na área de abastecimento.
+5.3. Monitoramento de vapores em ambientes confinados (câmaras de bombas).
+
+6. GERENCIAMENTO DE RISCOS
+6.1. Análise de Risco (AR) obrigatória antes de atividades de alto risco em instalações de inflamáveis.
+6.2. Procedimentos documentados para operações rotineiras e não rotineiras.

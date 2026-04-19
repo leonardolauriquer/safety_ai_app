@@ -1,0 +1,39 @@
+=== NR-32 - SEGURANÇA E SAÚDE NO TRABALHO EM SERVIÇOS DE SAÚDE ===
+Portaria MTE nº 3.214/78 | Última atualização: Portaria SEPRT nº 939/2008
+
+1. CAMPO DE APLICAÇÃO
+1.1. Esta norma estabelece as diretrizes básicas para a implementação de medidas de proteção à segurança e à saúde dos trabalhadores dos serviços de saúde.
+1.2. Aplica-se a todos os serviços de saúde: hospitais, clínicas, laboratórios, UPAS, home care, etc.
+
+2. RISCOS BIOLÓGICOS
+2.1. Trabalhadores da saúde estão expostos a agentes biológicos (vírus, bactérias, fungos, parasitas).
+2.2. Precauções padrão: higienização das mãos, uso de EPI (luvas, óculos, mascaras, aventais) em todos os procedimentos.
+2.3. Vacinação obrigatória conforme risco (Hepatite B, tríplice viral, influenza, etc.).
+2.4. Exposição a material biológico: protocolo imediato (lavar, comunicar, sorologias seriadas, profilaxia pós-exposição).
+
+3. RESÍDUOS DE SERVIÇOS DE SAÚDE (RSS)
+3.1. Classificação e segregação de resíduos conforme grupos: A (infectantes), B (químicos), C (radioativos), D (comuns), E (perfurocortantes).
+3.2. Recipientes para perfurocortantes (descarpaks) devem ser resistentes à punctura e fechados quando atingir 2/3 da capacidade.
+3.3. Descarte de agulhas: não recapar; usar coletor imediatamente após o uso.
+3.4. Plano de Gerenciamento de Resíduos de Serviços de Saúde (PGRSS) obrigatório.
+
+4. AGENTES QUÍMICOS E PERIGOSOS
+4.1. Quimioterápicos (citostáticos): manipulação em câmara de fluxo laminar; EPI específico; descarte em recipientes sinalizados.
+4.2. Óxido de etileno (esterilização): monitoramento de exposição; limite de tolerância rigoroso.
+4.3. Formol (fixação de tecidos): monitoramento e controle de exposição.
+4.4. Anestésicos gasosos: sistema de exaustão em centros cirúrgicos.
+
+5. RADIAÇÕES IONIZANTES
+5.1. Trabalhadores expostos a radiações ionizantes devem usar dosímetros individuais.
+5.2. Monitoramento periódico e registro das doses acumuladas.
+5.3. Limites de dose conforme a CNEN (Comissão Nacional de Energia Nuclear).
+
+6. ERGONOMIA
+6.1. Trabalho em pé por longos períodos: avaliação ergonômica e medidas de conforto.
+6.2. Movimentação de pacientes: técnicas seguras, equipamentos auxiliares (elevadores, cadeiras de rodas).
+6.3. Saúde mental: serviços de saúde apresentam alto risco de síndrome de burnout.
+
+7. PROGRAMA DE PREVENÇÃO DE RISCOS
+7.1. PCMSO específico para trabalhadores da saúde, com exames direcionados aos riscos.
+7.2. Programa de Imunização.
+7.3. Programa de Gestão de Riscos Biológicos.

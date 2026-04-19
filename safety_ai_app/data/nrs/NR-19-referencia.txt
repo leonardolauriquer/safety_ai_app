@@ -1,0 +1,31 @@
+=== NR-19 - EXPLOSIVOS ===
+Portaria MTE nº 3.214/78
+
+1. CAMPO DE APLICAÇÃO
+1.1. Esta norma regulamenta as condições de segurança nas atividades de fabricação, manipulação, armazenagem, transporte e utilização de explosivos.
+
+2. ARMAZENAGEM
+2.1. Os explosivos devem ser armazenados em paióis aprovados pelos órgãos competentes (Exército Brasileiro).
+2.2. Os paióis devem ser construídos conforme especificações técnicas que garantam resistência e ventilação.
+2.3. Distâncias mínimas de construções habitadas, vias de transporte e outras instalações.
+2.4. Separação por tipo de explosivo (primário e secundário).
+2.5. Temperatura controlada e ventilação adequada.
+
+3. MANUSEIO E MANIPULAÇÃO
+3.1. Somente trabalhadores habilitados e autorizados pelo Exército podem manipular explosivos.
+3.2. Proibido fumar, usar fogo aberto ou equipamentos que gerem faíscas nas proximidades.
+3.3. EPI: vestimentas antiestáticas, calçados antiestáticos.
+3.4. Proteção contra descargas elétricas atmosféricas (raios).
+
+4. TRANSPORTE
+4.1. Veículos adequados e autorizados para transporte de explosivos.
+4.2. Acompanhamento por escolta devidamente habilitada.
+4.3. Rotas aprovadas e horários específicos.
+
+5. QUALIFICAÇÃO DOS TRABALHADORES
+5.1. Treinamento obrigatório em segurança com explosivos.
+5.2. Registro e habilitação junto ao Exército Brasileiro (ou Agência de Mineração para mineração).
+
+6. EMERGÊNCIAS
+6.1. Procedimentos específicos para dud shots (detonadores que falharam).
+6.2. Procedimentos de evacuação em caso de acidente.

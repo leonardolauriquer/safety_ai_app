@@ -1,0 +1,40 @@
+=== NR-13 - CALDEIRAS, VASOS DE PRESSÃO, TUBULAÇÕES E RESERVATÓRIOS DE PRESSÃO ===
+Portaria MTE nº 3.214/78 | Última atualização: Portaria SEPRT nº 916/2019
+
+1. CAMPO DE APLICAÇÃO
+1.1. Esta norma estabelece requisitos mínimos para gestão da integridade estrutural de caldeiras a vapor, vasos de pressão, tubulações e reservatórios de pressão.
+
+2. CATEGORIAS DE CALDEIRAS
+2.1. Categoria A: pressão de operação maior que 1,96 MPa ou volume acima de 100 litros a qualquer pressão.
+2.2. Categoria B: pressão entre 0,06 MPa e 1,96 MPa, com volume entre 50 e 100 litros.
+2.3. Categoria C: pressão acima de 0,06 MPa, com volume menor que 50 litros.
+
+3. INSTALAÇÃO E OPERAÇÃO DE CALDEIRAS
+3.1. Caldeiras devem ser instaladas em casa de caldeiras ou em local descoberto, com isolamento adequado de áreas habitadas.
+3.2. Documentação obrigatória: projeto de instalação, prontuário da caldeira, registro de operação.
+3.3. Operador qualificado obrigatório para caldeiras categorias A e B.
+3.4. O operador deve ter curso específico (curso de operador de caldeiras com carga horária mínima de 100h).
+
+4. PRONTUÁRIO
+4.1. Cada caldeira deve ter prontuário com: documentos de fabricação, manual de operação, registro de inspeções, registro de acidentes/incidentes.
+4.2. O prontuário deve ficar disponível na área de operação.
+
+5. INSPEÇÕES DE SEGURANÇA
+5.1. Inspeção de segurança inicial: antes da entrada em operação (nova ou reformada).
+5.2. Inspeção periódica: a cada 12 meses para categoria A, 24 meses para B, 36 meses para C.
+5.3. Inspeção extraordinária: após acidente, reparo significativo, paralisação superior a 6 meses.
+5.4. O inspetor de caldeiras deve ser profissional habilitado (engenheiro) ou técnico certificado.
+
+6. VASOS DE PRESSÃO
+6.1. Classificados em 4 categorias (I a IV) com base no potencial de risco (produto de pressão × volume ou diâmetro × comprimento).
+6.2. Prontuário obrigatório.
+6.3. Inspeção periódica com frequência conforme categoria.
+
+7. DISPOSITIVOS DE SEGURANÇA
+7.1. Válvulas de segurança calibradas e identificadas.
+7.2. Instrumentos de medição (manômetros, termômetros) calibrados periodicamente.
+7.3. Dispositivos de alimentação (caldeiras a vapor).
+
+8. PROFISSIONAL HABILITADO
+8.1. O PH (Profissional Habilitado) é o engenheiro responsável pela inspeção de caldeiras e vasos.
+8.2. Deve emitir ART (Anotação de Responsabilidade Técnica) para cada inspeção.

@@ -1,0 +1,44 @@
+=== NR-5 - COMISSÃO INTERNA DE PREVENÇÃO DE ACIDENTES - CIPA ===
+Portaria MTE nº 3.214/78 | Última atualização: Portaria SEPRT nº 1.135/2017
+
+1. OBRIGATORIEDADE
+1.1. A CIPA tem por objetivo a prevenção de acidentes e doenças decorrentes do trabalho.
+1.2. São obrigadas a constituir CIPA as empresas privadas, públicas, sociedades de economia mista, órgãos da administração direta e indireta, instituições beneficentes, associações recreativas, cooperativas e outras instituições que admitam trabalhadores como empregados.
+
+2. DIMENSIONAMENTO
+2.1. A CIPA será composta de representantes do empregador e dos empregados.
+2.2. O número de membros é determinado pelo Quadro I da NR-5, com base no grupo e na classificação da atividade econômica (CNAE) e no número médio de empregados.
+2.3. Grupos de 1 a 6: quanto maior o grupo, mais representantes.
+
+3. ELEIÇÃO DOS REPRESENTANTES DOS EMPREGADOS
+3.1. Os representantes dos empregados são eleitos por escrutínio secreto, com candidatura espontânea.
+3.2. É vedada a interferência do empregador no processo eleitoral.
+3.3. O mandato é de 1 ano, permitida uma reeleição.
+3.4. O processo eleitoral deve ser iniciado com, no mínimo, 60 dias antes do término do mandato.
+
+4. ATRIBUIÇÕES DA CIPA
+4.1. Identificar os riscos do processo de trabalho e elaborar o mapa de riscos.
+4.2. Elaborar plano de trabalho para a implementação de ações preventivas.
+4.3. Participar da implementação e do controle da qualidade das medidas de prevenção.
+4.4. Avaliar os processos produtivos com prioridade às queixas e sugestões dos trabalhadores.
+4.5. Propor medidas de prevenção julgadas necessárias pela comissão.
+4.6. Acompanhar a análise das causas das doenças e acidentes de trabalho e propor medidas corretivas.
+4.7. Requerer ao SESMT, quando houver, ou ao empregador a paralisação de máquina ou setor onde considere haver risco grave e iminente à segurança e saúde dos trabalhadores.
+4.8. Colaborar no desenvolvimento e implementação do PCMSO e PGR.
+
+5. REUNIÕES
+5.1. A CIPA se reunirá mensalmente em horário de expediente.
+5.2. As reuniões terão atas assinadas pelos presentes e encaminhadas para todos os membros.
+5.3. Reuniões extraordinárias podem ser convocadas pelo presidente, vice-presidente ou mediante solicitação de dois terços dos membros.
+
+6. TREINAMENTO
+6.1. Todos os membros da CIPA (titulares e suplentes) devem receber treinamento antes de assumir a função.
+6.2. O treinamento é de responsabilidade do empregador, com carga horária mínima de 20 horas.
+6.3. O treinamento deve abordar: estudo do ambiente, condições de trabalho e fatores de risco; metodologia de investigação e análise de acidentes; noções sobre doenças do trabalho; primeiros socorros; NR-5.
+
+7. ESTABILIDADE
+7.1. Os membros eleitos têm estabilidade no emprego desde o registro de sua candidatura até 1 ano após o término do mandato.
+7.2. Não se aplica a estabilidade em caso de pedido de demissão, aposentadoria ou falta grave.
+
+8. CIPA CENTRALIZADA
+8.1. Empresas com vários estabelecimentos podem constituir CIPA Centralizada, com representação dos trabalhadores de cada estabelecimento, desde que mantida a proporcionalidade.

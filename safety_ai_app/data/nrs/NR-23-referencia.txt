@@ -1,0 +1,35 @@
+=== NR-23 - PROTEÇÃO CONTRA INCÊNDIOS ===
+Portaria MTE nº 3.214/78
+
+1. CAMPO DE APLICAÇÃO
+1.1. Esta norma estabelece as medidas de proteção contra incêndio que as empresas devem adotar.
+
+2. PREVENÇÃO DE INCÊNDIOS
+2.1. Todo o estabelecimento deve ter extintores de incêndio em bom estado de conservação e funcionamento, devidamente identificados com etiqueta de inspeção.
+2.2. Brigada de incêndio treinada, proporcional ao número de trabalhadores e ao risco de incêndio.
+2.3. Plano de emergência e evacuação com rotas sinalizadas.
+
+3. SAÍDAS DE EMERGÊNCIA
+3.1. Todo estabelecimento deve ter saídas em número suficiente para a evacuação rápida em caso de emergência.
+3.2. Saídas de emergência devem ser sinalizadas com setas luminescentes ou iluminadas.
+3.3. Largura mínima: 1,20 m para saídas principais.
+3.4. Portas de emergência devem abrir para o lado da fuga (sentido de saída).
+3.5. Proibido trancá-las durante o horário de funcionamento.
+
+4. EXTINTORES
+4.1. Extintores devem ser distribuídos conforme o tipo de risco (classe A, B, C, D, K).
+4.2. Distância máxima de caminhamento: 20 m para extintores de água/pó para fogos Classe A; 15 m para outras classes.
+4.3. Inspeção mensal (visual) e manutenção anual obrigatórias.
+
+5. BRIGADA DE INCÊNDIO
+5.1. Composição mínima conforme o número de trabalhadores por turno e o risco.
+5.2. Treinamento teórico e prático com frequência anual mínima.
+5.3. Simulacros anuais de evacuação.
+
+6. MATERIAIS INFLAMÁVEIS
+6.1. Armazenagem separada dos materiais de fácil combustão.
+6.2. Proibição de acúmulo de materiais combustíveis próximos a fontes de calor.
+6.3. Controle de trabalho a quente (solda, corte) em áreas com risco de incêndio.
+
+7. SISTEMAS DE DETECÇÃO E SUPRESSÃO
+7.1. Em riscos elevados, instalar detectores de fumaça e sprinklers conforme NBR 17240 e NBR 10897.

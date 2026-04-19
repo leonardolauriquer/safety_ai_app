@@ -1,0 +1,29 @@
+=== NR-25 - RESÍDUOS INDUSTRIAIS ===
+Portaria MTE nº 3.214/78
+
+1. CAMPO DE APLICAÇÃO
+1.1. Esta norma regulamenta a forma adequada de tratamento e destino de resíduos industriais, com foco na proteção dos trabalhadores.
+
+2. OBRIGAÇÕES GERAIS
+2.1. Os resíduos industriais sólidos, líquidos ou gasosos produzidos devem ter destinação adequada, de modo a não prejudicar a saúde dos trabalhadores nem contaminar o ambiente de trabalho.
+2.2. O acúmulo de resíduos no local de trabalho deve ser minimizado.
+
+3. CLASSIFICAÇÃO DE RESÍDUOS (NBR 10.004)
+3.1. Classe I – Perigosos: resíduos com inflamabilidade, corrosividade, reatividade, toxicidade ou patogenicidade.
+3.2. Classe II A – Não perigosos / Não inertes: resíduos com biodegradabilidade, combustibilidade ou solubilidade.
+3.3. Classe II B – Não perigosos / Inertes: resíduos que, submetidos a testes, não têm solubilização de constituintes acima dos padrões de potabilidade.
+
+4. MANEJO E ARMAZENAGEM INTERNA
+4.1. Resíduos perigosos devem ser segregados na origem.
+4.2. Contentores identificados com tipo de resíduo e símbolo de risco.
+4.3. Área de armazenagem com piso impermeável, contenção de derramamento e cobertura.
+4.4. EPI adequado para manuseio de resíduos perigosos.
+
+5. DESTINAÇÃO FINAL
+5.1. O destino final dos resíduos industriais deve ser feito conforme as legislações federal, estadual e municipal.
+5.2. Empresas de transporte e disposição de resíduos devem ter licença ambiental.
+5.3. Manifestos de transporte de resíduos perigosos são obrigatórios.
+
+6. PROTEÇÃO DOS TRABALHADORES
+6.1. Treinamento específico para trabalhadores que manuseiam resíduos perigosos.
+6.2. Monitoramento de exposição a agentes tóxicos conforme NR-9.

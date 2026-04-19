@@ -1,0 +1,45 @@
+=== NR-9 - AVALIAÇÃO E CONTROLE DAS EXPOSIÇÕES OCUPACIONAIS A AGENTES FÍSICOS, QUÍMICOS E BIOLÓGICOS ===
+Portaria MTE nº 3.214/78 | Última atualização: Portaria SEPRT nº 6.735/2020
+
+1. OBJETIVO E CAMPO DE APLICAÇÃO
+1.1. Esta norma estabelece a obrigatoriedade de elaboração e implementação de processo de identificação de perigos e avaliação de riscos de todos os agentes físicos, químicos e biológicos.
+1.2. A avaliação de riscos é componente obrigatório do Programa de Gerenciamento de Riscos (PGR), exigido pela NR-1.
+1.3. Aplica-se a todas as organizações que possuam empregados regidos pela CLT.
+
+2. DEFINIÇÕES
+2.1. Agente físico: formas de energia (ruído, vibrações, pressão anormal, temperatura extrema, radiações ionizantes e não ionizantes, ultrassom, infrassom).
+2.2. Agente químico: substâncias, compostos ou produtos que possam penetrar no organismo pela via respiratória, por contato ou absorção.
+2.3. Agente biológico: bactérias, fungos, bacilos, parasitas, protozoários, vírus, entre outros.
+2.4. Limite de tolerância: concentração ou intensidade máxima ou mínima, relacionada com a natureza e tempo de exposição ao agente, que não causará dano à saúde do trabalhador.
+
+3. AVALIAÇÃO DE EXPOSIÇÕES
+3.1. A avaliação dos agentes físicos, químicos e biológicos consiste em avaliação qualitativa e, quando necessário, avaliação quantitativa.
+3.2. A avaliação quantitativa deve ser realizada por profissional legalmente habilitado.
+3.3. Os resultados devem ser registrados e preservados por 20 anos.
+
+4. MEDIDAS DE PREVENÇÃO
+4.1. A hierarquia das medidas de prevenção deve ser seguida:
+   a) Eliminação do agente nocivo;
+   b) Substituição por agente menos nocivo;
+   c) Implementação de medidas de controle de engenharia;
+   d) Medidas administrativas;
+   e) EPIs como último recurso.
+4.2. Quando mantida a exposição, os trabalhadores devem ser monitorados periodicamente.
+
+5. NÍVEIS DE AÇÃO
+5.1. Nível de ação é o valor acima do qual devem ser iniciadas ações preventivas.
+5.2. Valor corresponde à metade do limite de tolerância.
+5.3. Quando identificado nível de ação, medidas específicas de controle e monitoramento devem ser implementadas.
+
+6. RUÍDO
+6.1. O limite de tolerância para ruído é de 85 dB(A) para jornada de 8 horas.
+6.2. Níveis superiores exigem proteção auditiva individual e Programa de Conservação Auditiva (PCA).
+6.3. Para cada 5 dB(A) de aumento, o tempo máximo de exposição cai pela metade.
+
+7. CALOR
+7.1. A avaliação do calor utiliza o Índice de Bulbo Úmido-Termômetro de Globo (IBUTG).
+7.2. Limites variam conforme o tipo de atividade (leve, moderada, pesada).
+
+8. PRODUTOS QUÍMICOS
+8.1. Os limites de tolerância para substâncias químicas constam do Quadro I do Anexo I da NR-15.
+8.2. Quando não houver limite estabelecido, deve ser adotado o critério da American Conference of Governmental Industrial Hygienists (ACGIH) ou outro critério internacionalmente reconhecido.

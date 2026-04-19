@@ -1,0 +1,421 @@
+=== NR-29 - NORMA REGULAMENTADORA DE SEGURANÇA E SAÚDE NO TRABALHO PORTUÁRIO ===
+Fonte: https://www.gov.br/trabalho-e-emprego/pt-br/acesso-a-informacao/participacao-social/conselhos-e-orgaos-colegiados/comissao-tripartite-partitaria-permanente/normas-regulamentadora/normas-regulamentadoras-vigentes/norma-regulamentadora-no-29-nr-29
+============================================================
+=== NR-29 - NORMA REGULAMENTADORA DE SEGURANÇA E SAÚDE NO TRABALHO PORTUÁRIO ===
+Fonte: https://www.gov.br/trabalho-e-emprego/pt-br/acesso-a-informacao/participacao-social/conselhos-e-orgaos-colegiados/comissao-tripartite-partitaria-permanente/normas-regulamentadora/normas-regulamentadoras-vigentes/norma-regulamentadora-no-29-nr-29
+============================================================
+
+MINISTÉRIO DO TRABALHO E EMPREGO 
+SECRETARIA DE SEGURANÇA E SAUDE NO TRABALHO 
+ 
+PORTARIA N.º 53, DE 28 DE DEZEMBRO DE 1997 
+(D.O.U. de 29/12/97 – Seção 1 – págs. 31.556 e 31.563) 
+ 
+O SECRETÁRIO DE SEGURANÇA E SAÚDE NO TRABALHO, no u so da competência que lhe foi 
+delegada pela Portaria MTb n.º 1.152, 12 de dezembro de 1997, publicado no DOU do dia 15.12.97, Seção II, página 9.490; e, 
+ 
+CONSIDERANDO o disposto no artigo 200 da Consolidaç ão das Leis do Trabalho – CLT, com redação 
+dada pela lei n.º 6.514, de 22 de dezembro de 1977; a Medida Provisória n.º 1575-6, de 27 de novembro de 1997 e a 
+Convenção / OIT / n.º 152, relativa à Segurança e H igiene dos Trabalhos Portuários, promulgada pelo De creto n.º 99.534, de 
+19 de setembro de 1990, resolve: 
+ 
+Art. 1º - Aprovar o texto da Norma Regulamentadora NR-29, relativa à segurança e saúde no trabalho 
+portuário, em anexo. 
+ 
+Art. 2º - O prazo para implementação das medidas estabelec idas na NR-29 será de 90 (noventa) dias da data 
+da sua publicação, ressalvados os seguintes subitens: 
+- 29.1.4.2.”c” – prazo de 6 (seis) meses; 
+- 29.1.4.2.”d” – prazo de 12 (doze) meses; 
+- 29.3.5.23 – prazo de 6 (seis) meses; 
+- 29.3.6.10.1 – prazo de 12 (doze) meses; 
+- 29.3.6.10.2 – prazo de 12 (doze) meses; 
+- 29.3.6.10.3 – prazo de 12 (doze) meses; 
+- 29.3.6.10.4 – prazo de 6 (seis) meses; 
+- 29.3.6.10.7 – prazo de 6 (seis) meses; 
+- 29.3.6.10.8 – prazo de 6 (seis) meses; 
+- 29.3.6.10.9 – prazo de 6 (seis) meses; 
+- 29.38.3 – prazo de 12 (doze) meses. 
+ 
+Art. 3º - Fica mantido, pelo prazo de 1 (um) ano, o Grupo de Trabalho Tripartite – GTT, instituído pela 
+Portaria n.º 12, de 1 de dezembro de 1995, alterada pela Portaria n.º 3, de 11 de abril de 1996, para acompanhar a 
+implementação da NR-29. 
+& 1º - O GTT funcionará na forma que dispuser o seu reg ulamento interno a ser elaborado pelos seus 
+membros. 
+ 
+& 2º - O GTT será coordenado pelo representante titular da Secretaria de Segurança e Saúde no Trabalho. 
+ 
+& 3º - O GTT se reunirá segundo cronograma a ser definido por seus membros. 
+ 
+& 4º - É facultado, a cada uma das representações no GT T, fazer-se acompanhar nas reuniões de assessoria 
+técnica-científica, sem direito a voto, garantido o direito a voz. 
+ 
+Art. 4º - As dúvidas suscitadas e os casos omissos serão d irimidos pela Secretaria de Segurança e Saúde no 
+Trabalho. 
+ 
+Art. 5º - Esta Portaria entra em vigor na data de sua publicação. 
+ 
+Art. 6º - Revogam-se as disposições em contrário. 
+ 
+ZUHER HANDAR 
+ 
+ANEXO 
+ 
+NORMA REGULAMENTADORA DE SEGURANÇA E SAÚDE NO TRABA LHO PORTUÁRIO 
+ 
+29.1 - DISPOSIÇÕES INICIAIS 
+ 
+ 
+2 
+ 
+29.1.1 - Objetivo 
+Regular a proteção obrigatória contra acidentes e d oenças profissionais, facilitar os primeiros socorr os a acidentados e alcançar 
+as melhores condições possíveis de segurança e saúde aos trabalhadores portuários. 
+29.1.2 - Aplicabilidade 
+As disposições contidas nesta NR aplicam-se aos tra balhadores portuários em operações tanto a bordo co mo em terra, assim 
+como aos demais trabalhadores que exerçam atividade s nos portos organizados e instalações portuárias d e uso privativo e 
+retroportuárias, situadas dentro ou fora da área do porto organizado. 
+29.1.3 - Definições 
+Para os fins desta Norma Regulamentadora, considera-se: 
+a) Terminal Retroportuário 
+É o terminal situado em zona contígua à de porto or ganizado ou instalação portuária, compreendida no p erímetro de cinco 
+quilômetros dos limites da zona primária, demarcada pela autoridade aduaneira local, no qual são execu tados os serviços de 
+operação, sob controle aduaneiro, com carga de importação e exportação, embarcados em contêiner, reboque ou semi-reboque. 
+b) Zona Primária 
+É a área alfandegada para a movimentação ou armazenagem de cargas destinadas ou provenientes do transporte aquaviário . 
+c) Tomador de Serviço 
+É toda pessoa jurídica de direito público ou privad o que, não sendo operador portuário ou empregador, requisite trabalhador 
+portuário avulso. 
+d) Pessoa Responsável 
+É aquela designada por operadores portuários, empre gadores, tomadores de serviço, comandantes de embar cações, Órgão 
+Gestor de Mão de Obra - OGMO, sindicatos de classe, fornecedores de equipamentos mecânicos e outros, c onforme o caso, 
+para assegurar o cumprimento de uma ou mais tarefas específicas e que possuam suficientes conhecimento s e experiência, com 
+a necessária autoridade para o exercício dessas funções. 
+29.1.4 – Competências 
+29.1.4.1 – Compete aos operadores portuários, empregadores, tomadores de serviço e OGMO, conforme o caso: 
+a) cumprir e fazer cumprir esta NR no que tange à prev enção de riscos de acidentes do trabalho e doenças profissionais nos 
+serviços portuários; 
+b) fornecer instalações, equipamentos, maquinários e a cessórios em bom estado e condições de segurança, 
+responsabilizando-se pelo correto uso; 
+c) zelar pelo cumprimento da norma de segurança e saúde nos trabalhos portuários. 
+29.1.4.2 – Compete ao OGMO ou ao empregador: 
+a) proporcionar a todos os trabalhadores formação sobr e segurança, saúde e higiene ocupacional no trabalh o portuário, 
+conforme o previsto nesta NR; 
+b) responsabilizar-se pela compra, manutenção, distrib uição, higienização, treinamento e zelo pelo uso co rreto dos 
+equipamentos de proteção individual – EPI e equipamentos de proteção coletiva -EPC; 
+c) elaborar e implementar o Programa de Prevenção de Riscos Ambientais – PPRA – no ambiente de trabalho portuário; 
+d) elaborar e implementar o Programa de Controle Médic o em Saúde Ocupacional - PCMSO - abrangendo todos o s 
+trabalhadores portuários. 
+29.1.4.3 – Compete aos trabalhadores: 
+a) cumprir a presente NR, bem como as demais disposições legais de segurança e saúde do trabalhador; 
+b) informar ao responsável pela operação de que esteja participando, as avarias ou deficiências observada s que possam 
+constituir risco para o trabalhador ou para a operação; 
+c) utilizar corretamente os dispositivos de segurança - EPI e EPC, que lhes sejam fornecidos, bem como as instalações que 
+lhes forem destinadas. 
+29.1.4.4 - Compete às administrações portuárias, de ntro dos limites da área do porto organizado, zelar para que os serviços se 
+realizem com regularidade, eficiência, segurança e respeito ao meio ambiente 
+29.1.5 - Instruções Preventivas de Riscos nas Operações Portuárias 
+29.1.5.1 - Para adequar os equipamentos e acessório s necessários à manipulação das cargas e providenci ar medidas de 
+prevenção, os operadores portuários, empregadores o u tomadores de serviço ficam obrigados à informar a s entidades 
+envolvidas com a execução dos trabalhos portuários, com a antecedência de no mínimo 48 horas, o seguinte: 
+a) peso dos volumes, unidades de carga e suas dimensões; 
+b) tipo e classe do carregamento a manipular; 
+c) características específicas das cargas perigosas a serem movimentadas ou em trânsito. 
+29.1.6 - Plano de Controle de Emergência - PCE e Plano de Ajuda Mútua – PAM 
+29.1.6.1 - Cabe à administração do porto, ao OGMO e empregadores, a elaboração PCE , contendo ações co ordenadas a serem 
+seguidas nas situações descritas neste subitem e compor com outras organizações o PAM. 
+29.1.6.2 - Devem ser previstos os recursos necessár ios, bem como linhas de atuação conjunta e organiza da, sendo objeto dos 
+planos as seguintes situações: 
+a) incêndio ou explosão; 
+b) vazamento de produtos perigosos; 
+c) queda de homem ao mar; 
+d) condições adversas de tempo que afetem a segurança das operações portuárias; 
+e) poluição ou acidente ambiental; 
+ 
+ 
+3 
+ 
+f) socorro a acidentados. 
+29.1.6.3 – No PCE e no PAM, deve constar o estabele cimento de uma periodicidade de treinamentos simula dos, cabendo aos 
+trabalhadores indicados comporem as equipes e efetiva participação. 
+ 
+29.2 - ORGANIZAÇÃO DA ÁREA DE SEGURANÇA E SAÚDE DO TRABALHO PORTUÁRIO. 
+29.2.1 - Serviço Especializado em Segurança e Saúde do Trabalhador Portuário - SESSTP. 
+29.2.1.1 - Todo porto organizado, instalação portuá ria de uso privativo e retroportuária deve dispor d e um SESSTP, de acordo 
+com o dimensionamento mínimo constante do Quadro I, mantido pelo OGMO ou empregadores, conforme o caso , atendendo 
+todas as categorias de trabalhadores. 
+29.2.1.1.1 - O custeio do SESSTP será dividido prop orcionalmente de acordo com o número de trabalhador es utilizados pelos 
+operadores portuários, empregadores, 
+tomadores de serviço e pela administração do porto, por ocasião da arrecadação dos valores relativos à remuneração dos 
+trabalhadores. 
+29.2.1.2 - Os profissionais integrantes do SESSTP, deverão ser empregados do OGMO ou empregadores. 
+29.2.1.3 - Nas situações em que o OGMO não tenha si do constituído, cabe ao responsável pelas operações portuárias o 
+cumprimento deste subitem, tendo, de forma análoga, as mesmas atribuições e responsabilidade do OGMO. 
+29.2.1.4 - O SESSTP deve ser dimensionado de acordo com a soma dos seguintes fatores: 
+a) média aritmética obtida pela divisão do número de t rabalhadores avulsos tomados no ano civil anterior e pelo número de 
+dias efetivamente trabalhados; 
+b) média do número de empregados com vínculo empregatício do ano civil anterior. 
+29.2.1.4.1 - Nos portos organizados e instalações p ortuárias de uso privativo em início de operação, o dimensionamento terá 
+por base o número estimado de trabalhadores a serem tomados no ano. 
+ 
+Quadro I - Dimensionamento mínimo do SESSTP 
+Número de Trabalhadores 
+Prof. Especializados 50 - 100 101 - 250 251 - 500 501 - 750 751 - 1000 1 001 - 2000 
+Engenheiro de Segurança -- 01 01 01 01 02 
+Técnico de Segurança 01 02 03 04 05 08 
+Médico do Trabalho -- 01 02 01 02 03 
+Enfermeiro do Trabalho -- -- -- -- 01 02 
+Aux. Enf. Do Trabalho 01 01 02 02 02 03 
+ 
+29.2.1.4.2 - Acima de 2000 (dois mil) trabalhadores para cada grupo de 2000 (dois mil) trabalhadores, ou fração acima de 500, 
+haverá um acréscimo de 01 profissional especializad o em cada função específica, exceto no caso do Técn ico de Segurança do 
+Trabalho, no qual haverá um acréscimo de 3 profissionais. 
+29.2.1.4.3 - Os profissionais do SESSTP devem cumprir jornada de trabalho integral. 
+29.2.1.5 - Compete aos profissionais integrantes do SESSTP: 
+a) realizar identificação prévia das condições de segu rança a bordo da embarcação, abrangendo, dentre out ros, os 
+equipamentos de bordo, as vias de acesso aos porões , as condições de iluminamento e ventilação, bem co mo todos os 
+equipamentos e acessórios a serem utilizados nos tr abalhos portuários visando a prevenção de acidentes ou doenças do 
+trabalho. 
+b) realizar análise imediata e obrigatória - em conjun to com o órgão competente do MTb - dos acidentes em que haja morte, 
+perda de membro, função orgânica ou prejuízo de grande monta, ocorridos nas atividades portuárias. 
+c) as atribuições previstas na NR-4 - Serviços Especia lizados em Engenharia de Segurança e em Medicina do Trabalho – 
+SESMT, observados os modelos de mapas constantes do anexo I. 
+29.2.2 - Comissão de Prevenção de Acidentes no Trabalho Portuário – CPATP 
+29.2.2.1 - O OGMO, os empregadores e as instalações portuárias de uso privativo, ficam obrigados a org anizar e manter em 
+funcionamento a CPATP. 
+29.2.2.2 - A CPATP tem como objetivo observar e rel atar condições de risco nos ambientes de trabalho e solicitar medidas 
+para reduzir até eliminar ou neutralizar os riscos existentes, bem como discutir os acidentes ocorrido s, encaminhando ao 
+SESSTP, ao OGMO ou empregadores, o resultado da dis cussão, solicitando medidas que previnam acidentes semelhantes e 
+ainda, orientar os demais trabalhadores quanto a prevenção de acidentes. 
+29.2.2.3 - A CPATP será constituída de forma paritá ria, por trabalhadores portuários com vínculo empre gatício por tempo 
+indeterminado e avulsos e por representantes dos op eradores portuários, empregadores e/ou OGMO, dimens ionado de acordo 
+com o Quadro II 
+. 
+29.2.2.4 - Haverá na CPATP tantos suplentes quantos forem os representantes titulares, sendo a suplênc ia específica de cada 
+titular. 
+29.2.2.5 - A composição da CPATP obedecerá critério s que garantam a representação das atividades portu árias com maior 
+potencial de risco e ocorrência de acidentes, respeitado o dimensionamento do quadro II 
+ 
+Quadro II - Dimensionamento da CPATP 
+N.º médio de 
+Trabalhadores 
+20 
+a 
+51 
+a 
+101 
+a 
+501 
+a 
+1001 
+a 
+2001 
+a 
+5001 
+a 
+Acima de 10000 a cada grupo 
+de 2.500 acrescentar 
+ 
+ 
+4 
+ 
+50 100 500 1000 2000 5000 10000 
+N.º de Rep 
+Titulares do 
+Empregador 
+01 02 04 06 09 12 15 02 
+N.º de Repres 
+Titulares dos 
+trabalhadores 
+01 02 04 06 09 12 15 02 
+ 
+29.2.2.6 - A composição da CPATP será proporcional ao número médio do conjunto de trabalhadores portuá rios utilizados no 
+ano anterior. 
+29.2.2.7 - Os representantes dos trabalhadores na CPATP, titulares e suplentes, serão eleitos em escrutínio secreto. 
+29.2.2.8 - Assumirão a condição de membros titulares os candidatos mais votados. 
+29.2.2.9 - Em caso de empate, assumirá o candidato que tiver maior tempo de serviço no trabalho portuário. 
+29.2.2.10 - Os demais candidatos votados assumirão a condição de suplentes, obedecendo a ordem decresc ente de votos 
+recebidos, observando o disposto no item 29.2.2 e subitens. 
+29.2.2.11 - A eleição deve ser realizada durante o expediente, respeitados os turnos, devendo ter a pa rticipação de, no mínimo, 
+metade mais um do número médio do conjunto dos trab alhadores portuários utilizados no ano anterior, ob tido conforme 
+subitem 29.2.1.4 desta NR. 
+29.2.2.12 - Organizada a CPATP, a mesma deve ser re gistrada no órgão regional do Ministério do Trabalh o, até 10 (dez) dias 
+após a eleição. 
+29.2.2.13 - O registro da CPATP deve ser feito medi ante requerimento ao Delegado Regional do Trabalho, acompanhado de 
+cópia das atas de eleição, instalação e posse, cont endo o calendário anual das reuniões ordinárias da CPATP, constando dia, 
+mês, hora e local de realização das mesmas. 
+29.2.2.14 - O OGMO, os empregadores e/ou as instala ções portuárias de uso privativo designará dentre o s seus representantes 
+titulares o presidente e os trabalhadores elegerão, dentre os seus titulares, o vice presidente da CPATP. 
+29.2.2.15 - Nos impedimentos do presidente, assumirá as suas funções o vice-presidente. 
+29.2.2.16 - A duração do mandato será de 1 (um) ano, permitida uma reeleição. 
+29.2.2.17 - A CPATP terá um secretário e seu respec tivo substituto que serão escolhidos, de comum acor do, pelos membros 
+titulares da comissão. 
+29.2.2.18 - A CPATP terá as seguintes atribuições: 
+a) discutir os acidentes ocorridos na área portuária, inclusive a bordo; 
+b) sugerir medidas de prevenção de acidentes julgadas necessárias, por iniciativa própria ou indicadas po r outros 
+trabalhadores, encaminhando-as ao SESSTP, ao OGMO, empregadores e/ou as administrações dos terminais d e uso 
+privativo; 
+c) promover a divulgação e zelar pela observância das Normas de Segurança e Saúde no Trabalho; 
+d) despertar o interesse dos trabalhadores portuários pela prevenção de acidentes e de doenças ocupaciona is e estimula-los, 
+permanentemente, a adotar comportamento preventivo durante o trabalho; 
+e) promover, anualmente, em conjunto com o SESSTP, a S emana Interna de Prevenção de Acidente no Trabalho Portuário - 
+SIPATP; 
+f) lavrar as atas das reuniões ordinárias e extraordin árias em livro próprio que deve ser registrado no ó rgão regional do MTb, 
+enviando-as mensalmente ao SESSTP, ao OGMO, aos emp regadores e a administração dos terminais portuário s de uso 
+privativo; 
+g) realizar em conjunto com o SESSTP, quando houver, a investigação de causas e conseqüências dos acident es e das 
+doenças ocupacionais, acompanhando a execução das medidas corretivas; 
+h) realizar mensalmente e sempre que houver denúncia d e risco, mediante prévio aviso ao OGMO, empregadore s, 
+administrações de instalações portuárias de uso pri vativo e ao SESSTP, inspeção nas dependências do po rto ou instalação 
+portuária de uso privativo, dando-lhes conhecimento dos riscos encontrados, bem como ao responsável pelo setor; 
+i) sugerir a realização de cursos, treinamentos e camp anhas que julgar necessárias para melhorar o desemp enho dos 
+trabalhadores portuários quanto à segurança e saúde no trabalho; 
+j) preencher o Anexo II desta NR, mantendo-o arquivado , de maneira a permitir acesso a qualquer momento, aos 
+interessados, sendo de livre escolha o método de arquivamento; 
+l) elaborar o Mapa de Risco, de acordo com o que dispõe a NR 5; 
+m) convocar pessoas, quando necessário, para tomada de informações, depoimentos e dados ilustrativos e/ou esclarecedores, 
+por ocasião de investigação dos acidentes do trabalho; 
+29.2.2.19 - As decisões da CPATP deverão ocorrer, sempre que possível, por consenso entre os participantes. 
+29.2.2.20 – Não havendo consenso para as decisões da CPATP, deverá ser tomada pelo menos uma das segui ntes providências, 
+visando a solução dos conflitos: 
+a) constituir um mediador em comum acordo com os participantes; 
+b) solicitar no prazo de 8 (oito) dias, através do presidente da CPATP, a mediação do órgão regional do MTb. 
+29.2.2.21 - Compete ao presidente da CPATP: 
+a) convocar os membros para as reuniões da CPATP; 
+b) presidir as reuniões, encaminhando ao OGMO, emprega dores, administrações dos terminais portuários de u so privativo e 
+ao SESSTP as recomendações aprovadas, bem como, acompanhar-lhes a execução; 
+ 
+ 
+5 
+ 
+c) designar membros da CPATP para investigar o acident e do trabalho ou acompanhar investigação feita pelo SESSTP, 
+imediatamente após receber a comunicação da ocorrência do acidente; 
+d) determinar tarefas aos membros da CPATP; 
+e) coordenar todas as atribuições da CPATP; 
+f) manter e promover o relacionamento da CPATP com o S ESSTP e demais órgãos dos portos organizados ou ins talações 
+portuárias de uso privativo; 
+g) delegar atribuições ao vice-presidente; 
+29.2.2.22 - Compete ao vice-presidente da CPATP: 
+a) executar atribuições que lhe forem delegadas; 
+b) substituir o presidente nos seus impedimentos. 
+29.2.2.23 - Compete ao Secretário da CPATP: 
+a) elaborar as atas da eleição, da posse e das reuniões, registrando-as em livro próprio; 
+b) preparar a correspondência; 
+c) manter o arquivo atualizado; 
+d) providenciar para que as atas sejam assinadas por todos os membros do CPATP; 
+e) realizar as demais tarefas que lhe forem atribuídas pelo presidente da CPATP. 
+29.2.2.24 - Compete aos Membros da CPATP: 
+a) elaborar o calendário anual de reuniões da CPATP; 
+b) participar das reuniões da CPATP, discutindo os assuntos em pauta e aprovando ou não as recomendações; 
+c) investigar o acidente do trabalho, quando designado pelo presidente da CPATP, e discutir os acidentes ocorridos; 
+d) freqüentar o curso sobre prevenção de acidentes do trabalho, promovido pelo OGMO, empregadores e admin istrações dos 
+terminais portuários de uso privativo; 
+e) cuidar para que todas as atribuições da CPATP previ stas no subitem 29.2.2.18 sejam cumpridas durante a respectiva 
+gestão. 
+29.2.2.25 - Compete ao OGMO ou empregadores: 
+a) promover para todos os membros da CPATP, titulares e suplentes, curso sobre prevenção de acidentes do trabalho, higiene 
+e saúde ocupacional , com carga horária mínima de 24 (vinte e quatro) horas, obedecendo ao currículo básico do Anexo III 
+desta NR, sendo este de freqüência obrigatória e re alizado antes da posse dos membros de cada mandato, exceção feita ao 
+mandato inicial; 
+b) prestigiar integralmente a CPATP, proporcionando ao s seus componentes os meios necessários ao desempen ho de suas 
+atribuições; 
+c) convocar eleições para escolha dos membros da nova CPATP, com antecedência mínima de 45 (quarenta e ci nco) dias, 
+realizando-as, no máximo, até 30 (trinta) dias antes do término do mandato da CPATP em exercício; 
+d) promover cursos de atualização para os membros da CPATP; 
+e) dar condições necessárias para que todos os titulares de representações na CPATP compareçam às reuniõe s ordinárias e/ou 
+extraordinárias; 
+29.2.2.26 - Compete aos trabalhadores: 
+a) eleger seus representantes na CPATP; 
+b) indicar à CPATP e ao SESSTP situações de risco e apresentar sugestões para melhoria das condições de trabalho; 
+c) cumprir as recomendações quanto à prevenção de acidentes, transmitidas pelos membros da CPATP e do SESSTP; 
+d) comparecer às reuniões da CPATP sempre que convocado. 
+29.2.2.27 - A CPATP se reunirá pelo menos uma vez p or mês, em local apropriado e durante o expediente, obedecendo ao 
+calendário anual. 
+29.2.2.28 - Sempre que ocorrer acidente que resulte em morte, perda de membro ou de função orgânica, o u que cause prejuízo 
+de grande monta, a CPATP se reunirá em caráter extr aordinário no prazo máximo de 48 (quarenta e oito) horas após a 
+ocorrência, podendo ser exigida a presença da pessoa responsável pela operação portuária conforme definido no subitem 29.1.3 
+alínea “d” desta NR. 
+29.2.2.29 - Registrada a CPATP no órgão regional do MTb, a mesma não poderá ter o número de representa ntes reduzido, bem 
+como não poderá ser desativada pelo OGMO ou emprega dores antes do término do mandato de seus membros, ainda que haja 
+redução do número de trabalhadores portuários, exceto nos casos em que houver encerramento da atividade portuária. 
+29.2.2.30 - No caso de instalações portuárias de us o privativo e os terminais retroportuários que poss uam SESMT e CIPA nos 
+termos do que estabelecem, respectivamente as NR-4 e NR-5, aprovadas pela Portaria n.º 3214/78 do MTb e alterações 
+posteriores, e não utilizem mão-de-obra de trabalha dores portuários avulsos, poderão mantê-los, com as atribuições 
+especificadas nesta NR. 
+ 
+29.3 - SEGURANÇA, HIGIENE E SAÚDE NO TRABALHO PORTU ÁRIO. 
+29.3.1 - Nas operações de atracação, desatracação e manobras de embarcações. 
+29.3.1.1 - Na atracação, desatracação e manobras de embarcações devem ser adotadas medidas de prevenção de acidentes, com 
+cuidados especiais aos riscos de prensagem, batidas contra e esforços excessivos dos trabalhadores. 
+29.3.1.2 - É obrigatório o uso de um sistema de com unicação entre o prático, na embarcação, e o respon sável em terra pela 
+atracação, através de transceptor portátil, de modo a ser assegurada uma comunicação bilateral. 
+29.3.1.3 - Todos os trabalhadores envolvidos nessas operações devem fazer uso de coletes salva-vidas aprovados pela Diretoria 
+de Portos e Costas - DPC, dotados de fitas retro-refletivas. 
+ 
+ 
+6 
+ 
+29.3.1.4 - Durante as manobras de atracação e desat racação, os guindastes de terra e os de pórtico dev em estar o mais 
+afastado possível das extremidades dos navios. 
+29.3.2 - Acessos às embarcações. 
+29.3.2.1 - As escadas, rampas e demais acessos às e mbarcações devem ser mantidas em bom estado de cons ervação e limpeza, 
+sendo preservadas as características das superfícies antiderrapantes. 
+29.3.2.2 - As escadas e rampas de acesso às embarca ções devem dispor de balaustrada - guarda-corpos de proteção contra 
+quedas. 
+29.3.2.2.1 - O corrimão deve oferecer apoio adequad o, possuindo boa resistência em toda a sua extensão , não permitindo 
+flexões que tirem o equilíbrio do usuário. 
+29.3.2.3 - As escadas de acesso às embarcações ou a s estruturas complementares a estas conforme o prev isto no subitem 
+29.3.2.10, devem ficar apoiadas em terra, tendo em sua base um dispositivo rotativo, devidamente prote gido que permita a 
+compensação dos movimentos da embarcação. 
+29.3.2.4 - As escadas de acesso às embarcações deve m possuir largura adequada que permita o trânsito s eguro para um único 
+sentido de circulação, devendo ser guarnecidas com uma rede protetora, em perfeito estado de conservaç ão. Uma parte lateral 
+da rede deve ser amarrada ao costado do navio, enquanto a outra, passando sob a escada, deve ser amarr ada no lado superior de 
+sua balaustrada (lado de terra), de modo que, em caso de queda, o trabalhador não venha a bater contra as estruturas vizinhas. 
+29.3.2.4.1 - O disposto no subitem 29.3.2.4 não se aplica quando a distância do convés da embarcação a o cais não permita a 
+instalação de redes de proteção. 
+29.3.2.5 - A escada de portaló deve ficar posiciona da com aclividade adequada em relação ao plano hori zontal de modo que 
+permita o acesso seguro à embarcação. 
+29.3.2.6 - Os degraus das escadas, em face das vari ações de nível da embarcação, devem ser montados de maneira a mantê-los 
+em posição horizontal ou com declive que permita apoio adequado para os pés. 
+29.3.2.7 - O acesso à embarcação deve ficar fora do alcance do raio da lança do guindaste, pau-de-carg a ou assemelhado. 
+Quando isso não for possível, o local de acesso deve ser adequadamente sinalizado. 
+29.3.2.8 - É proibida a colocação de extensões elét ricas nas estruturas e corrimões das escadas e ramp as de acesso das 
+embarcações. 
+29.3.2.9 - Os suportes e os cabos de sustentação da s escadas ligados ao guincho não podem criar obstác ulos à circulação de 
+pessoas e devem ser mantidos sempre tencionados. 
+29.3.2.10 - Quando necessário o uso de pranchas, ra mpas ou passarelas de acesso, conjugadas ou não com as escadas, estas 
+devem seguir as seguintes especificações: 
+a) serem de concepção rígida; 
+b) terem largura mínima de 0,80 m (oitenta centímetros); 
+c) estarem providas de tacos transversais a intervalos de 0,40 m (quarenta centímetros) em toda extensão do piso; 
+d) possuírem corrimão em ambos os lados de sua extensã o dotado de guarda-corpo duplo com réguas situadas a alturas 
+mínimas de 1,20 m (um meto e vinte centímetros) e 0 ,70 m (setenta centímetros) medidas a partir da sup erfície do piso e 
+perpendicularmente ao eixo longitudinal da escada; 
+e) serem dotadas de dispositivos que permitam fixá-las firmemente à escada da embarcação ou à sua estrutu ra numa 
+extremidade; 
+f) a extremidade, que se apóia no cais, deve ser dotad a de dispositivo rotativo que permita acompanhar o movimento da 
+embarcação; 
+g) estarem posicionadas no máximo a 30 (trinta) graus de um plano horizontal. 
+29.3.2.11 - Não é permitido o acesso à embarcação u tilizando-se escadas tipo quebra-peito, salvo em si tuações excepcionais, 
+devidamente justificadas, avaliadas e acompanhadas pelo SESSPT e SESMT, conforme o caso. 
+29.3.2.12 – É proibido o acesso de trabalhadores à embarcações em equipamentos de guindar, exceto em o perações de resgate 
+e salvamento ou quando forem utilizados cestos espe ciais de transporte, desde que os equipamentos de g uindar possuam 
+condições especiais de segurança e existam procedimentos específicos para tais operações. 
+29.3.2.13 - Nos locais de trabalho próximos à água e pontos de transbordo devem existir bóias salva vi das e outros 
+equipamentos necessários ao resgate de vitimas que caiam na água, que sejam aprovados pela DPC. 
+29.3.2.13.1 - Nos trabalhos noturnos as bóias salva vidas deverão possuir dispositivo de iluminação au tomática aprovadas pela 
+DPC. 
+29.3.3 – Conveses. 
+29.3.3.1 - Os conveses devem estar sempre limpos e desobstruídos, dispondo de uma área de circulação q ue permita o trânsito 
+seguro dos trabalhadores. 
+29.3.3.2 - Quaisquer aberturas devem estar protegid as de forma que impeçam a queda de pessoas ou objet os. Quando houver 
+perigo de escorregamento nas superfícies em suas im ediações, devem ser empregados dispositivos ou proc esso que tornem o 
+piso antiderrapante. 
+29.3.3.3 - Olhais, escadas, tubulações, aberturas e cantos vivos devem ser mantidos sinalizados, a fim de indicar e advertir 
+acerca dos riscos existentes. 
+29.3.3.4 - A circulação de pessoal no convés princi pal deve ser efetuada pelo lado do mar, exceto por impossibilidade técnica 
+ou operacional comprovada. 
+29.3.3.5 - As cargas ou objetos que necessariamente tenham que ser estivadas no convés, devem ser pead as e escoradas 
+imediatamente após a estivagem. 
+29.3.3.6 - Os conveses devem oferecer boas condiçõe s de visibilidade aos operadores dos equipamentos d e içar, sinaleiros e 
+ 
+ 

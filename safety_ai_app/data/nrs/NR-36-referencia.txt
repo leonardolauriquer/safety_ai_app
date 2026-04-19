@@ -1,0 +1,35 @@
+=== NR-36 - SEGURANÇA E SAÚDE NO TRABALHO EM EMPRESAS DE ABATE E PROCESSAMENTO DE CARNES E DERIVADOS ===
+Portaria MTE nº 3.214/78 | Publicada pela Portaria MTE nº 555/2013
+
+1. CAMPO DE APLICAÇÃO
+1.1. Esta norma estabelece os requisitos mínimos de segurança e saúde para os trabalhadores em empresas de abate e processamento de carnes e derivados de animais (frigoríficos).
+
+2. FATORES DE RISCO
+2.1. Riscos ergonômicos: trabalho repetitivo, posturas inadequadas, uso de facas por longos períodos, ritmo de trabalho intenso.
+2.2. Riscos físicos: baixas temperaturas nas câmaras frigoríficas.
+2.3. Riscos biológicos: zoonoses, contato com sangue e vísceras.
+2.4. Riscos mecânicos: uso de instrumentos cortantes, equipamentos de abate.
+
+3. ORGANIZAÇÃO DO TRABALHO
+3.1. O ritmo de produção deve ser compatível com a saúde e a segurança dos trabalhadores.
+3.2. Rodízio de tarefas para reduzir sobrecarga de movimentos repetitivos.
+3.3. Pausas para recuperação psicofisiológica: mínimo de 20 minutos a cada 1h40min de trabalho (dependendo da atividade).
+
+4. TEMPERATURA
+4.1. Câmaras de frio: trabalhadores devem ter roupas e EPIs adequados para baixas temperaturas.
+4.2. Avaliação do estresse térmico pelo frio (IREQ) para câmaras.
+4.3. Tempo máximo de exposição ao frio e pausas em ambientes aquecidos.
+
+5. ERGONOMIA
+5.1. Avaliação ergonômica das atividades de corte, desossa e embalagem.
+5.2. Adaptação de ferramentas (facas com cabos ergonômicos, luvas anti-vibração).
+5.3. Altura ajustável das bancadas de trabalho.
+
+6. TREINAMENTO E CAPACITAÇÃO
+6.1. Treinamento inicial obrigatório de 8 horas antes de assumir a função.
+6.2. Reciclagem anual.
+6.3. Capacitação em técnicas de corte seguro, uso de EPIs e DORT/LER.
+
+7. SAÚDE DO TRABALHADOR
+7.1. PCMSO com ênfase em DORT (Distúrbios Osteomusculares Relacionados ao Trabalho).
+7.2. Vigilância de casos de LER/DORT com afastamento e reabilitação.
