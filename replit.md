@@ -27,7 +27,9 @@ Key pages include:
 
 ### Backend Architecture
 
-The core is a RAG pipeline (`nr_rag_qa.py`) built with LangChain, utilizing a persistent ChromaDB for NR indexing and Sentence Transformers for embeddings. OpenRouter serves as the LLM provider, with configurable models and dynamic temperature. The retriever combines BM25 and semantic search. Features include historical chat compression, Chain-of-Thought reasoning, and guardrails for domain adherence.
+The core is a RAG pipeline (`nr_rag_qa.py`) built with LangChain, utilizing a persistent ChromaDB for NR indexing and Sentence Transformers for embeddings. OpenRouter serves as the LLM provider, with configurable models and dynamic temperature. The retriever combines BM25 and semantic search (ensemble 30/70). Features include historical chat compression, Chain-of-Thought reasoning, and guardrails for domain adherence.
+
+Embedding model: `intfloat/multilingual-e5-base` (278M, requires "query:"/"passage:" prefixes, normalize_embeddings=True). Reranker: `cross-encoder/mmarco-mMiniLMv2-L12-H384-v1` (multilingual mMARCO, good for Portuguese).
 
 Data processors handle various data sources for quick queries and sizing tools, such as CBO, CID-10 (local and WHO API), CNAE (IBGE API), CA/EPI (Ministry of Labor FTP), and NR-specific tables for CIPA, SESMT, and fines. Document generators use `python-docx` and `docxtpl` for creating DOCX/PDF outputs.
 
