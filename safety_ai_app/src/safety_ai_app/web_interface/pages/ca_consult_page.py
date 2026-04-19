@@ -152,7 +152,11 @@ def _display_ca_details(ca_data: pd.Series) -> None:
 def ca_consult_page() -> None:
     """Página de consulta de Certificado de Aprovação (CA) de EPIs."""
     inject_glass_styles()
-    
+
+    if st.button("← Consultas Rápidas", key="back_from_ca"):
+        st.session_state.current_page = "quick_queries_page"
+        st.rerun()
+
     with st.container():
         st.markdown(glass_marker(), unsafe_allow_html=True)
         

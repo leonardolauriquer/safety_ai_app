@@ -82,7 +82,7 @@ _project_root = os.path.abspath(os.path.join(_script_dir, '..', '..'))
 
 CHROMADB_PERSIST_DIRECTORY = os.path.join(_project_root, "data", "chroma_db")
 COLLECTION_NAME = "nrs_collection"
-EMBEDDING_MODEL_NAME = 'intfloat/multilingual-e5-base'
+EMBEDDING_MODEL_NAME = 'intfloat/multilingual-e5-large-instruct'
 RERANKER_MODEL_NAME = 'cross-encoder/mmarco-mMiniLMv2-L12-H384-v1'
 RERANKER_TOP_N = 5
 

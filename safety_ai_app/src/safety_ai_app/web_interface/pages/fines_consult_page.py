@@ -18,6 +18,10 @@ def fines_consult_page() -> None:
     """Renderiza a página de consulta de multas da NR 28."""
     inject_glass_styles()
 
+    if st.button("← Consultas Rápidas", key="back_from_fines"):
+        st.session_state.current_page = "quick_queries_page"
+        st.rerun()
+
     with st.container():
         st.markdown(glass_marker(), unsafe_allow_html=True)
 

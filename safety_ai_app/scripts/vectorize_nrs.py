@@ -24,8 +24,8 @@ logger = logging.getLogger(__name__)
 CHROMADB_PERSIST_DIRECTORY = os.path.join(project_root, "data", "chroma_db")
 COLLECTION_NAME = "nrs_collection"
 
-# Modelo de embeddings multilíngue — 768 dimensões, otimizado para português
-EMBEDDING_MODEL_NAME = 'sentence-transformers/paraphrase-multilingual-mpnet-base-v2'
+# Modelo de embeddings multilíngue — 1024 dimensões, SOTA para português (E5-large-instruct)
+EMBEDDING_MODEL_NAME = 'intfloat/multilingual-e5-large-instruct'
 
 # Arquivo sentinela que registra o modelo de embeddings usado na última indexação.
 # Se o modelo mudar, uma re-indexação completa é disparada automaticamente.
@@ -84,7 +84,7 @@ def main(force_reindex: bool = False):
     da pasta do Google Drive 'SafetyAI - Conhecimento Base/Base de dados IA' no ChromaDB.
 
     Pipeline:
-    - Modelo de embeddings multilíngue (paraphrase-multilingual-mpnet-base-v2, 768 dims)
+    - Modelo de embeddings multilíngue (multilingual-e5-large-instruct, 1024 dims)
     - Chunking estrutural para NRs (chunk_size=1000, overlap=200)
     - Metadados enriquecidos: nr_number, article, item extraídos por parsing estrutural
 
@@ -176,7 +176,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description=(
             "Vetoriza e indexa NRs e outros documentos do Google Drive no ChromaDB.\n"
-            f"Modelo: {EMBEDDING_MODEL_NAME} (multilíngue, 768 dims).\n\n"
+            f"Modelo: {EMBEDDING_MODEL_NAME} (multilíngue, 1024 dims).\n\n"
             "IMPORTANTE: Use --force-reindex ao trocar o modelo de embeddings.\n"
             "O script detecta automaticamente mudanças de modelo via arquivo sentinela "
             f"em {_EMBEDDING_SENTINEL_FILE}."

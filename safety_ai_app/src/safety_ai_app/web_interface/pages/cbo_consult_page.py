@@ -24,6 +24,10 @@ def normalize_text(text: str) -> str:
 def cbo_consult_page() -> None:
     inject_glass_styles()
 
+    if st.button("← Consultas Rápidas", key="back_from_cbo"):
+        st.session_state.current_page = "quick_queries_page"
+        st.rerun()
+
     with st.container():
         st.markdown(glass_marker(), unsafe_allow_html=True)
 

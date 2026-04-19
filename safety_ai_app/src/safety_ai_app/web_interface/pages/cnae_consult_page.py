@@ -44,6 +44,10 @@ def _build_breadcrumb(entry: Dict[str, Any]) -> str:
 def cnae_consult_page() -> None:
     inject_glass_styles()
 
+    if st.button("← Consultas Rápidas", key="back_from_cnae"):
+        st.session_state.current_page = "quick_queries_page"
+        st.rerun()
+
     st.markdown("""
     <style>
     .cnae-card {

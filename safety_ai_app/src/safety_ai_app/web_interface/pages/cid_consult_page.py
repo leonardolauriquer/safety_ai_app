@@ -23,6 +23,10 @@ def strip_html_tags(text: str) -> str:
 def cid_consult_page() -> None:
     inject_glass_styles()
 
+    if st.button("← Consultas Rápidas", key="back_from_cid"):
+        st.session_state.current_page = "quick_queries_page"
+        st.rerun()
+
     medical_icon = _get_material_icon_html(THEME['icons'].get('cid_consult', 'medical'))
     search_icon = _get_material_icon_html(THEME['icons'].get('search_magnifying_glass', 'search'))
 
