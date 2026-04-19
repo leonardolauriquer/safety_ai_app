@@ -24,6 +24,10 @@ def cipa_sizing_page() -> None:
     """
     inject_glass_styles()
 
+    if st.button("← Dimensionamentos", key="back_from_cipa"):
+        st.session_state.current_page = "sizing_page"
+        st.rerun()
+
     with st.container():
         st.markdown(glass_marker(), unsafe_allow_html=True)
         

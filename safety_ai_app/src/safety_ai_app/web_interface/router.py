@@ -54,6 +54,7 @@ def build_page_registry(
     from safety_ai_app.web_interface.pages.fines_consult_page import fines_consult_page as render_fines_consult_page
     from safety_ai_app.web_interface.pages.cipa_sizing_page import cipa_sizing_page as render_cipa_sizing_page
     from safety_ai_app.web_interface.pages.sesmt_sizing_page import sesmt_sizing_page as render_sesmt_sizing_page
+    from safety_ai_app.web_interface.pages.emergency_brigade_sizing_page import emergency_brigade_sizing_page as render_emergency_brigade_sizing_page
     from safety_ai_app.web_interface.pages.apr_generator_page import apr_generator_page as render_apr_generator_page
     from safety_ai_app.web_interface.pages.ata_generator_page import ata_generator_page as render_ata_generator_page
     from safety_ai_app.web_interface.pages.games_page import games_page as render_games_page
@@ -115,7 +116,7 @@ def build_page_registry(
         "settings": render_settings_page,
         "ai_evaluation": render_ai_evaluation_page,
         "logout_action": do_logout,
-        "emergency_brigade_sizing": _make_placeholder("emergency_brigade_sizing", "emergency_brigade", theme, get_material_icon_html),
+        "emergency_brigade_sizing": render_emergency_brigade_sizing_page,
         "admin": render_admin_panel_page,
         "admin_panel": render_admin_panel_page,
     }
