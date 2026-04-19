@@ -51,7 +51,7 @@ def _get_db_connection():
 
 
 def _ensure_token_table(conn) -> bool:
-    """Create the google_oauth_tokens table if it doesn't exist. Returns True on success."""
+    """Create the google_oauth_tokens table if it doesn't exist, and migrate existing tables. Returns True on success."""
     try:
         with conn.cursor() as cur:
             cur.execute("""
@@ -59,8 +59,17 @@ def _ensure_token_table(conn) -> bool:
                     id SERIAL PRIMARY KEY,
                     token_key VARCHAR(255) NOT NULL UNIQUE,
                     token_data TEXT NOT NULL,
-                    updated_at TIMESTAMP DEFAULT NOW()
+                    updated_at TIMESTAMP DEFAULT NOW(),
+                    user_id VARCHAR(255)
                 )
+            """)
+            cur.execute("""
+                ALTER TABLE google_oauth_tokens
+                    ADD COLUMN IF NOT EXISTS user_id VARCHAR(255)
+            """)
+            cur.execute("""
+                CREATE INDEX IF NOT EXISTS idx_google_oauth_tokens_user_id
+                    ON google_oauth_tokens (user_id)
             """)
         conn.commit()
         return True
@@ -70,17 +79,30 @@ def _ensure_token_table(conn) -> bool:
         return False
 
 
-def _load_creds_from_db() -> Optional[Credentials]:
-    """Load OAuth credentials from PostgreSQL database."""
+def _token_key_for_user(user_id: Optional[str]) -> str:
+    """Return the database token_key for the given user_id (or the shared legacy key when None)."""
+    if user_id is not None:
+        return f"{_DB_TOKEN_KEY}:{user_id}"
+    return _DB_TOKEN_KEY
+
+
+def _load_creds_from_db(user_id: Optional[str] = None) -> Optional[Credentials]:
+    """Load OAuth credentials from PostgreSQL database.
+
+    Args:
+        user_id: Optional identifier for the user whose credentials to load.
+                 When None, the legacy shared token is loaded for backward compatibility.
+    """
     conn = _get_db_connection()
     if conn is None:
         return None
     try:
         _ensure_token_table(conn)
+        token_key = _token_key_for_user(user_id)
         with conn.cursor() as cur:
             cur.execute(
                 "SELECT token_data FROM google_oauth_tokens WHERE token_key = %s",
-                (_DB_TOKEN_KEY,)
+                (token_key,)
             )
             row = cur.fetchone()
         if row is None:
@@ -89,7 +111,7 @@ def _load_creds_from_db() -> Optional[Credentials]:
         return Credentials.from_authorized_user_info(data, SCOPES_USER)
     except (json.JSONDecodeError, KeyError, ValueError) as e:
         logger.warning(f"Erro ao deserializar token do banco de dados: {e}. Removendo para re-autenticar.")
-        _delete_creds_from_db()
+        _delete_creds_from_db(user_id=user_id)
         return None
     except Exception as e:
         logger.warning(f"Erro ao carregar token do banco de dados: {e}")
@@ -98,21 +120,29 @@ def _load_creds_from_db() -> Optional[Credentials]:
         conn.close()
 
 
-def _save_creds_to_db(creds: Credentials) -> None:
-    """Persist OAuth credentials to PostgreSQL database."""
+def _save_creds_to_db(creds: Credentials, user_id: Optional[str] = None) -> None:
+    """Persist OAuth credentials to PostgreSQL database.
+
+    Args:
+        creds: The OAuth credentials to save.
+        user_id: Optional identifier for the user. When None, the legacy shared token
+                 slot is used for backward compatibility.
+    """
     conn = _get_db_connection()
     if conn is None:
         raise OSError("Banco de dados indisponível — não foi possível salvar o token.")
     try:
         _ensure_token_table(conn)
+        token_key = _token_key_for_user(user_id)
         with conn.cursor() as cur:
             cur.execute("""
-                INSERT INTO google_oauth_tokens (token_key, token_data, updated_at)
-                VALUES (%s, %s, NOW())
+                INSERT INTO google_oauth_tokens (token_key, token_data, updated_at, user_id)
+                VALUES (%s, %s, NOW(), %s)
                 ON CONFLICT (token_key) DO UPDATE
                     SET token_data = EXCLUDED.token_data,
-                        updated_at = NOW()
-            """, (_DB_TOKEN_KEY, creds.to_json()))
+                        updated_at = NOW(),
+                        user_id = EXCLUDED.user_id
+            """, (token_key, creds.to_json(), user_id))
         conn.commit()
         logger.info("Token OAuth guardado no banco de dados com sucesso.")
     except Exception as e:
@@ -122,17 +152,23 @@ def _save_creds_to_db(creds: Credentials) -> None:
         conn.close()
 
 
-def _delete_creds_from_db() -> None:
-    """Remove OAuth credentials from the database."""
+def _delete_creds_from_db(user_id: Optional[str] = None) -> None:
+    """Remove OAuth credentials from the database.
+
+    Args:
+        user_id: Optional identifier for the user whose credentials to remove.
+                 When None, the legacy shared token is removed for backward compatibility.
+    """
     conn = _get_db_connection()
     if conn is None:
         return
     try:
         _ensure_token_table(conn)
+        token_key = _token_key_for_user(user_id)
         with conn.cursor() as cur:
             cur.execute(
                 "DELETE FROM google_oauth_tokens WHERE token_key = %s",
-                (_DB_TOKEN_KEY,)
+                (token_key,)
             )
         conn.commit()
     except Exception as e:
@@ -162,62 +198,103 @@ def _get_client_credentials_from_env() -> Optional[Dict]:
     return None
 
 
-def _load_creds_from_json() -> Optional[Credentials]:
-    """Load OAuth credentials — database first, local file as fallback."""
-    db_creds = _load_creds_from_db()
+def _token_json_file_for_user(user_id: Optional[str]) -> str:
+    """Return the local fallback JSON file path for the given user.
+
+    When user_id is provided a user-scoped file name is used so that multiple
+    users do not overwrite each other's tokens if the database is unavailable.
+    When user_id is None the legacy shared file is used for backward compatibility.
+    """
+    if user_id is not None:
+        safe_id = user_id.replace(os.sep, "_").replace("/", "_")
+        return os.path.join(project_root, f"token_user_{safe_id}.json")
+    return TOKEN_USER_JSON_FILE
+
+
+def _load_creds_from_json(user_id: Optional[str] = None) -> Optional[Credentials]:
+    """Load OAuth credentials — database first, local file as fallback.
+
+    Args:
+        user_id: Optional identifier for the user whose credentials to load.
+                 When None, the legacy shared token is used for backward compatibility.
+    """
+    db_creds = _load_creds_from_db(user_id=user_id)
     if db_creds is not None:
         return db_creds
 
-    if not os.path.exists(TOKEN_USER_JSON_FILE):
+    token_file = _token_json_file_for_user(user_id)
+    if not os.path.exists(token_file):
         return None
     try:
-        with open(TOKEN_USER_JSON_FILE, 'r', encoding='utf-8') as f:
+        with open(token_file, 'r', encoding='utf-8') as f:
             data = json.load(f)
         creds = Credentials.from_authorized_user_info(data, SCOPES_USER)
         try:
-            _save_creds_to_db(creds)
-            os.remove(TOKEN_USER_JSON_FILE)
+            _save_creds_to_db(creds, user_id=user_id)
+            os.remove(token_file)
             logger.info("Token migrado do ficheiro local para o banco de dados.")
         except OSError as migrate_err:
             logger.warning(f"Não foi possível migrar token para o banco de dados: {migrate_err}")
         return creds
     except (json.JSONDecodeError, KeyError, ValueError) as e:
-        logger.warning(f"Erro ao carregar {TOKEN_USER_JSON_FILE}: {e}. Removendo para re-autenticar.")
-        os.remove(TOKEN_USER_JSON_FILE)
+        logger.warning(f"Erro ao carregar {token_file}: {e}. Removendo para re-autenticar.")
+        os.remove(token_file)
         return None
 
 
-def _save_creds_to_json(creds: Credentials) -> None:
+def _save_creds_to_json(creds: Credentials, user_id: Optional[str] = None) -> None:
     """Persist OAuth credentials — database primary, local file as fallback.
 
     Raises OSError / IOError on write failure so callers can handle the
     situation explicitly instead of silently continuing with unsaved tokens.
+
+    Args:
+        creds: The OAuth credentials to persist.
+        user_id: Optional identifier for the user. When None, the legacy shared
+                 token slot is used for backward compatibility.
     """
+    token_file = _token_json_file_for_user(user_id)
     try:
-        _save_creds_to_db(creds)
-        if os.path.exists(TOKEN_USER_JSON_FILE):
+        _save_creds_to_db(creds, user_id=user_id)
+        if os.path.exists(token_file):
             try:
-                os.remove(TOKEN_USER_JSON_FILE)
+                os.remove(token_file)
             except OSError:
                 pass
     except OSError:
         logger.warning("Falha ao guardar no banco de dados; a tentar ficheiro local como fallback.")
-        with open(TOKEN_USER_JSON_FILE, 'w', encoding='utf-8') as f:
+        with open(token_file, 'w', encoding='utf-8') as f:
             f.write(creds.to_json())
 
 
-def _delete_creds() -> None:
-    """Remove stored OAuth credentials from all storage locations."""
-    _delete_creds_from_db()
-    if os.path.exists(TOKEN_USER_JSON_FILE):
+def _delete_creds(user_id: Optional[str] = None) -> None:
+    """Remove stored OAuth credentials from all storage locations.
+
+    Args:
+        user_id: Optional identifier for the user whose credentials to remove.
+                 When None, the legacy shared token is removed for backward compatibility.
+    """
+    _delete_creds_from_db(user_id=user_id)
+    token_file = _token_json_file_for_user(user_id)
+    if os.path.exists(token_file):
         try:
-            os.remove(TOKEN_USER_JSON_FILE)
+            os.remove(token_file)
         except OSError:
             pass
 
 
-def get_google_drive_user_creds_and_auth_info() -> Tuple[Optional[Any], Optional[str], Optional[str]]:
-    creds = _load_creds_from_json()
+def get_google_drive_user_creds_and_auth_info(
+    user_id: Optional[str] = None,
+) -> Tuple[Optional[Any], Optional[str], Optional[str]]:
+    """Return (creds, auth_url, error_message) for the given user.
+
+    Args:
+        user_id: Optional identifier for the user whose Drive session to manage.
+                 When provided each user's token is stored and retrieved in
+                 isolation.  When None the legacy single-token behaviour is
+                 preserved for backward compatibility.
+    """
+    creds = _load_creds_from_json(user_id=user_id)
 
     if creds and creds.valid:
         return creds, None, None
@@ -227,11 +304,11 @@ def get_google_drive_user_creds_and_auth_info() -> Tuple[Optional[Any], Optional
             creds.refresh(Request())
         except Exception as e:
             logger.error(f"Erro ao renovar o token do usuário: {e}. Será necessária uma nova autenticação.", exc_info=True)
-            _delete_creds()
+            _delete_creds(user_id=user_id)
             creds = None
         if creds:
             try:
-                _save_creds_to_json(creds)
+                _save_creds_to_json(creds, user_id=user_id)
             except OSError as e:
                 logger.warning(f"Token renovado mas não foi possível salvar: {e}. Re-autenticação necessária na próxima sessão.")
             return creds, None, None
@@ -293,7 +370,7 @@ def get_google_drive_user_creds_and_auth_info() -> Tuple[Optional[Any], Optional
         flow.fetch_token(code=authorization_code)
         creds = flow.credentials
         try:
-            _save_creds_to_json(creds)
+            _save_creds_to_json(creds, user_id=user_id)
         except OSError as save_err:
             logger.warning(f"Autenticação bem-sucedida mas não foi possível salvar token: {save_err}. Re-autenticação necessária na próxima sessão.")
         st.query_params.clear()
@@ -310,7 +387,7 @@ def get_google_drive_user_creds_and_auth_info() -> Tuple[Optional[Any], Optional
         return None, None, "REDIRECTING_SUCCESS"
     except Exception as e:
         logger.error(f"Erro ao autenticar usuário com o código: {e}.", exc_info=True)
-        _delete_creds()
+        _delete_creds(user_id=user_id)
         if 'oauth_state' in st.session_state:
             del st.session_state['oauth_state']
         try:

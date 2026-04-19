@@ -123,7 +123,10 @@ def _start_auto_sync_scheduler() -> bool:
 
 
 def get_user_drive_service_wrapper() -> Optional[str]:
-    creds, auth_url, auth_error_message = get_google_drive_user_creds_and_auth_info()
+    session_user_id = st.session_state.get("session_id")
+    creds, auth_url, auth_error_message = get_google_drive_user_creds_and_auth_info(
+        user_id=session_user_id
+    )
     st.session_state.user_drive_auth_needed = False
     st.session_state.user_drive_auth_url = None
     st.session_state.user_drive_auth_error = None
@@ -173,9 +176,8 @@ def _cleanup_temp_files(max_age_seconds: int = 3600) -> None:
 def do_logout(reason: str = "user_action") -> None:
     try:
         user_email = st.session_state.get("user_email")
-        token_path = os.path.join(project_root, "token_user.json")
-        if os.path.exists(token_path):
-            os.remove(token_path)
+        from safety_ai_app.auth.google_auth import _delete_creds as _gdrive_delete_creds
+        _gdrive_delete_creds(user_id=st.session_state.get("session_id"))
         st.session_state.logged_in = False
         st.session_state.user_drive_service = None
         st.session_state.user_drive_auth_needed = False
