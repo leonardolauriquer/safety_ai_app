@@ -102,6 +102,12 @@ def render_sidebar_menu(theme: dict, get_image_base64) -> None:
             _render_nav_item_with_badge('admin_panel', theme['phrases'].get('admin_panel', 'Painel Admin'), "admin_panel", current_page, badge=sync_badge)
             _render_nav_item('ai_evaluation', theme['phrases'].get('ai_evaluation', 'Avaliação IA'), "ai_evaluation", current_page)
 
+    try:
+        from safety_ai_app.web_interface.pwa_support import get_pwa_install_button_html
+        st.sidebar.markdown(get_pwa_install_button_html(), unsafe_allow_html=True)
+    except Exception:
+        pass
+
     if st.session_state.logged_in:
         user_name = st.session_state.get("user_name", "Usuário")
         user_email = st.session_state.get("user_email", "")

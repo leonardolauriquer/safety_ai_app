@@ -29,7 +29,7 @@ st.set_page_config(
     page_title=THEME["phrases"]["app_title"],
     page_icon=os.path.join(project_root, THEME["images"]["page_icon"]),
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed"
 )
 
 try:

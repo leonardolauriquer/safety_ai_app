@@ -55,7 +55,32 @@ def _build_manifest(project_root: str) -> str:
         "background_color": _BG_COLOR,
         "theme_color": _THEME_COLOR,
         "lang": "pt-BR",
+        "categories": ["business", "productivity", "utilities"],
+        "prefer_related_applications": False,
         "icons": icons,
+        "shortcuts": [
+            {
+                "name": "Chat IA",
+                "short_name": "Chat",
+                "description": "Consultar normas regulamentadoras com IA",
+                "url": "/?page=chat",
+                "icons": [{"src": f"data:image/png;base64,{icon_192}", "sizes": "192x192"}] if icon_192 else [],
+            },
+            {
+                "name": "Consultas Rápidas",
+                "short_name": "Consultas",
+                "description": "CBO, CID, CNAE, CA/EPI e Multas NR",
+                "url": "/?page=quick_queries_page",
+                "icons": [{"src": f"data:image/png;base64,{icon_192}", "sizes": "192x192"}] if icon_192 else [],
+            },
+            {
+                "name": "Dimensionamento",
+                "short_name": "CIPA/SESMT",
+                "description": "Dimensionar CIPA, SESMT e Brigada",
+                "url": "/?page=sizing_page",
+                "icons": [{"src": f"data:image/png;base64,{icon_192}", "sizes": "192x192"}] if icon_192 else [],
+            },
+        ],
     }
     return json.dumps(manifest, ensure_ascii=False)
 
@@ -67,13 +92,18 @@ def _load_apple_touch_icon_b64(project_root: str) -> str:
 
 def get_pwa_injection_html(project_root: str) -> str:
     """
-    Returns an HTML snippet containing a <script> block that injects PWA
-    meta tags and a web-app manifest into the parent document's <head>.
+    Injeta no <head> do documento pai:
+    - Viewport meta com viewport-fit=cover (suporte a notch iPhone X+)
+    - Meta tags para Android/Chrome e iOS/Safari
+    - Web App Manifest (inline Blob URL)
+    - Apple Touch Icon
+    - Registro do Service Worker (offline support)
+    - Listener para beforeinstallprompt (install prompt no Android)
+    - JS para auto-expand sidebar em desktop (viewport > 1024px)
 
-    Safe to call on every Streamlit re-render — the script checks for
-    existing tags before inserting to avoid duplicates.
+    Safe to call on every Streamlit re-render — deduplicado via data attributes.
     """
-    cache_key = "pwa_html"
+    cache_key = "pwa_html_v3"
     if cache_key in _PWA_CACHE:
         return _PWA_CACHE[cache_key]
 
@@ -96,6 +126,7 @@ def get_pwa_injection_html(project_root: str) -> str:
     var doc = window.parent.document;
     var head = doc.head;
     if (!head) return;
+    if (doc.querySelector('meta[name="safetyai-pwa-injected"]')) return;
 
     function addMeta(name, content, attr) {{
         attr = attr || 'name';
@@ -115,6 +146,16 @@ def get_pwa_injection_html(project_root: str) -> str:
         head.appendChild(l);
     }}
 
+    /* --- Sentinel to prevent double-injection --- */
+    addMeta('safetyai-pwa-injected', '1');
+
+    /* --- Viewport com viewport-fit=cover (iPhone X+ notch) --- */
+    (function() {{
+        var vp = doc.querySelector('meta[name="viewport"]');
+        var content = 'width=device-width, initial-scale=1.0, viewport-fit=cover';
+        if (vp) {{ vp.content = content; }} else {{ addMeta('viewport', content); }}
+    }})();
+
     /* --- Android / Chrome --- */
     addMeta('theme-color', '{_THEME_COLOR}');
     addMeta('mobile-web-app-capable', 'yes');
@@ -125,7 +166,8 @@ def get_pwa_injection_html(project_root: str) -> str:
     addMeta('apple-mobile-web-app-title', '{_APP_SHORT_NAME}');
     addMeta('format-detection', 'telephone=no');
     {apple_touch_js}
-    /* --- Web App Manifest --- */
+
+    /* --- Web App Manifest (Blob URL) --- */
     if (!doc.querySelector('link[rel="manifest"]')) {{
         try {{
             var manifestData = `{manifest_json_js}`;
@@ -136,8 +178,90 @@ def get_pwa_injection_html(project_root: str) -> str:
             console.warn('PWA manifest injection failed:', e);
         }}
     }}
+
+    /* --- Service Worker Registration --- */
+    if ('serviceWorker' in window.parent.navigator) {{
+        window.parent.addEventListener('load', function() {{
+            window.parent.navigator.serviceWorker
+                .register('/app/static/sw.js', {{ scope: '/' }})
+                .then(function(reg) {{
+                    console.info('[SafetyAI PWA] Service worker registrado:', reg.scope);
+                }})
+                .catch(function(err) {{
+                    console.warn('[SafetyAI PWA] Service worker falhou:', err);
+                }});
+        }});
+    }}
+
+    /* --- Install Prompt (Android Chrome "Adicionar à tela inicial") --- */
+    window.parent.__safetyai_installPrompt = null;
+    window.parent.addEventListener('beforeinstallprompt', function(e) {{
+        e.preventDefault();
+        window.parent.__safetyai_installPrompt = e;
+        /* Expõe flag no sessionStorage para o Streamlit detectar via JS snippet */
+        try {{ sessionStorage.setItem('safetyai_can_install', '1'); }} catch(_) {{}}
+        console.info('[SafetyAI PWA] Install prompt disponível.');
+    }});
+    window.parent.addEventListener('appinstalled', function() {{
+        window.parent.__safetyai_installPrompt = null;
+        try {{ sessionStorage.removeItem('safetyai_can_install'); }} catch(_) {{}}
+        console.info('[SafetyAI PWA] App instalado com sucesso!');
+    }});
+
+    /* --- Auto-expand sidebar em desktop (viewport > 1024px) --- */
+    (function() {{
+        if (window.parent.innerWidth <= 1024) return;
+        setTimeout(function() {{
+            var btn = doc.querySelector('[data-testid="collapsedControl"]');
+            if (btn) {{ btn.click(); }}
+        }}, 400);
+    }})();
+
 }})();
 </script>
 """
     _PWA_CACHE[cache_key] = html
     return html
+
+
+def get_pwa_install_button_html() -> str:
+    """
+    Retorna HTML para um botão 'Instalar app' que dispara o install prompt do Chrome/Android.
+    Deve ser renderizado via st.markdown(..., unsafe_allow_html=True).
+    Fica visível apenas quando o install prompt está disponível.
+    """
+    return """
+<div id="pwa-install-wrapper" style="display:none; margin: 8px 0;">
+    <button id="pwa-install-btn"
+        onclick="
+            var p = window.parent.__safetyai_installPrompt;
+            if (p) { p.prompt(); p.userChoice.then(function(r){ if(r.outcome==='accepted') document.getElementById('pwa-install-wrapper').style.display='none'; }); }
+        "
+        style="
+            background: linear-gradient(135deg, #4ADE80, #22D3EE);
+            border: none; border-radius: 10px; color: #020617;
+            font-weight: 700; padding: 10px 20px; font-size: 0.9rem;
+            cursor: pointer; width: 100%; display: flex; align-items: center;
+            justify-content: center; gap: 8px;
+        ">
+        📲 Instalar SafetyAI no dispositivo
+    </button>
+</div>
+<script>
+(function() {
+    var wrapper = document.getElementById('pwa-install-wrapper');
+    if (!wrapper) return;
+    var canInstall = false;
+    try { canInstall = sessionStorage.getItem('safetyai_can_install') === '1'; } catch(_) {}
+    if (canInstall || window.parent.__safetyai_installPrompt) {
+        wrapper.style.display = 'block';
+    }
+    window.parent.addEventListener('beforeinstallprompt', function() {
+        wrapper.style.display = 'block';
+    });
+    window.parent.addEventListener('appinstalled', function() {
+        wrapper.style.display = 'none';
+    });
+})();
+</script>
+"""

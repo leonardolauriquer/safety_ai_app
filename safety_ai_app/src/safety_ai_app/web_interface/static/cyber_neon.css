@@ -60,6 +60,9 @@ html, body, [data-testid="stApp"] {
     font-family: var(--font-body) !important;
 }
 
+body { overflow-x: hidden; }
+html { overflow-x: hidden; }
+
 /* === SCROLLBAR === */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg-surface); }
@@ -514,36 +517,110 @@ div[data-testid*="stButton"] > button span,
 #MainMenu, footer, header { visibility: hidden !important; display: none !important; }
 .viewerBadge_container__r5tak { display: none !important; }
 
-/* === RESPONSIVE === */
-@media (max-width: 768px) {
+/* === RESPONSIVE — TABLET (768–1024px) === */
+@media (max-width: 1024px) and (min-width: 769px) {
     :root {
-        --space-lg: 16px;
-        --space-xl: 24px;
-        --space-2xl: 32px;
-    }
-    .feature-grid { grid-template-columns: 1fr; }
-    .quiz-options { grid-template-columns: 1fr; }
-    .hero-section h1 { font-size: 2rem; }
-    .chat-message { max-width: 92%; }
-
-    /* Larger tap targets for touch */
-    button, [role="button"],
-    .stButton > button {
-        min-height: 44px !important;
+        --space-xl: 28px;
+        --space-2xl: 40px;
     }
 
-    /* Reduce sidebar padding on mobile */
-    section[data-testid="stSidebar"] > div {
-        padding-top: 8px !important;
+    /* 3-column grids become 2-column on tablet */
+    .feature-grid { grid-template-columns: repeat(2, 1fr); }
+    .quiz-options { grid-template-columns: repeat(2, 1fr); }
+
+    /* Streamlit: wrap 3-col layouts to 2-col */
+    [data-testid="stHorizontalBlock"] { flex-wrap: wrap; gap: 12px; }
+    [data-testid="stHorizontalBlock"] > [data-testid="column"]:nth-child(n+3) {
+        flex: 1 1 calc(50% - 8px) !important;
+        min-width: calc(50% - 8px) !important;
     }
 }
 
-@media (max-width: 480px) {
-    .hero-section h1 { font-size: 1.6rem; }
-    .stTextInput input, .stTextArea textarea {
-        font-size: 16px !important; /* prevents auto-zoom on iOS */
+/* === RESPONSIVE — MOBILE (≤768px) === */
+@media (max-width: 768px) {
+    :root {
+        --space-lg: 14px;
+        --space-xl: 20px;
+        --space-2xl: 28px;
     }
-    select { font-size: 16px !important; }
+
+    /* Collapse ALL Streamlit multi-column blocks to single column */
+    [data-testid="stHorizontalBlock"] {
+        flex-direction: column !important;
+        flex-wrap: wrap !important;
+        gap: 10px !important;
+    }
+    [data-testid="stHorizontalBlock"] > [data-testid="column"] {
+        width: 100% !important;
+        min-width: 100% !important;
+        flex: 1 1 100% !important;
+    }
+
+    /* Grids: 1 column */
+    .feature-grid { grid-template-columns: 1fr; }
+    .quiz-options { grid-template-columns: 1fr; }
+
+    /* Typography */
+    .hero-section h1 { font-size: 1.9rem; }
+    h1 { font-size: 1.5rem !important; }
+    h2 { font-size: 1.2rem !important; }
+
+    /* Chat bubbles full-width */
+    .chat-message { max-width: 95%; }
+
+    /* Larger tap targets (iOS/Android minimum 44px) */
+    button, [role="button"], .stButton > button,
+    [data-testid="baseButton-secondary"], [data-testid="baseButton-primary"] {
+        min-height: 44px !important;
+    }
+
+    /* Sidebar: compact top padding */
+    section[data-testid="stSidebar"] > div {
+        padding-top: 8px !important;
+    }
+
+    /* Main content: reduce horizontal padding */
+    .block-container {
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+        padding-top: 16px !important;
+    }
+
+    /* Result cards: reduce padding */
+    .result-card { padding: 12px 14px !important; }
+
+    /* Tables: allow horizontal scroll in a wrapper */
+    [data-testid="stDataFrame"], [data-testid="stTable"] {
+        overflow-x: auto !important;
+    }
+
+    /* Hub icon cards: stack below title */
+    .hub-card { min-height: unset !important; padding: 14px 12px !important; }
+    .hub-icon { font-size: 2rem !important; }
+
+    /* Metric cards: compact */
+    [data-testid="stMetric"] { padding: 8px !important; }
+}
+
+/* === RESPONSIVE — SMALL MOBILE (≤480px) === */
+@media (max-width: 480px) {
+    .hero-section h1 { font-size: 1.5rem; }
+
+    /* Prevent iOS auto-zoom on focus — needs 16px+ */
+    .stTextInput input, .stTextArea textarea,
+    input, textarea, select {
+        font-size: 16px !important;
+    }
+
+    /* Narrower page padding on very small screens */
+    .block-container {
+        padding-left: 8px !important;
+        padding-right: 8px !important;
+    }
+
+    /* Section titles compact */
+    .section-title { font-size: 0.85rem !important; }
+    .page-header .title { font-size: 1.1rem !important; }
 }
 
 /* === PWA / SAFE AREA (iPhone X+, notch devices) === */
@@ -555,6 +632,12 @@ div[data-testid*="stButton"] > button span,
         padding-bottom: env(safe-area-inset-bottom) !important;
     }
     .stApp {
-        padding-bottom: env(safe-area-inset-bottom) !important;
+        /* bottom safe area for home indicator on iPhone */
+        padding-bottom: max(env(safe-area-inset-bottom), 16px) !important;
+    }
+    /* Inset sides for landscape notch/Dynamic Island */
+    .block-container {
+        padding-left: max(var(--space-md), env(safe-area-inset-left)) !important;
+        padding-right: max(var(--space-md), env(safe-area-inset-right)) !important;
     }
 }
