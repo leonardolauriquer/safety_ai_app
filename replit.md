@@ -25,6 +25,14 @@ Key pages include:
 - **News Feed:** RSS-based OSH news.
 - **Admin Panel:** Comprehensive administration and RAG pipeline evaluation.
 
+### Server Entry Point
+
+The application uses a thin `aiohttp` reverse proxy (`server.py`) that listens on port 5000 and forwards all traffic to Streamlit on port 5001. The proxy adds two additional endpoints:
+- `GET /sw.js` — serves the service worker with `Service-Worker-Allowed: /` HTTP header so the SW can claim full-origin scope (`/`) for offline navigation support.
+- `GET /_safetyai_offline` — serves the inline offline fallback HTML page.
+
+This architecture is required because Streamlit's static file server cannot set custom HTTP headers or serve files at the root path `/`.
+
 ### Backend Architecture
 
 The core is a RAG pipeline (`nr_rag_qa.py`) built with LangChain, utilizing a persistent ChromaDB for NR indexing and Sentence Transformers for embeddings. OpenRouter serves as the LLM provider, with configurable models and dynamic temperature. The retriever combines BM25 and semantic search (ensemble 30/70). Features include historical chat compression, Chain-of-Thought reasoning, and guardrails for domain adherence.
