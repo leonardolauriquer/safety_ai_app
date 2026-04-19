@@ -136,6 +136,7 @@ pymdown-extensions==10.16.1 ; python_version >= "3.12" and python_version < "3.1
 pymupdf==1.26.5 ; python_version >= "3.12" and python_version < "3.13"
 pyparsing==3.2.5 ; python_version >= "3.12" and python_version < "3.13"
 psycopg2-binary==2.9.11 ; python_version >= "3.12" and python_version < "3.13"
+pypdf>=6.10.0 ; python_version >= "3.12" and python_version < "3.13"
 pypdf2==3.0.1 ; python_version >= "3.12" and python_version < "3.13"
 pypika==0.48.9 ; python_version >= "3.12" and python_version < "3.13"
 pyproject-hooks==1.2.0 ; python_version >= "3.12" and python_version < "3.13"
