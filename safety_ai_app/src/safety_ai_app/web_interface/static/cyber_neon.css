@@ -396,6 +396,35 @@ div[data-testid*="stButton"] > button span,
     font-weight: 500 !important;
 }
 
+/* === RADIO BUTTONS === */
+.stRadio > label { color: var(--text-muted) !important; font-size: 0.82em !important; font-family: var(--font-body) !important; }
+.stRadio > div { gap: 4px !important; }
+.stRadio [role="radiogroup"] { gap: 2px !important; }
+.stRadio [data-baseweb="radio"] { background: transparent !important; }
+.stRadio [data-baseweb="radio"]:hover { background: var(--neon-green-dim) !important; border-radius: var(--radius-sm) !important; }
+.stRadio [data-baseweb="radio"] span[data-testid="stMarkdownContainer"] p,
+.stRadio [data-baseweb="radio"] > div:last-child { color: var(--text-secondary) !important; font-family: var(--font-body) !important; font-size: 0.9rem !important; }
+
+/* === CHECKBOX === */
+.stCheckbox > label { color: var(--text-muted) !important; font-size: 0.82em !important; font-family: var(--font-body) !important; }
+.stCheckbox [data-baseweb="checkbox"] span { color: var(--text-secondary) !important; font-family: var(--font-body) !important; font-size: 0.9rem !important; }
+.stCheckbox [data-testid="stCheckbox"] { border-color: var(--border-subtle) !important; background: transparent !important; border-radius: var(--radius-sm) !important; }
+.stCheckbox [data-testid="stCheckbox"]:checked { background: var(--neon-green) !important; border-color: var(--neon-green) !important; }
+
+/* === MULTISELECT === */
+.stMultiSelect > label { color: var(--text-muted) !important; font-size: 0.82em !important; font-family: var(--font-body) !important; }
+.stMultiSelect [data-baseweb="select"] > div { background: var(--bg-surface) !important; border: 1px solid var(--border-subtle) !important; border-radius: var(--radius-md) !important; color: var(--text-primary) !important; font-family: var(--font-body) !important; }
+.stMultiSelect [data-baseweb="select"] > div:focus-within { border-color: var(--neon-green) !important; box-shadow: 0 0 0 2px var(--neon-green-dim) !important; }
+.stMultiSelect [data-baseweb="tag"] { background: rgba(74,222,128,0.12) !important; border: 1px solid rgba(74,222,128,0.25) !important; border-radius: var(--radius-sm) !important; }
+.stMultiSelect [data-baseweb="tag"] span { color: var(--neon-green) !important; font-size: 0.82em !important; }
+.stMultiSelect [data-baseweb="tag"] [data-testid="stMarkdownContainer"] { color: var(--neon-green) !important; }
+
+/* === SELECT/DROPDOWN MENU === */
+[data-baseweb="popover"] [data-baseweb="menu"] { background: var(--bg-nebula) !important; border: 1px solid var(--border-subtle) !important; border-radius: var(--radius-md) !important; }
+[data-baseweb="popover"] [role="option"] { color: var(--text-secondary) !important; background: transparent !important; }
+[data-baseweb="popover"] [role="option"]:hover { background: var(--neon-green-dim) !important; color: var(--neon-green) !important; }
+[aria-selected="true"][role="option"] { background: rgba(74,222,128,0.08) !important; color: var(--neon-green) !important; }
+
 /* === FILE UPLOADER === */
 .stFileUploader {
     background: var(--bg-surface) !important;

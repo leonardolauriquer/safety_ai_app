@@ -1,0 +1,116 @@
+GUIA TÉCNICO DE ELABORAÇÃO DO PGR (PROGRAMA DE GERENCIAMENTO DE RISCOS)
+Base legal: NR-1 (Portaria MTE nº 672/2021 e Portaria MTE nº 1.419/2024)
+Documento de referência técnica — SafetyAI
+
+FUNDAMENTO LEGAL
+
+O PGR é exigido pela NR-1 e deve ser elaborado por todos os empregadores que possuam trabalhadores regidos pela CLT, exceto:
+- MEI sem empregados;
+- Empregador pessoa física sem empregados.
+
+O PGR substitui o PPRA (NR-9 anterior) como programa central de gerenciamento de riscos.
+Prazo de adequação: empresas do GR-3 e GR-4 desde maio/2022; GR-1 e GR-2 desde novembro/2022.
+
+RESPONSÁVEL TÉCNICO
+
+A NR-1 não exige habilitação específica para elaborar o PGR, mas:
+- Para avaliações quantitativas de agentes físicos, químicos e biológicos: exige Engenheiro de Segurança ou Médico do Trabalho (NR-9);
+- Para laudos de insalubridade e periculosidade: exige Engenheiro de Segurança ou Médico do Trabalho (NR-15/NR-16);
+- Para assinar com responsabilidade técnica: registro em CREA (engenheiro) ou CRM (médico).
+
+ESTRUTURA MÍNIMA OBRIGATÓRIA DO PGR
+
+PARTE 1 — INVENTÁRIO DE RISCOS
+
+1.1 Identificação do Empregador
+- Razão social, CNPJ, endereço, CNAE, GR, número de empregados
+
+1.2 Identificação dos Grupos Homogêneos de Exposição (GHE)
+GHE: conjunto de trabalhadores que realizam as mesmas atividades, nos mesmos locais de trabalho, expostos aos mesmos riscos e com magnitude de exposição semelhante.
+Exemplo: GHE 01 — Soldadores da linha de produção | GHE 02 — Operadores de caldeiras
+
+1.3 Mapeamento dos Perigos por GHE
+Para cada GHE, identificar perigos nas categorias:
+a) Físicos: ruído, calor, frio, vibrações, radiações;
+b) Químicos: poeiras, fumos, vapores, névoas, gases, absorção cutânea;
+c) Biológicos: bactérias, fungos, vírus, parasitas;
+d) Ergonômicos: posturas inadequadas, levantamento de carga, repetitividade, jornada excessiva;
+e) Mecânicos: máquinas sem proteção, trabalho em altura, espaços confinados, eletricidade;
+f) Psicossociais: carga excessiva, assédio, violência, monotonia, pressão por metas.
+
+1.4 Avaliação dos Riscos
+Para cada perigo identificado, avaliar:
+- Probabilidade de ocorrência: improvável (1) / possível (2) / provável (3) / frequente (4)
+- Severidade do dano: insignificante (1) / menor (2) / moderado (3) / grave (4) / catastrófico (5)
+- Nível de risco = Probabilidade × Severidade
+
+Classificação do nível de risco:
+- Risco baixo (1-4): aceitável — monitorar;
+- Risco médio (5-9): tolerável com medidas de controle;
+- Risco alto (10-16): inaceitável — medidas urgentes;
+- Risco crítico (17-20): proibir a atividade até controle.
+
+1.5 Medidas de Controle Existentes
+Registrar as medidas já implementadas para cada risco e avaliar se são efetivas.
+
+1.6 Avaliações Quantitativas
+Quando exigidas por NR específica (ruído — NR-15 Anexo 1, calor — NR-15 Anexo 3, agentes químicos — NR-15 Anexo 11), realizar avaliações quantitativas com periodicidade adequada.
+
+PARTE 2 — PLANO DE AÇÃO
+
+Para cada risco inaceitável ou tolerável que exige medidas:
+a) Descrição da medida de controle a ser implementada;
+b) Responsável pela implementação (nome/cargo);
+c) Prazo de conclusão;
+d) Recursos necessários (investimento estimado);
+e) Indicadores de eficácia.
+
+As medidas devem seguir a hierarquia de controles (NR-1, item 1.5.4):
+1º Eliminação → 2º Substituição → 3º Controle de engenharia → 4º Controle administrativo → 5º EPI
+
+PARTE 3 — REGISTROS E MONITORAMENTO
+
+- Evidências das medidas implementadas (fotos, registros de manutenção, treinamentos);
+- Monitoramento dos indicadores de eficácia;
+- Registro de inspeções periódicas;
+- Revisões do PGR com justificativas.
+
+PERIODICIDADE DE REVISÃO
+
+O PGR deve ser revisado:
+a) Sempre que houver mudança significativa nos processos produtivos, ambiente ou tecnologias;
+b) Após acidentes graves ou quase-acidentes relevantes;
+c) Quando os resultados do PCMSO indicarem deterioração da saúde dos trabalhadores;
+d) Conforme cronograma estabelecido; avaliações quantitativas de agentes físicos, químicos e biológicos são revisadas conforme periodicidades das NRs aplicáveis (ex.: NR-9).
+
+INTEGRAÇÃO COM ESOCIAL
+
+- Tabela 28 do eSocial: registro de todos os agentes nocivos identificados no PGR;
+- S-2240: condições ambientais do trabalho por função;
+- S-2220: exames periódicos (PCMSO);
+- S-2210: CAT (comunicação de acidentes).
+
+RISCOS PSICOSSOCIAIS NO PGR (PORTARIA MTE 1.419/2024)
+
+A partir de janeiro/2025, os riscos psicossociais são obrigatórios no inventário de riscos. Para incluí-los:
+
+Ferramentas de avaliação recomendadas:
+- COPSOQ (Copenhagen Psychosocial Questionnaire) — validado no Brasil;
+- Questionário de Avaliação de Riscos Psicossociais no Trabalho (GARFOS);
+- Job Demand-Control Support Model (Karasek).
+
+Medidas de controle psicossociais (organizacionais):
+- Revisão de metas e normas de produção;
+- Flexibilização de jornadas onde possível;
+- Programas de capacitação de líderes em gestão saudável;
+- Canal de denúncia de assédio (obrigatório nas empresas com CIPA — Lei 14.457/2022);
+- Acesso a suporte psicológico (PAE — Programa de Assistência ao Empregado);
+- Promoção de pausas e desconexão digital.
+
+DOCUMENTAÇÃO DO PGR
+
+O PGR deve estar:
+- Disponível a todos os trabalhadores, CIPA e SESMT;
+- Acessível ao Auditor Fiscal do Trabalho em caso de fiscalização;
+- Conservado por tempo mínimo de 20 anos (boa prática, alinhado com LTCAT e PPP);
+- Assinado pelo responsável técnico e pelo representante da empresa.

@@ -1,0 +1,114 @@
+NORMA REGULAMENTADORA Nº 17 — ERGONOMIA
+Ministério do Trabalho e Emprego — MTE
+
+OBJETIVO (item 17.1)
+
+17.1 Esta Norma Regulamentadora visa estabelecer os parâmetros que permitam a adaptação das condições de trabalho às características psicofisiológicas dos trabalhadores, de modo a proporcionar um máximo de conforto, segurança e desempenho eficiente.
+
+17.1.1 As condições de trabalho incluem aspectos relacionados ao levantamento, transporte e descarga de materiais, ao mobiliário, aos equipamentos, às condições ambientais do posto de trabalho e à própria organização do trabalho.
+
+ANÁLISE ERGONÔMICA DO TRABALHO — AET (item 17.1.2)
+
+17.1.2 Para avaliar a adaptação das condições de trabalho às características psicofisiológicas dos trabalhadores, cabe ao empregador realizar a Análise Ergonômica do Trabalho — AET, devendo a mesma abordar as condições de trabalho estabelecidas nesta NR.
+
+LEVANTAMENTO, TRANSPORTE E DESCARGA INDIVIDUAL DE MATERIAIS (item 17.2)
+
+17.2.1 Para fins desta NR, é estabelecido o peso máximo que um trabalhador pode remover individualmente:
+- Homens: 23 kg
+- Mulheres e menores de 18 anos: 20 kg
+(Referência: NIOSH Lifting Equation para cálculo do peso limite recomendado — PLR)
+
+17.2.2 Em circunstâncias especiais, o peso poderá ser reduzido conforme:
+a) condições físicas do trabalhador;
+b) treinamento e experiência na tarefa;
+c) frequência e duração da tarefa;
+d) distância de transporte.
+
+17.2.3 Para o transporte manual de cargas, o empregador deve adotar medidas organizacionais, tais como:
+- Uso de equipamentos auxiliares (carrinhos, paleteiras, empilhadeiras);
+- Rodízio de trabalhadores;
+- Redução da frequência do levantamento;
+- Treinamento de técnicas corretas de levantamento.
+
+MOBILIÁRIO DO POSTO DE TRABALHO (item 17.3)
+
+17.3.2 Para trabalho que exija sentado:
+a) Os assentos devem ter altura ajustável à estatura do trabalhador;
+b) O encosto deve ter forma levemente adaptada ao corpo para proteção da região lombar;
+c) O assento deve ser estofado e revestido de material que permita a dissipação do calor;
+d) A cadeira deve ter apoio para os pés quando o trabalhador não conseguir apoiá-los no chão.
+
+17.3.3 Para trabalho em pé:
+a) As bancadas, mesas e painéis devem proporcionar ao trabalhador condições de boa postura, visualização e operação;
+b) A altura das superfícies de trabalho deve ser compatível com a natureza da tarefa: aproximadamente 90-100 cm para trabalho leve, 75-90 cm para trabalho de precisão em posição sentada.
+
+EQUIPAMENTOS DE TRABALHO (item 17.4)
+
+17.4.1 Os equipamentos utilizados no processamento de dados e demais equipamentos devem ser adequados às características psicofisiológicas dos trabalhadores.
+
+17.4.2 Todos os equipamentos que compõem um posto de trabalho devem estar adequados às características psicofisiológicas dos trabalhadores e à natureza do trabalho a ser executado.
+
+17.4.3 Para trabalho em terminais de vídeo (VDTs/computadores):
+a) O teclado deve estar separado do monitor;
+b) A tela do monitor deve ser posicionada entre 45 e 70 cm dos olhos do trabalhador;
+c) O brilho e contraste devem ser ajustáveis;
+d) A inclinação da tela deve ser regulável de 0 a 20° a partir da linha horizontal;
+e) O nível de iluminação do posto de trabalho deve ser entre 300 e 500 lux.
+
+17.4.4 Quando o trabalho exige digitação, o empregador deve proporcionar intervalos de descanso para os membros superiores.
+
+CONDIÇÕES AMBIENTAIS DE TRABALHO (item 17.5)
+
+17.5.1 As condições ambientais de trabalho devem estar adequadas às características psicofisiológicas dos trabalhadores e à natureza do trabalho a ser executado.
+
+17.5.2 Para trabalhos que exijam atenção constante, com exigências cognitivas elevadas ou de caráter repetitivo, em locais fechados:
+- Temperatura efetiva entre 20°C e 23°C;
+- Velocidade do ar não superior a 0,75 m/s;
+- Umidade relativa do ar não inferior a 40%.
+
+17.5.3 Para trabalhos que não exijam atenção constante:
+- Temperatura efetiva entre 20°C e 23°C (recomendação);
+- Avaliação de conforto térmico conforme ISO 7730 ou NHO FUNDACENTRO.
+
+ORGANIZAÇÃO DO TRABALHO (item 17.6)
+
+17.6.1 A organização do trabalho deve ser adequada às características psicofisiológicas dos trabalhadores e à natureza do trabalho a ser executado.
+
+17.6.2 A organização do trabalho, para efeito desta NR, deve levar em consideração, no mínimo:
+a) as normas de produção;
+b) o modo operatório;
+c) a exigência de tempo;
+d) a determinação do conteúdo de tempo;
+e) o ritmo de trabalho;
+f) o conteúdo das tarefas.
+
+17.6.3 Quando o trabalho exige sobrecarga muscular estática ou dinâmica do pescoço, ombros, dorso e membros superiores e inferiores, devem ser incluídas pausas para recuperação psicofisiológica.
+
+TRABALHO EM TELEATENDIMENTO E TELEMARKETING (Anexo II)
+
+Para centrais de atendimento e telemarketing:
+- Jornada efetiva de 6 horas, com 2 pausas de 10 minutos contínuos além do intervalo para refeição;
+- Intervalo de 20 minutos para refeição com afastamento do posto;
+- Distância de escuta no headset: 65 dB(A) no máximo;
+- Iluminação: 500 lux sobre o posto;
+- Temperatura do ar entre 20°C e 23°C;
+- Umidade relativa do ar entre 40% e 60%.
+
+ANÁLISE ERGONÔMICA DO TRABALHO — METODOLOGIA (AET)
+
+A AET é exigida quando identificado risco ergonômico relevante no PGR. Etapas:
+1. Análise da demanda: delimitação do problema ergonômico a ser investigado;
+2. Análise da tarefa: condições de trabalho, equipamentos, normas e modos operatórios prescrito;
+3. Análise da atividade: o que o trabalhador realmente faz (observação e medição);
+4. Diagnóstico: avaliação da carga de trabalho, fatores de risco e consequências para a saúde;
+5. Recomendações: medidas de melhoria priorizadas por nível de risco;
+6. Validação: verificação da efetividade das medidas implementadas.
+
+Profissional habilitado para AET: ergonomista certificado (ABERGO), ou médico/engenheiro com especialização em ergonomia.
+
+INTEGRAÇÃO COM OUTROS PROGRAMAS
+
+- PGR (NR-1): riscos ergonômicos no inventário de riscos;
+- PCMSO (NR-7): exames específicos para riscos musculoesqueléticos (LER/DORT);
+- eSocial S-2240: registro de exposição a agentes ergonômicos;
+- LER/DORT (Lesões por Esforços Repetitivos / Distúrbios Osteomusculares Relacionados ao Trabalho): quando há nexo causal, gera CAT e benefício acidentário.

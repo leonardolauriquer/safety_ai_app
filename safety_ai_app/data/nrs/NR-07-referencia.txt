@@ -1,0 +1,100 @@
+NORMA REGULAMENTADORA Nº 7 — PROGRAMA DE CONTROLE MÉDICO DE SAÚDE OCUPACIONAL (PCMSO)
+Ministério do Trabalho e Emprego — MTE
+
+OBJETIVO (item 7.1)
+
+7.1 Esta Norma estabelece a obrigatoriedade de elaboração e implementação, por parte de todos os empregadores e instituições que admitam trabalhadores como empregados, do Programa de Controle Médico de Saúde Ocupacional (PCMSO), com o objetivo de promoção e preservação da saúde do conjunto dos seus trabalhadores.
+
+RESPONSABILIDADES (item 7.2)
+
+7.2.1 O PCMSO é parte integrante do conjunto mais amplo de iniciativas da empresa no campo da saúde dos trabalhadores, devendo estar articulado com as disposições previstas em outras NRs.
+7.2.2 Cabe ao empregador:
+a) garantir a elaboração e implementação do PCMSO;
+b) custear os exames e procedimentos médicos;
+c) nomear médico do trabalho como responsável técnico pelo PCMSO.
+
+7.2.4 O PCMSO deverá ter caráter de prevenção, rastreamento e diagnóstico precoce dos agravos à saúde relacionados ao trabalho, inclusive de natureza subclínica.
+
+RESPONSÁVEL TÉCNICO (item 7.3)
+
+7.3.1 O PCMSO deve ser elaborado por médico do trabalho, que deve ser especialista em medicina do trabalho ou ter residência médica em medicina do trabalho ou medicina preventiva e social, com área de atuação em saúde do trabalhador.
+7.3.2 Cabe ao médico responsável:
+a) realizar os exames médicos previstos ou encarregar outro médico de sua realização;
+b) encarregar enfermeiro do trabalho de aplicar os procedimentos necessários;
+c) elaborar os laudos dos exames médicos;
+d) emitir o Atestado de Saúde Ocupacional (ASO);
+e) elaborar, manter e guardar os prontuários médicos;
+f) comunicar ao empregador resultados suspeitos ou confirmados de doenças ocupacionais.
+
+ELABORAÇÃO DO PCMSO (item 7.4)
+
+7.4.1 O PCMSO deve ser elaborado levando em consideração o inventário de riscos do PGR (NR-1), contemplando os riscos identificados para cada função e Grupo Homogêneo de Exposição (GHE).
+7.4.2 O PCMSO deve incluir, necessariamente:
+a) reconhecimento dos riscos à saúde dos trabalhadores;
+b) realização dos exames médicos obrigatórios;
+c) procedimentos e condutas a serem adotados no caso de agravo à saúde do trabalhador.
+
+EXAMES MÉDICOS OBRIGATÓRIOS (item 7.5)
+
+7.5.1 O empregador é obrigado a realizar os seguintes exames médicos:
+a) admissional: deve ser realizado antes que o trabalhador assuma suas atividades;
+b) periódico: conforme periodicidade estabelecida pelo médico coordenador;
+c) retorno ao trabalho: obrigatório quando o trabalhador retorna ao trabalho após afastamento igual ou superior a 30 dias por motivo de doença ou acidente;
+d) mudança de função: antes da data da mudança;
+e) demissional: até a data da homologação da rescisão contratual ou data do último dia trabalhado; pode ser dispensado se o último exame foi realizado há menos de 135 dias (para empresas de GR 1 e 2) ou 90 dias (GR 3 e 4).
+
+PERIODICIDADE DOS EXAMES PERIÓDICOS (item 7.5.3)
+
+7.5.3 Para trabalhadores expostos a riscos ou situações especiais:
+- expostos a riscos ou fatores de risco: periodicidade definida pelo médico coordenador conforme o nível de risco e a natureza da exposição;
+- para trabalhadores não expostos a riscos específicos:
+  * menores de 18 anos: anual;
+  * entre 18 e 45 anos: a cada 2 anos;
+  * acima de 45 anos: anual.
+
+EXAMES COMPLEMENTARES (item 7.5.5)
+
+7.5.5.1 Os exames complementares são definidos pelo médico coordenador em função dos riscos identificados no PGR para cada GHE. Exemplos obrigatórios por tipo de exposição:
+- Ruído ≥ 85 dB(A): audiometria tonal limiar (basal e periódica);
+- Agentes químicos respiratórios (poeiras, fumos, vapores): espirometria;
+- Benzeno e derivados: hemograma completo;
+- Chumbo: plumbemia;
+- Trabalho noturno: exame clínico + glicemia + colesterol;
+- Riscos psicossociais elevados: avaliação de saúde mental com instrumento validado (ex.: PHQ-9, GAD-7, MBI para burnout).
+
+ATESTADO DE SAÚDE OCUPACIONAL — ASO (item 7.5.7)
+
+7.5.7.1 O ASO deve conter, no mínimo:
+a) nome completo do trabalhador, número de RG ou CPF;
+b) função do trabalhador e riscos ocupacionais inerentes;
+c) indicação dos procedimentos médicos a que foi submetido com data e resultados;
+d) nome do médico coordenador, com número de registro no CRM;
+e) data e assinatura do médico que realizou o exame;
+f) definição de apto ou inapto para a função específica.
+
+7.5.7.2 O ASO deve ser emitido em 2 vias: uma para o trabalhador e outra mantida pelo empregador.
+
+RELATÓRIO ANALÍTICO ANUAL (item 7.6)
+
+7.6.1 O médico coordenador deve elaborar relatório anual contendo:
+a) descrição quantitativa dos exames realizados e resultados;
+b) identificação das doenças ocupacionais diagnosticadas ou de causas comuns relacionadas ao trabalho;
+c) avaliação da efetividade das medidas de controle adotadas;
+d) recomendações para aprimoramento do programa.
+
+INTEGRAÇÃO COM ESOCIAL
+
+O PCMSO deve fornecer dados para preenchimento dos seguintes eventos no eSocial:
+- S-2220 (Monitoramento da Saúde do Trabalhador): um evento por exame realizado, com CID, resultado e ASO;
+- S-2240 (Condições Ambientais do Trabalho): registro das exposições a agentes nocivos para fins de histórico previdenciário;
+- S-2210 (Comunicação de Acidente de Trabalho — CAT): emitida pelo empregador até o 1º dia útil após o acidente.
+
+SAÚDE MENTAL E RISCOS PSICOSSOCIAIS NO PCMSO
+
+Com a atualização da NR-1 (Portaria 1.419/2024), o PCMSO deve contemplar:
+- Protocolos de triagem de saúde mental para GHEs expostos a riscos psicossociais significativos;
+- Monitoramento de indicadores de burnout (CID-11: QD85), transtornos de ansiedade (CID-10: F41.x) e depressão (F32/F33) relacionados ao trabalho;
+- Procedimentos de encaminhamento ao médico assistente ou serviço especializado;
+- Medidas de retorno progressivo ao trabalho após afastamento por transtorno mental ocupacional.
+
+Nota: Quando há nexo causal entre transtorno mental e o trabalho, o empregador deve emitir CAT (S-2210 no eSocial) e o afastamento é classificado como acidentário (B91 no INSS).

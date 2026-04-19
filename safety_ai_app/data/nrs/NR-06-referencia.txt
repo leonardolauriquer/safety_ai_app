@@ -1,0 +1,104 @@
+NORMA REGULAMENTADORA Nº 6 — EQUIPAMENTO DE PROTEÇÃO INDIVIDUAL (EPI)
+Ministério do Trabalho e Emprego — MTE
+
+OBJETIVO E DEFINIÇÃO (item 6.1)
+
+6.1 Para os fins de aplicação desta NR, considera-se Equipamento de Proteção Individual (EPI) todo dispositivo ou produto, de uso individual utilizado pelo trabalhador, destinado à proteção de riscos suscetíveis de ameaçar a segurança e a saúde no trabalho.
+
+6.1.1 Considera-se Equipamento Conjugado de Proteção Individual (ECPI) aquele composto por vários dispositivos que o fabricante tenha associado contra um ou mais riscos que possam ocorrer simultaneamente.
+
+CERTIFICADO DE APROVAÇÃO — CA (item 6.3)
+
+6.3.1 O EPI somente poderá ser posto à venda ou utilizado com a indicação do Certificado de Aprovação — CA, expedido pelo órgão nacional competente em matéria de segurança e saúde no trabalho do MTE.
+
+6.3.2 O CA concedido aos EPI fabricados no país ou importados terá validade:
+a) de 5 anos para aqueles equipamentos com tecnologia consolidada;
+b) conforme laudo de ensaio, para os demais.
+
+6.3.3 O CA pode ser consultado no sistema CONSULCA do MTE (antigo SFIT), disponível no site do MTE.
+
+6.3.4 EPI com CA vencido não pode ser utilizado. A empresa que fornece ou usa EPI com CA vencido está sujeita a autuação pela Fiscalização do Trabalho.
+
+RESPONSABILIDADES DO EMPREGADOR (item 6.4)
+
+6.4 Cabe ao empregador quanto ao EPI:
+a) adquirir o adequado ao risco de cada atividade;
+b) exigir seu uso;
+c) fornecer ao trabalhador somente o aprovado pelo órgão nacional competente em matéria de segurança e saúde no trabalho;
+d) orientar e treinar o trabalhador sobre o uso adequado, guarda e conservação;
+e) substituir imediatamente quando danificado ou extraviado;
+f) responsabilizar-se pela higienização e manutenção periódica;
+g) comunicar o MTE qualquer irregularidade observada;
+h) registrar o fornecimento do EPI ao trabalhador (ficha de EPI assinada ou sistema informatizado).
+
+RESPONSABILIDADES DO TRABALHADOR (item 6.5)
+
+6.5 Cabe ao empregado quanto ao EPI:
+a) usar o EPI apenas para a finalidade a que se destina;
+b) responsabilizar-se pela guarda e conservação;
+c) comunicar ao empregador qualquer alteração que o torne impróprio para uso;
+d) cumprir as determinações do empregador sobre o uso adequado.
+
+PRINCIPAIS EPIs POR TIPO DE RISCO
+
+PROTEÇÃO DA CABEÇA:
+- Capacete de segurança: obras, canteiros de construção, trabalho em altura, ambientes com risco de impacto ou queda de objetos;
+- Capuz: proteção contra agentes químicos, fogo (Nomex), frio.
+
+PROTEÇÃO AUDITIVA:
+- Protetor auricular tipo plug (espuma, silicone): ruído entre 85 e 105 dB(A) — verificar NRR/CA;
+- Protetor auricular tipo concha (headphone): ruído acima de 95-100 dB(A) ou quando necessária comunicação.
+
+PROTEÇÃO DOS OLHOS E FACE:
+- Óculos de segurança: proteção contra impactos, poeiras, respingos;
+- Óculos de solda com lentes grau 6-14 (DIN): conforme processo de soldagem (MIG/TIG/eletrodo revestido);
+- Protetor facial (face shield): trabalho com risco de respingos de produtos químicos, usinagem, esmerilhamento;
+- Máscara de solda com filtro automático: soldagem elétrica.
+
+PROTEÇÃO RESPIRATÓRIA:
+- Respirador semifacial filtrante (PFF2 N95): poeiras, névoas não tóxicas;
+- Respirador semifacial peça facial com filtros substituíveis: vapores orgânicos (OV), poeiras, fumos metálicos;
+- Respirador de face inteira: agentes com risco ocular + respiratório;
+- SCBA (Self-Contained Breathing Apparatus) / Máscara com linha de ar: espaços confinados, atmosferas deficientes em O₂ ou IDLH.
+
+PROTEÇÃO DO TRONCO:
+- Avental de raspa/vaqueta: solda, trabalho com ferramentas de corte;
+- Avental de PVC: trabalho com produtos químicos aquosos;
+- Jaleco antichamas (Nomex, FR cotton): trabalho com risco de arco elétrico ou incêndio;
+- Colete refletivo: trabalho em vias, sinalização.
+
+PROTEÇÃO DE MEMBROS SUPERIORES:
+- Luva de raspa/vaqueta: manuseio de materiais abrasivos, caldeiraria, solda;
+- Luva de nitrila/neoprene: produtos químicos, óleos, solventes;
+- Luva isolante de borracha: trabalho elétrico (classe 0 a 4, conforme tensão);
+- Luva de malha de aço: manipulação de carnes, facas.
+
+PROTEÇÃO DE MEMBROS INFERIORES:
+- Calçado de segurança com biqueira de aço: risco de impacto nos pés;
+- Botina com solado antiderrapante: pisos escorregadios;
+- Bota dielétrica (sem partes metálicas): trabalho elétrico em baixa tensão;
+- Bota de PVC: trabalho em água, esgoto, agentes químicos aquosos.
+
+PROTEÇÃO CONTRA QUEDA DE ALTURA (NR-35):
+- Cinto paraquedista: único tipo aprovado para trabalho em altura (≥ 2 m);
+- Talabarte de posicionamento e retenção: para posicionamento no posto;
+- Talabarte de absorção de energia (double): para deslocamento em altura com risco de queda livre;
+- Trava-queda: para deslocamento em linha de vida;
+- Linha de vida horizontal ou vertical: conforme o trajeto.
+
+PROTEÇÃO CONTRA QUEDAS DE OBJETOS:
+- Capacete com jugular (obrigatório em trabalho em altura);
+- Tela de proteção, bandejas e redes (EPCs complementares).
+
+FICHA DE ENTREGA DO EPI
+
+O empregador deve manter registro do fornecimento de EPI para cada trabalhador, contendo:
+- Nome do trabalhador;
+- Data de entrega;
+- Tipo de EPI (descrição, marca, CA);
+- Assinatura do trabalhador (ou confirmação digital);
+- Prazo de validade ou data da próxima entrega.
+
+NOTA SOBRE INSALUBRIDADE E EPI
+
+Conforme Súmula 289 do TST: o simples fornecimento de EPI não elimina o direito ao adicional de insalubridade. Para eliminar a insalubridade, é necessário reduzir a exposição abaixo do limite de tolerância por meio de controles de engenharia ou administrativos. O EPI é a última barreira e protege o trabalhador, mas não altera o enquadramento de insalubridade (exceto quando comprovada neutralização total da exposição, caso a caso, por laudo técnico).

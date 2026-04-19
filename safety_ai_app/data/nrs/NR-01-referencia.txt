@@ -1,0 +1,121 @@
+NORMA REGULAMENTADORA Nº 1 — DISPOSIÇÕES GERAIS E GERENCIAMENTO DE RISCOS OCUPACIONAIS (GRO)
+Ministério do Trabalho e Emprego — MTE
+Atualização vigente: Portaria MTE nº 1.419, de 29 de agosto de 2024 (riscos psicossociais)
+
+OBJETIVO E CAMPO DE APLICAÇÃO (item 1.1)
+
+1.1 Esta Norma estabelece as disposições gerais aplicáveis às Normas Regulamentadoras - NR relativas à segurança e saúde no trabalho, bem como define as obrigações dos empregadores e empregados no que se refere à segurança e saúde no trabalho.
+1.1.1 Esta Norma se aplica a todos os empregadores e trabalhadores, sejam pessoas físicas ou jurídicas, de direito privado ou público, bem como aos profissionais liberais, às instituições de beneficência, às associações recreativas e outras instituições sem fins lucrativos, que possuam trabalhadores sob sua responsabilidade.
+
+RESPONSABILIDADES (item 1.4)
+
+1.4.1 Cabe ao empregador:
+a) cumprir e fazer cumprir as disposições legais e regulamentares sobre segurança e saúde no trabalho;
+b) elaborar ordens de serviço sobre segurança e saúde no trabalho;
+c) informar os trabalhadores sobre os riscos ocupacionais existentes nos locais de trabalho e os meios de preveni-los;
+d) comunicar ao órgão regional do MTE os acidentes de trabalho fatais e as situações de trabalho que representem riscos graves e iminentes à segurança e saúde dos trabalhadores;
+e) elaborar e implementar o Programa de Gerenciamento de Riscos (PGR);
+f) garantir que os trabalhadores participem das ações de segurança e saúde no trabalho.
+
+1.4.2 Cabe aos trabalhadores:
+a) cumprir as disposições legais e regulamentares sobre segurança e saúde no trabalho;
+b) colaborar no cumprimento das NRs;
+c) usar o EPI fornecido pelo empregador;
+d) submeter-se aos exames médicos previstos;
+e) comunicar ao empregador situações de risco para sua segurança, saúde ou de terceiros.
+
+GERENCIAMENTO DE RISCOS OCUPACIONAIS — GRO (item 1.5)
+
+1.5 O empregador deve implementar o Gerenciamento de Riscos Ocupacionais (GRO), por meio do Programa de Gerenciamento de Riscos (PGR).
+1.5.1 O GRO deve incluir o processo de identificação de perigos, avaliação e controle dos riscos ocupacionais.
+
+RISCOS OCUPACIONAIS — CATEGORIAS (itens 1.5.2 e 1.5.3)
+
+1.5.2 Os riscos ocupacionais compreendem:
+a) Riscos físicos: ruído, calor, frio, vibrações, pressões anormais, radiações ionizantes e não ionizantes, umidade;
+b) Riscos químicos: poeiras, fumos, névoas, neblinas, gases, vapores e outros compostos, substâncias absorvidas por via cutânea;
+c) Riscos biológicos: bactérias, fungos, bacilos, parasitas, protozoários, vírus, príons, entre outros;
+d) Riscos ergonômicos: esforço físico intenso, levantamento e transporte manual de peso, exigência de postura inadequada, controle rígido de produtividade, imposição de ritmos excessivos, trabalho em turno e noturno, jornadas prolongadas, monotonia e repetitividade, situações de estresse;
+e) Riscos mecânicos (de acidentes): arranjo físico inadequado, máquinas e equipamentos sem proteção, ferramentas inadequadas, eletricidade, incêndio, explosão, quedas;
+f) Riscos psicossociais: fatores que podem causar danos psicológicos, comportamentais ou físicos aos trabalhadores.
+
+RISCOS PSICOSSOCIAIS (item 1.5.3.1 — Portaria MTE nº 1.419/2024, vigência jan/2025)
+
+1.5.3.1 Os riscos psicossociais compreendem, entre outros, os seguintes fatores:
+a) intensidade e ritmo de trabalho excessivos;
+b) jornadas de trabalho prolongadas;
+c) falta de autonomia e controle sobre o trabalho;
+d) demandas emocionais excessivas;
+e) conflito entre exigências do trabalho e vida pessoal;
+f) relações interpessoais e de trabalho inadequadas, incluindo violência, assédio moral e assédio sexual;
+g) insegurança no emprego e instabilidade contratual;
+h) falta de suporte social de gestores e colegas;
+i) trabalho monótono ou repetitivo sem significado;
+j) exposição a eventos traumáticos;
+k) pressão por desempenho e metas inatingíveis.
+
+1.5.3.2 Os riscos psicossociais devem ser incluídos no inventário de riscos do PGR e gerenciados com as mesmas ferramentas aplicadas aos demais riscos ocupacionais.
+
+HIERARQUIA DE CONTROLES (item 1.5.4)
+
+1.5.4 As medidas de prevenção devem ser adotadas com base na seguinte hierarquia:
+a) Eliminação do fator de risco;
+b) Substituição do fator de risco;
+c) Medidas de proteção coletiva;
+d) Medidas de caráter administrativo ou de organização do trabalho;
+e) Adoção de equipamentos de proteção individual (EPI).
+
+PROGRAMA DE GERENCIAMENTO DE RISCOS — PGR (item 1.5.5)
+
+1.5.5 O PGR deve conter:
+I — inventário de riscos ocupacionais;
+II — plano de ação para implementação das medidas de prevenção.
+
+1.5.5.1 O inventário de riscos deve contemplar:
+a) identificação de perigos e avaliação dos riscos gerados por esses perigos, incluindo fontes, situações e atos que possam causar danos, com determinação de possíveis causas e consequências;
+b) identificação dos trabalhadores expostos, com suas funções e número de expostos;
+c) avaliação dos riscos, incluindo probabilidade e severidade dos danos;
+d) classificação dos riscos em inaceitáveis ou toleráveis;
+e) registro das medidas de prevenção implementadas.
+
+1.5.5.2 O plano de ação deve conter:
+a) a priorização para implementação das medidas de prevenção de acordo com o nível de risco;
+b) objetivos e metas;
+c) responsáveis pela implementação;
+d) cronograma;
+e) recursos necessários.
+
+1.5.5.3 O PGR deve ser atualizado:
+a) sempre que houver mudança nos processos produtivos, no ambiente de trabalho ou nas tecnologias utilizadas que implique nova identificação de perigos e avaliação de riscos;
+b) periodicamente, conforme cronograma estabelecido pelo empregador, levando em consideração as avaliações quantitativas de agentes físicos, químicos e biológicos realizadas com as periodicidades exigidas pelas NRs aplicáveis.
+
+1.5.5.4 O PGR deve ser acessível a todos os trabalhadores e aos membros da CIPA ou SESMT.
+
+INTEGRAÇÃO DO PGR COM OUTROS PROGRAMAS (item 1.5.6)
+
+1.5.6 As informações contidas no PGR devem subsidiar:
+a) a elaboração do Programa de Controle Médico de Saúde Ocupacional (PCMSO), previsto na NR-7;
+b) as avaliações ambientais para fins de caracterização de insalubridade e periculosidade;
+c) a elaboração do Laudo Técnico das Condições Ambientais de Trabalho (LTCAT), para fins previdenciários;
+d) o preenchimento do eSocial, especialmente os eventos de condições ambientais do trabalho.
+
+DISPENSAS DO PGR (item 1.5.7)
+
+1.5.7 Ficam dispensados da elaboração do PGR, mas não da implementação do GRO:
+a) Microempreendedor Individual (MEI) sem empregados;
+b) Empregador pessoa física que não possua empregados.
+
+DIREITO DE RECUSA (item 1.6)
+
+1.6.1 O trabalhador tem o direito de interromper suas atividades e comunicar ao superior hierárquico quando verificar que estas implicam risco grave e iminente à sua segurança e saúde ou a terceiros.
+1.6.2 O empregador não poderá exigir que o trabalhador retorne à atividade enquanto o risco grave e iminente persistir.
+
+QUADRO I — GRAUS DE RISCO POR ATIVIDADE ECONÔMICA
+
+O Grau de Risco (GR) varia de 1 a 4 conforme o CNAE da empresa:
+- GR 1: menor risco (ex.: comércio varejista de alimentos, serviços administrativos)
+- GR 2: risco médio (ex.: transporte rodoviário, construção de edifícios)
+- GR 3: risco alto (ex.: metalurgia, fabricação de produtos químicos)
+- GR 4: maior risco (ex.: extração de minerais, fabricação de explosivos, obras de infraestrutura)
+
+O GR é determinante para o dimensionamento do SESMT (NR-4) e CIPA (NR-5).

@@ -1,0 +1,137 @@
+GUIA TÉCNICO DE ELABORAÇÃO DO LTCAT E DA AET
+Base legal: Lei 8.213/91 (Arts. 57-58), Decreto 3.048/99 (Anexo IV), Instrução Normativa INSS nº 128/2022; NR-17 (AET)
+Documento de referência técnica — SafetyAI
+
+====================================================================
+PARTE A — LTCAT (LAUDO TÉCNICO DAS CONDIÇÕES AMBIENTAIS DE TRABALHO)
+====================================================================
+
+FINALIDADE
+
+O LTCAT comprova a exposição habitual e permanente a agentes nocivos para fins de concessão de aposentadoria especial (Lei 8.213/91, Arts. 57 e 58) e reconhecimento de períodos de trabalho especial para conversão em tempo comum.
+
+Diferença importante:
+- LTCAT: finalidade PREVIDENCIÁRIA (aposentadoria especial, PPP, eSocial);
+- Laudo de Insalubridade (NR-15): finalidade TRABALHISTA (adicional de insalubridade na folha de pagamento).
+São documentos distintos, com finalidades distintas, embora a avaliação ambiental possa ser comum.
+
+RESPONSÁVEL TÉCNICO
+
+O LTCAT deve ser elaborado por:
+- Médico do Trabalho (CRM ativo e especialização em MT); ou
+- Engenheiro de Segurança do Trabalho (CREA ativo e especialização em EST).
+
+A responsabilidade técnica é obrigatória — o documento deve ser assinado com número de registro profissional.
+
+AGENTES NOCIVOS PARA FINS PREVIDENCIÁRIOS
+
+Os agentes e atividades que ensejam aposentadoria especial estão listados no Anexo IV do Decreto 3.048/99 e incluem:
+- Agentes físicos: ruído ≥ 85 dB(A) (tabela do Decreto), calor, frio, pressões anormais, vibrações, radiações ionizantes;
+- Agentes químicos: benzeno, chumbo, mercúrio, cromo hexavalente, arsênio, sílica livre, amianto, óxidos de nitrogênio, etc.;
+- Agentes biológicos: em hospitais, serviços de saúde, laboratórios, coleta de resíduos, etc.
+
+CONTEÚDO MÍNIMO DO LTCAT
+
+O LTCAT deve conter, no mínimo (Decreto 3.048/99 e IN INSS 128/2022):
+a) Identificação da empresa: razão social, CNPJ, endereço, CNAE;
+b) Identificação do responsável técnico: nome, formação, CRM ou CREA, contato;
+c) Descrição detalhada das atividades exercidas pelos trabalhadores avaliados (GHE ou por função);
+d) Identificação dos agentes nocivos presentes no ambiente de trabalho;
+e) Metodologia de avaliação utilizada (tipo de equipamento, norma de referência, data e condições das medições);
+f) Resultados das avaliações quantitativas ou qualitativas;
+g) Conclusão sobre a existência (ou não) de exposição habitual e permanente ao agente nocivo;
+h) Medidas de proteção coletiva e individual adotadas, incluindo avaliação da eficácia dos EPIs;
+i) Data de elaboração e assinatura do responsável técnico.
+
+EXPOSIÇÃO HABITUAL E PERMANENTE
+
+Para fins previdenciários, a exposição deve ser habitual e permanente (não eventual):
+- Habitual: que faz parte das atividades rotineiras do trabalhador;
+- Permanente: que ocorre de forma contínua, não esporádica, ao longo da jornada.
+
+Nota: o uso de EPI eficaz que neutralize a exposição ao agente nocivo PODE descaracterizar a exposição para fins previdenciários — mas apenas quando comprovada a efetiva neutralização por laudo técnico. Isso é diferente do adicional de insalubridade (Súmula 289 TST).
+
+VALIDADE E ATUALIZAÇÃO
+
+O LTCAT deve ser atualizado sempre que houver mudança:
+- Nos processos produtivos ou operacionais;
+- Nos ambientes de trabalho;
+- Nas tecnologias e equipamentos utilizados;
+- Que possa alterar a exposição dos trabalhadores aos agentes nocivos.
+
+Sem mudança nas condições: não há prazo mínimo legal para atualização automática, mas é boa prática revisar a cada 2-3 anos.
+
+INTEGRAÇÃO COM ESOCIAL
+
+- Evento S-2240 (Condições Ambientais do Trabalho): preenchido com base no LTCAT, por função/GHE, informando os agentes nocivos e nível de exposição;
+- PPP (Perfil Profissiográfico Previdenciário): documento individual gerado com base nos dados do S-2220 e S-2240, emitido quando o trabalhador se desliga ou solicita.
+
+DIFERENÇAS ENTRE LTCAT E OUTROS LAUDOS
+
+| Característica | LTCAT | Laudo de Insalubridade (NR-15) | AET (NR-17) |
+|---|---|---|---|
+| Finalidade | Previdenciária (aposentadoria especial) | Trabalhista (adicional de insalubridade) | Ergonômica (adequação do trabalho) |
+| Base legal | Lei 8.213/91, Decreto 3.048/99 | CLT, NR-15 | NR-17 |
+| Responsável | Méd. Trabalho ou Eng. Segurança | Méd. Trabalho ou Eng. Segurança | Ergonomista, méd. ou eng. com especialização |
+| EPI neutraliza? | Pode neutralizar (se eficaz) | NÃO (Súmula 289 TST) | N/A |
+| Destino | INSS, eSocial, PPP | Folha de pagamento | Melhoria do posto de trabalho |
+
+=========================================================================
+PARTE B — AET (ANÁLISE ERGONÔMICA DO TRABALHO) — REFERÊNCIA ESTRUTURAL
+=========================================================================
+
+FUNDAMENTO LEGAL
+
+A AET é exigida pela NR-17 sempre que identificado risco ergonômico relevante no inventário do PGR. Para algumas atividades, é obrigatória por força de Acordo, Convenção Coletiva ou norma específica (ex.: teleatendimento — NR-17 Anexo II).
+
+ESTRUTURA DA AET
+
+1. ANÁLISE DA DEMANDA
+- Identificação do problema ergonômico: quais postos/atividades apresentam queixas musculoesqueléticas, absenteísmo, afastamentos ou riscos?
+- Fontes: dados de saúde (PCMSO/SESMT), queixas dos trabalhadores, avaliação do PGR.
+
+2. ANÁLISE DA TAREFA (O QUE É PRESCRITO)
+- Descrição das tarefas realizadas por cada função/posto;
+- Identificação das exigências: físicas (força, postura, repetitividade), cognitivas (atenção, tomada de decisão), temporais (ritmo, metas);
+- Levantamento do ambiente: iluminação, temperatura, ruído, layout.
+
+3. ANÁLISE DA ATIVIDADE (O QUE REALMENTE OCORRE)
+- Observação sistemática dos trabalhadores durante a jornada;
+- Medição de posturas (ex.: RULA, REBA, OWAS para análise postural);
+- Avaliação do levantamento de cargas (equação de NIOSH);
+- Avaliação de vibração de mão-braço ou corpo inteiro (quando aplicável);
+- Identificação de discrepâncias entre tarefa prescrita e atividade real.
+
+4. DIAGNÓSTICO ERGONÔMICO
+- Identificação dos fatores de risco ergonômicos prioritários;
+- Avaliação do nível de risco para cada fator (baixo / médio / alto / crítico);
+- Correlação com indicadores de saúde (afastamentos, LER/DORT, queixas).
+
+5. RECOMENDAÇÕES
+- Medidas de engenharia: redesenho de postos, equipamentos auxiliares, automação;
+- Medidas organizacionais: pausas, rodízio, revisão de metas, jornadas;
+- Medidas de treinamento: técnicas corretas de movimentação, conscientização;
+- Priorizadas por nível de risco e custo-benefício.
+
+6. VALIDAÇÃO
+- Verificação da efetividade das medidas implementadas após prazo definido;
+- Nova medição dos fatores de risco;
+- Atualização do diagnóstico e das recomendações.
+
+FERRAMENTAS DE AVALIAÇÃO ERGONÔMICA
+
+| Ferramenta | Aplicação | O que avalia |
+|---|---|---|
+| RULA | Membros superiores e pescoço | Carga musculoesquelética em trabalho sedentário |
+| REBA | Corpo inteiro | Risco de LER/DORT em diversas posturas |
+| NIOSH Lifting Equation | Levantamento manual de cargas | Peso limite recomendado (PLR) |
+| Strain Index (JSI) | Mão/punho | Risco de lesão em tarefas manuais repetitivas |
+| OCRA | Membros superiores | Índice de exposição a movimentos repetitivos |
+| OWAS | Postura de corpo inteiro | Classificação rápida de posturas no trabalho |
+| Questionário Nórdico | Trabalhadores | Prevalência de sintomas musculoesqueléticos |
+
+INTEGRAÇÃO COM PCMSO
+
+- Os afastamentos por LER/DORT (CID-10: M50-M99) devem ser monitorados pelo PCMSO;
+- Retorno ao trabalho após afastamento ergonômico: o médico do trabalho deve avaliar o posto antes do retorno;
+- Readaptação profissional: quando a lesão é permanente, articular com o INSS.

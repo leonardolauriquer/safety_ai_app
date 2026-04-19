@@ -192,34 +192,48 @@ GLASS_PANEL_CSS = """
 .act-more { color: #475569; font-size: 0.75em; font-style: italic; }
 /* === HUB CARD (Quick Queries, Sizing, etc.) === */
 .hub-card {
-    border-radius: 12px;
-    padding: 18px 16px 48px 16px;
+    border-radius: 12px 12px 0 0;
+    padding: 16px 16px 14px 16px;
     position: relative;
     overflow: hidden;
-    margin-bottom: 2px;
+    margin-bottom: 0;
     transition: all 0.15s ease;
-    min-height: 150px;
+    min-height: 130px;
 }
 .hub-card:hover { transform: translateY(-1px); }
-.hub-card-icon { margin-bottom: 10px; }
-.hub-card-icon svg { width: 22px; height: 22px; }
+.hub-card-icon { margin-bottom: 8px; }
+.hub-card-icon svg { width: 20px; height: 20px; }
 .hub-card-title {
-    font-size: 1.1em;
+    font-size: 1.05em;
     font-weight: 700;
     margin-bottom: 2px;
 }
 .hub-card-label {
     color: #94A3B8;
-    font-size: 0.72em;
+    font-size: 0.70em;
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
 .hub-card-desc {
     color: #64748B;
-    font-size: 0.79em;
-    line-height: 1.45;
+    font-size: 0.78em;
+    line-height: 1.4;
+}
+/* Hub card open button — connects visually to card above */
+.hub-card-btn-wrapper div[data-testid="stButton"] > button {
+    border-radius: 0 0 12px 12px !important;
+    border-top: none !important;
+    margin-top: 0 !important;
+    font-size: 0.82em !important;
+    padding: 6px 12px !important;
+    min-height: 32px !important;
+    letter-spacing: 0.02em !important;
+    background: rgba(15,23,42,0.5) !important;
+    color: #64748B !important;
+    border-color: rgba(74,222,128,0.12) !important;
+    box-shadow: none !important;
 }
 /* === BACK NAV BUTTON === */
 .safetyai-back-btn {

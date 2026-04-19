@@ -1,0 +1,110 @@
+NORMA REGULAMENTADORA Nº 33 — SEGURANÇA E SAÚDE NOS TRABALHOS EM ESPAÇOS CONFINADOS
+Ministério do Trabalho e Emprego — MTE
+
+OBJETIVO E APLICAÇÃO (item 33.1)
+
+33.1 Esta Norma estabelece os requisitos mínimos para identificação de espaços confinados e o reconhecimento, avaliação, monitoramento e controle dos riscos existentes, de forma a garantir permanentemente a segurança e saúde dos trabalhadores que interagem direta ou indiretamente nesses espaços.
+
+DEFINIÇÕES ESSENCIAIS (item 33.2)
+
+33.2.1 Espaço Confinado (EC): qualquer área ou ambiente não projetado para ocupação humana contínua, que possua meios limitados de entrada e saída, cuja ventilação existente é insuficiente para remover contaminantes ou onde possa existir a deficiência ou enriquecimento de oxigênio.
+
+33.2.2 Espaço Confinado Permissível (ECP): espaço confinado que apresenta ou pode apresentar durante a entrada e trabalho:
+a) atmosfera perigosa;
+b) material que pode submergir um trabalhador;
+c) configuração interna que possa prender ou asfixiar por estreitamento ou inclinação descendente;
+d) qualquer outro risco grave que ameace a vida.
+
+33.2.3 Atmosfera perigosa: aquela que pode expor trabalhadores a risco de vida, incapacitação, lesão ou efeitos agudos à saúde, incluindo:
+- Concentração de oxigênio abaixo de 19,5% (deficiência) ou acima de 23,5% (enriquecimento);
+- Concentração de substâncias inflamáveis ≥ 10% do Limite Inferior de Inflamabilidade (LII);
+- Concentração de contaminantes acima dos limites de tolerância.
+
+EQUIPE MÍNIMA OBRIGATÓRIA (item 33.5)
+
+33.5.1 Para todo trabalho em espaço confinado devem ser designados:
+a) Supervisor de Entrada: responsável pela autorização de entrada e pelo cumprimento de todos os requisitos de segurança;
+b) Trabalhador Autorizado: o que trabalha dentro do espaço;
+c) Vigia: posicionado fora do espaço confinado, com comunicação contínua com o trabalhador autorizado.
+
+33.5.2 Responsabilidades do Vigia:
+- Manter comunicação contínua com os trabalhadores autorizados dentro do EC;
+- Monitorar as atividades dentro e fora do EC;
+- Ordenar imediatamente a evacuação do EC quando identificada situação perigosa;
+- Nunca entrar no EC — se necessário socorro, acionar o resgate externo;
+- Comunicar ao supervisor qualquer situação de risco.
+
+33.5.3 Responsabilidades do Supervisor de Entrada:
+- Verificar e certificar que as medidas de controle foram implementadas antes de autorizar a entrada;
+- Cancelar a entrada ou ordenar a saída imediata quando os riscos não foram controlados;
+- Verificar o resgate e emergência estão preparados;
+- Emitir a Permissão de Trabalho (PT).
+
+MEDIÇÃO ATMOSFÉRICA (item 33.6)
+
+33.6.1 Antes de qualquer entrada e durante todo o trabalho em ECP, deve ser realizada a medição contínua ou frequente da atmosfera interior para verificação de:
+a) porcentagem de oxigênio (%O₂);
+b) porcentagem do Limite Inferior de Inflamabilidade (%LII);
+c) concentração de contaminantes (CO, H₂S, outros).
+
+33.6.2 A medição deve ser feita com equipamento multigas ou equipamentos específicos, calibrados, com certificado de calibração vigente.
+
+33.6.3 Valores de referência para medição:
+- O₂: entre 19,5% e 23,5% — seguro; abaixo de 19,5% ou acima de 23,5% — proibido entrar;
+- Inflamabilidade: acima de 10% do LII — proibido entrar;
+- CO (monóxido de carbono): acima de 35 ppm (LT NR-15) — risco; acima de 200 ppm — perigo imediato;
+- H₂S (gás sulfídrico): acima de 8 ppm (LT NR-15) — risco; acima de 50 ppm — perigo imediato.
+
+PERMISSÃO DE TRABALHO — PT (item 33.7)
+
+33.7.1 Para toda entrada em ECP, é obrigatória a emissão de Permissão de Trabalho (PT), que deve conter, no mínimo:
+a) identificação do espaço confinado;
+b) objetivo e descrição dos serviços a serem realizados;
+c) data e duração de validade (geralmente não exceder o turno de trabalho);
+d) autorização do supervisor;
+e) identificação de todos os trabalhadores autorizados;
+f) riscos identificados e medidas de controle implementadas;
+g) atmosfera medida antes da entrada (%O₂, %LII, contaminantes);
+h) EPIs necessários;
+i) procedimentos de emergência e salvamento;
+j) comunicação com o sistema de resgate externo.
+
+33.7.2 A PT deve ser encerrada ao final do trabalho ou quando as condições do EC se alterarem de forma a tornar o serviço inseguro.
+
+33.7.3 As PTs encerradas devem ser arquivadas durante o período em que o espaço confinado existir na planta (enquanto houver o EC na instalação — por tempo indeterminado, conforme NR-33 item 33.4.3.4).
+
+EPI MÍNIMO PARA TRABALHO EM EC (item 33.8)
+
+- Detector de gases multiparamétrico (O₂, LII, CO, H₂S);
+- Aparelho de Proteção Respiratória com suprimento de ar (em atmosferas com deficiência de O₂ ou contaminadas);
+- Cinto de resgate tipo paraquedista com talabarte conectado ao sistema de içamento;
+- Capacete com jugular;
+- Luva de proteção conforme agente;
+- Calçado de segurança.
+
+PLANO DE RESGATE (item 33.9)
+
+33.9.1 O plano de resgate deve ser elaborado antes de qualquer entrada em ECP e deve contemplar:
+a) sistema de comunicação entre vigia e trabalhador;
+b) tripé de resgate com talabarte e guincho (em EC com entrada vertical);
+c) equipe de resgate treinada e equipada disponível durante toda a operação;
+d) sistemas de içamento compatíveis com as dimensões do EC;
+e) contato com serviços de emergência externos (Bombeiros, SAMU).
+
+33.9.2 A equipe de resgate NÃO deve entrar no EC sem EPIs e treinamento adequados. A maioria das mortes em EC ocorre com socorristas não equipados.
+
+TREINAMENTO (item 33.10)
+
+33.10.1 Todos os trabalhadores que interagem com EC (supervisor, trabalhador autorizado, vigia) devem receber treinamento teórico e prático, com carga horária mínima de 16 horas para entrada inicial.
+
+33.10.2 O treinamento periódico deve ser realizado:
+a) sempre que houver mudança nos procedimentos;
+b) quando os trabalhadores apresentarem deficiências na aplicação dos procedimentos;
+c) a critério do supervisor.
+
+INTEGRAÇÃO COM OUTROS DOCUMENTOS
+
+- Inventário de riscos do PGR (NR-1): incluir os ECs e seus riscos;
+- PCMSO (NR-7): exames admissionais e periódicos contemplando exposição em EC;
+- Permissão de Trabalho: exigida para cada entrada em ECP;
+- Mapa de espaços confinados: levantamento e classificação de todos os ECs da planta.

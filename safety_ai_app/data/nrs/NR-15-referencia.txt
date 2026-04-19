@@ -1,0 +1,97 @@
+NORMA REGULAMENTADORA Nº 15 — ATIVIDADES E OPERAÇÕES INSALUBRES
+Ministério do Trabalho e Emprego — MTE
+
+OBJETIVO E APLICAÇÃO (item 15.1)
+
+15.1 São consideradas atividades ou operações insalubres as que se desenvolvem acima dos limites de tolerância previstos nos Anexos nº 1, 2, 3, 4, 5, 8, 9, 10 e 11 desta NR, e nas demais Normas de Higiene Ocupacional (NHO) da FUNDACENTRO.
+
+15.1.1 O exercício de trabalho em condições insalubres assegura ao trabalhador o pagamento do adicional de insalubridade, de acordo com o grau de insalubridade:
+- Grau máximo: 40% do salário mínimo;
+- Grau médio: 20% do salário mínimo;
+- Grau mínimo: 10% do salário mínimo.
+
+RUÍDO CONTÍNUO OU INTERMITENTE — ANEXO 1
+
+O limite de tolerância para ruído contínuo ou intermitente é:
+
+| Nível de Ruído — dB(A) | Máxima Exposição Diária Permissível |
+|---|---|
+| 85 | 8 horas |
+| 86 | 7 horas |
+| 87 | 6 horas |
+| 88 | 5 horas |
+| 90 | 4 horas |
+| 92 | 3 horas |
+| 94 | 2 horas e 15 minutos |
+| 95 | 2 horas |
+| 97 | 1 hora e 30 minutos |
+| 100 | 1 hora |
+| 102 | 45 minutos |
+| 105 | 30 minutos |
+| 110 | 15 minutos |
+| 115 | 7 minutos |
+
+Nota: Níveis acima de 115 dB(A) são proibidos sem proteção auditiva, independentemente de qualquer tempo de exposição.
+Nota: Exposição a níveis abaixo de 80 dB(A) não é considerada insalubre.
+Grau de insalubridade do ruído: médio (20% sobre o salário mínimo).
+
+RUÍDO DE IMPACTO — ANEXO 2
+
+O limite de tolerância para ruído de impacto é de 130 dB(C) (pico) ou 120 dB(A) quando não se dispõe de medidor com circuito de resposta de impulso. Grau: médio (20% SM).
+
+CALOR — ANEXO 3
+
+A exposição ao calor é avaliada pelo IBUTG (Índice de Bulbo Úmido e Termômetro de Globo).
+
+Regime de trabalho: alternância de trabalho/descanso por hora
+| Tipo de Atividade | Trabalho Contínuo | 45 min / 15 min | 30 min / 30 min | 15 min / 45 min |
+|---|---|---|---|---|
+| Leve | IBUTG ≤ 30,0 | IBUTG ≤ 30,6 | IBUTG ≤ 31,4 | IBUTG ≤ 32,2 |
+| Moderada | IBUTG ≤ 26,7 | IBUTG ≤ 28,0 | IBUTG ≤ 29,0 | IBUTG ≤ 30,0 |
+| Pesada | IBUTG ≤ 25,0 | IBUTG ≤ 25,9 | IBUTG ≤ 27,9 | IBUTG ≤ 30,0 |
+
+Grau de insalubridade pelo calor: médio (20% SM).
+
+AGENTES QUÍMICOS — ANEXO 11
+
+O limite de tolerância para agentes químicos é definido conforme os valores de referência da Tabela 1 do Anexo 11, que inclui:
+- Benzeno: 1,0 ppm (TWA) — controle biológico obrigatório (NR-7 PCMSO)
+- Tolueno: 78 ppm (TWA)
+- Sílica livre cristalizada (quartzo): 0,1 mg/m³
+- Chumbo e compostos: 0,1 mg/m³ (inorgânicos)
+- Chumbo (inorgânico) — controle biológico: plumbemia ≤ 40 µg/dL (BEI ACGIH)
+- Monóxido de carbono: 39 ppm (TWA)
+- Amônia: 20 ppm (TWA)
+
+Grau de insalubridade por agentes químicos: varia conforme o agente (mínimo a máximo, conforme Quadro 1 do Anexo 11).
+
+AGENTES BIOLÓGICOS — ANEXO 14
+
+São insalubres de grau máximo (40% SM) as atividades que expõem trabalhadores a:
+- Agentes biológicos em hospitais, serviços de urgência e emergência, laboratórios de análises clínicas;
+- Trabalho em esgoto, coleta de lixo com exposição a agentes biológicos;
+- Manejo de animais com doenças infectocontagiosas;
+- Trabalho em contato com portadores de doenças infectocontagiosas em fase de transmissão.
+
+CARACTERIZAÇÃO DA INSALUBRIDADE
+
+15.3 A caracterização e a classificação da insalubridade e da periculosidade, segundo as normas do MTE, far-se-ão através de perícia a cargo de Médico do Trabalho ou Engenheiro de Segurança do Trabalho.
+
+15.3.1 A eliminação ou a neutralização da insalubridade ocorrerá:
+a) com a adoção de medidas que conservem o ambiente de trabalho dentro dos limites de tolerância;
+b) com a utilização de equipamentos de proteção individual ao trabalhador, que diminuam a intensidade do agente agressivo a limites de tolerância.
+
+Importante — Súmula 289 do TST: O simples fornecimento do aparelho de proteção pelo empregador não o exime do pagamento do adicional de insalubridade. Cabe-lhe tomar as medidas que conduzam à diminuição ou eliminação da nocividade, entre as quais as relativas ao uso efetivo do equipamento pelo empregado.
+
+AVALIAÇÃO QUANTITATIVA
+
+Para ruído, calor, frio e agentes químicos e biológicos que exijam avaliação quantitativa, devem ser utilizadas metodologias de avaliação estabelecidas pelas Normas de Higiene Ocupacional (NHO) da FUNDACENTRO, pela ABNT, ACGIH ou pela NR-15 e seus Anexos.
+
+O laudo técnico de insalubridade deve ser elaborado por Médico do Trabalho ou Engenheiro de Segurança do Trabalho (exige registro em CRM ou CREA, respectivamente).
+
+RELAÇÃO COM OUTROS PROGRAMAS
+
+- PGR (NR-1): identificação e avaliação dos agentes de insalubridade no inventário de riscos;
+- PCMSO (NR-7): exames médicos específicos por agente (audiometria, espirometria, hemograma, etc.);
+- LTCAT: laudo para fins previdenciários (aposentadoria especial) baseado nas mesmas avaliações;
+- eSocial S-2240: registro das condições de trabalho insalubre e agentes nocivos.
