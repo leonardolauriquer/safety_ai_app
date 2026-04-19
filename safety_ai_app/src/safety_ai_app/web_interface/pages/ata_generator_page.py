@@ -224,13 +224,11 @@ def ata_generator_page() -> None:
         ''', unsafe_allow_html=True)
 
     st.markdown(f'<div class="section-title">{_get_material_icon_html("info")} 1. Identificação da Ata</div>', unsafe_allow_html=True)
-    
-    # Adicionar campo de upload de logo
-    st.markdown(f'<div class="section-title">{_get_material_icon_html("image")} Logo da Empresa (Opcional)</div>', unsafe_allow_html=True)
+
     uploaded_logo = st.file_uploader(
-        "Faça upload do logo da sua empresa (PNG, JPG). Será exibido no cabeçalho do documento.",
+        "Logo da empresa (PNG/JPG — opcional, aparecerá no cabeçalho do documento)",
         type=["png", "jpg", "jpeg"],
-        key="user_logo_uploader_ata" # Chave única para esta página
+        key="user_logo_uploader_ata"
     )
 
     MAX_FILE_SIZE_MB = 15
