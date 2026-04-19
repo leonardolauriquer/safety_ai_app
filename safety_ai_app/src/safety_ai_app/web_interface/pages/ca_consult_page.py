@@ -10,7 +10,7 @@ from safety_ai_app.theme_config import _get_material_icon_html, THEME
 
 # Importa CADataProcessor (assumindo que está no mesmo nível ou acessível via sys.path)
 from safety_ai_app.ca_data_processor import CADataProcessor
-from safety_ai_app.web_interface.shared_styles import inject_glass_styles, glass_marker
+from safety_ai_app.web_interface.shared_styles import inject_glass_styles, glass_marker, render_back_button
 
 logger = logging.getLogger(__name__)
 
@@ -153,9 +153,7 @@ def ca_consult_page() -> None:
     """Página de consulta de Certificado de Aprovação (CA) de EPIs."""
     inject_glass_styles()
 
-    if st.button("← Consultas Rápidas", key="back_from_ca"):
-        st.session_state.current_page = "quick_queries_page"
-        st.rerun()
+    render_back_button("← Consultas Rápidas", "quick_queries_page", "back_from_ca")
 
     with st.container():
         st.markdown(glass_marker(), unsafe_allow_html=True)

@@ -5,7 +5,7 @@ from typing import Any, Dict, List, Optional, Tuple
 from safety_ai_app.sesmt_data_processor import get_sesmt_dimensioning, PROFESSIONAL_NAMES, EMPLOYEE_RANGE_COLUMNS
 from safety_ai_app.cnae_risk_data_processor import CNAERiskDataProcessor
 from safety_ai_app.theme_config import _get_material_icon_html, THEME
-from safety_ai_app.web_interface.shared_styles import inject_glass_styles, glass_marker
+from safety_ai_app.web_interface.shared_styles import inject_glass_styles, glass_marker, render_back_button
 
 logger = logging.getLogger(__name__)
 
@@ -80,9 +80,7 @@ def sesmt_sizing_page() -> None:
     """
     inject_glass_styles()
 
-    if st.button("← Dimensionamentos", key="back_from_sesmt"):
-        st.session_state.current_page = "sizing_page"
-        st.rerun()
+    render_back_button("← Dimensionamentos", "sizing_page", "back_from_sesmt")
 
     with st.container():
         st.markdown(glass_marker(), unsafe_allow_html=True)

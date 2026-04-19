@@ -46,7 +46,7 @@ GLASS_PANEL_CSS = """
     border: 1px solid rgba(74,222,128,0.08);
     border-radius: 10px;
     padding: 14px 16px;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     transition: all 0.12s;
 }
 .result-card:hover {
@@ -79,7 +79,7 @@ GLASS_PANEL_CSS = """
 .stats-line {
     color: #64748B;
     font-size: 0.8em;
-    margin: 10px 0;
+    margin: 8px 0;
 }
 .stats-line b { color: #4ADE80; }
 .empty-state {
@@ -155,7 +155,114 @@ GLASS_PANEL_CSS = """
 .hierarchy-list li strong {
     color: #4ADE80;
 }
+/* === CNAE CARD === */
+.cnae-card {
+    background: rgba(15,23,42,0.5);
+    border: 1px solid rgba(74,222,128,0.08);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    transition: all 0.12s;
+}
+.cnae-card:hover { background: rgba(74,222,128,0.04); border-color: rgba(74,222,128,0.15); }
+.cnae-title { color: #E2E8F0; font-size: 0.92em; font-weight: 500; margin-bottom: 5px; }
+.cnae-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+.cnae-code { color: #4ADE80; font-family: monospace; font-size: 0.85em; font-weight: 600; }
+.cnae-level-badge {
+    background: rgba(74,222,128,0.08);
+    border: 1px solid rgba(74,222,128,0.15);
+    border-radius: 4px;
+    color: #4ADE80;
+    font-size: 0.72em;
+    padding: 1px 6px;
+    font-weight: 500;
+}
+.risk-badge {
+    border-radius: 4px;
+    font-size: 0.72em;
+    padding: 1px 7px;
+    font-weight: 700;
+    color: #0F172A;
+}
+.breadcrumb { color: #475569; font-size: 0.75em; margin-top: 5px; line-height: 1.5; }
+.bc-part { color: #64748B; }
+.bc-sep { color: #334155; margin: 0 3px; }
+.act-list { margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(74,222,128,0.06); }
+.act-item { color: #94A3B8; font-size: 0.78em; padding: 2px 0; }
+.act-more { color: #475569; font-size: 0.75em; font-style: italic; }
+/* === HUB CARD (Quick Queries, Sizing, etc.) === */
+.hub-card {
+    border-radius: 12px;
+    padding: 18px 16px 48px 16px;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 2px;
+    transition: all 0.15s ease;
+    min-height: 150px;
+}
+.hub-card:hover { transform: translateY(-1px); }
+.hub-card-icon { margin-bottom: 10px; }
+.hub-card-icon svg { width: 22px; height: 22px; }
+.hub-card-title {
+    font-size: 1.1em;
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+.hub-card-label {
+    color: #94A3B8;
+    font-size: 0.72em;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+}
+.hub-card-desc {
+    color: #64748B;
+    font-size: 0.79em;
+    line-height: 1.45;
+}
+/* === BACK NAV BUTTON === */
+.safetyai-back-btn {
+    background: transparent !important;
+    color: #64748B !important;
+    border: 1px solid rgba(148,163,184,0.2) !important;
+    box-shadow: none !important;
+    font-size: 0.8em !important;
+    padding: 5px 12px !important;
+    min-height: 30px !important;
+    font-weight: 400 !important;
+    transform: none !important;
+    letter-spacing: 0 !important;
+}
+.safetyai-back-btn:hover {
+    color: #4ADE80 !important;
+    border-color: rgba(74,222,128,0.35) !important;
+    background: rgba(74,222,128,0.05) !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
 </style>
+"""
+
+_BACK_BTN_JS = """
+<script>
+(function() {
+    var doc = window.parent ? window.parent.document : document;
+    function styleBackBtns() {
+        doc.querySelectorAll('button').forEach(function(btn) {
+            var txt = btn.innerText || btn.textContent || '';
+            if (txt.trim().startsWith('←') || txt.trim().startsWith('\u2190')) {
+                if (!btn.classList.contains('safetyai-back-btn')) {
+                    btn.classList.add('safetyai-back-btn');
+                }
+            }
+        });
+    }
+    styleBackBtns();
+    setTimeout(styleBackBtns, 150);
+    setTimeout(styleBackBtns, 500);
+})();
+</script>
 """
 
 
@@ -168,3 +275,12 @@ def inject_glass_styles():
 def glass_marker():
     """Returns HTML marker for glass panel CSS selector."""
     return '<div class="page-glass"></div>'
+
+
+def render_back_button(label: str, target_page: str, key: str) -> None:
+    """Renders a ghost-style back navigation button and injects JS to style it."""
+    import streamlit as st
+    if st.button(label, key=key):
+        st.session_state.current_page = target_page
+        st.rerun()
+    st.markdown(_BACK_BTN_JS, unsafe_allow_html=True)

@@ -7,7 +7,7 @@ import streamlit as st
 from safety_ai_app.fines_data_processor import FinesDataProcessor, format_currency_br
 from safety_ai_app.google_drive_integrator import get_service_account_drive_integrator_instance
 from safety_ai_app.theme_config import _get_material_icon_html
-from safety_ai_app.web_interface.shared_styles import glass_marker, inject_glass_styles
+from safety_ai_app.web_interface.shared_styles import glass_marker, inject_glass_styles, render_back_button
 
 logger = logging.getLogger(__name__)
 
@@ -18,9 +18,7 @@ def fines_consult_page() -> None:
     """Renderiza a página de consulta de multas da NR 28."""
     inject_glass_styles()
 
-    if st.button("← Consultas Rápidas", key="back_from_fines"):
-        st.session_state.current_page = "quick_queries_page"
-        st.rerun()
+    render_back_button("← Consultas Rápidas", "quick_queries_page", "back_from_fines")
 
     with st.container():
         st.markdown(glass_marker(), unsafe_allow_html=True)

@@ -6,7 +6,7 @@ import unicodedata
 
 from safety_ai_app.cbo_data_processor import CBODatabase
 from safety_ai_app.theme_config import _get_material_icon_html, THEME
-from safety_ai_app.web_interface.shared_styles import inject_glass_styles, glass_marker
+from safety_ai_app.web_interface.shared_styles import inject_glass_styles, glass_marker, render_back_button
 
 logger = logging.getLogger(__name__)
 
@@ -24,9 +24,7 @@ def normalize_text(text: str) -> str:
 def cbo_consult_page() -> None:
     inject_glass_styles()
 
-    if st.button("← Consultas Rápidas", key="back_from_cbo"):
-        st.session_state.current_page = "quick_queries_page"
-        st.rerun()
+    render_back_button("← Consultas Rápidas", "quick_queries_page", "back_from_cbo")
 
     with st.container():
         st.markdown(glass_marker(), unsafe_allow_html=True)

@@ -5,7 +5,7 @@ from typing import List, Dict, Any, Optional
 
 from safety_ai_app.cnae_data_processor import CNAEDataProcessor
 from safety_ai_app.theme_config import _get_material_icon_html, THEME
-from safety_ai_app.web_interface.shared_styles import inject_glass_styles, glass_marker
+from safety_ai_app.web_interface.shared_styles import inject_glass_styles, glass_marker, render_back_button
 
 logger = logging.getLogger(__name__)
 
@@ -44,49 +44,7 @@ def _build_breadcrumb(entry: Dict[str, Any]) -> str:
 def cnae_consult_page() -> None:
     inject_glass_styles()
 
-    if st.button("← Consultas Rápidas", key="back_from_cnae"):
-        st.session_state.current_page = "quick_queries_page"
-        st.rerun()
-
-    st.markdown("""
-    <style>
-    .cnae-card {
-        background: rgba(15,23,42,0.5);
-        border: 1px solid rgba(74,222,128,0.08);
-        border-radius: 10px;
-        padding: 12px 14px;
-        margin-bottom: 8px;
-        transition: all 0.12s;
-    }
-    .cnae-card:hover { background: rgba(74,222,128,0.04); border-color: rgba(74,222,128,0.15); }
-    .cnae-title { color: #E2E8F0; font-size: 0.92em; font-weight: 500; margin-bottom: 5px; }
-    .cnae-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
-    .cnae-code { color: #4ADE80; font-family: monospace; font-size: 0.85em; font-weight: 600; }
-    .cnae-level-badge {
-        background: rgba(74,222,128,0.08);
-        border: 1px solid rgba(74,222,128,0.15);
-        border-radius: 4px;
-        color: #4ADE80;
-        font-size: 0.72em;
-        padding: 1px 6px;
-        font-weight: 500;
-    }
-    .risk-badge {
-        border-radius: 4px;
-        font-size: 0.72em;
-        padding: 1px 7px;
-        font-weight: 700;
-        color: #0F172A;
-    }
-    .breadcrumb { color: #475569; font-size: 0.75em; margin-top: 5px; line-height: 1.5; }
-    .bc-part { color: #64748B; }
-    .bc-sep { color: #334155; margin: 0 3px; }
-    .act-list { margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(74,222,128,0.06); }
-    .act-item { color: #94A3B8; font-size: 0.78em; padding: 2px 0; }
-    .act-more { color: #475569; font-size: 0.75em; font-style: italic; }
-    .cnae-tabs div[role="tab"] { font-size: 0.82em !important; }
-    </style>
-    """, unsafe_allow_html=True)
+    render_back_button("← Consultas Rápidas", "quick_queries_page", "back_from_cnae")
 
     cnae_icon = _get_material_icon_html(THEME['icons'].get('cnae_consult', 'building'))
     search_icon = _get_material_icon_html(THEME['icons'].get('search_magnifying_glass', 'search'))

@@ -3,7 +3,7 @@ import logging
 from typing import Dict, Any
 from safety_ai_app.theme_config import THEME, _get_material_icon_html
 from safety_ai_app.cnae_risk_data_processor import CNAERiskDataProcessor
-from safety_ai_app.web_interface.shared_styles import inject_glass_styles, glass_marker
+from safety_ai_app.web_interface.shared_styles import inject_glass_styles, glass_marker, render_back_button
 
 logger = logging.getLogger(__name__)
 
@@ -88,9 +88,7 @@ def get_brigade_dimensioning(risk_level: str, population: int) -> Dict[str, Any]
 def emergency_brigade_sizing_page() -> None:
     inject_glass_styles()
 
-    if st.button("← Dimensionamentos", key="back_from_brigade"):
-        st.session_state.current_page = "sizing_page"
-        st.rerun()
+    render_back_button("← Dimensionamentos", "sizing_page", "back_from_brigade")
 
     with st.container():
         st.markdown(glass_marker(), unsafe_allow_html=True)
