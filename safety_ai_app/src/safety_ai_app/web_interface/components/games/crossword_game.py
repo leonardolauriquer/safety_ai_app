@@ -68,6 +68,16 @@ def load_crossword_data() -> Dict[str, Any]:
     # Passa apenas o nome do arquivo, a lógica de pasta é interna ao integrator
     excel_words_data = download_and_parse_crossword_excel(CROSSWORD_EXCEL_DRIVE_PATH)
 
+    # Fallback: vocabulário local quando Drive não está disponível
+    if not excel_words_data:
+        local_vocab_path = os.path.join(PROJECT_ROOT, 'data', 'games', 'crossword_words_local.json')
+        try:
+            with open(local_vocab_path, 'r', encoding='utf-8') as f:
+                excel_words_data = json.load(f)
+            logger.info(f'Vocabulário local carregado como fallback: {len(excel_words_data)} palavras.')
+        except Exception as e:
+            logger.warning(f'Não foi possível carregar vocabulário local: {e}')
+
     if excel_words_data:
         # Agrupar palavras do Excel por tamanho para seleção eficiente
         words_by_length: Dict[int, List[Dict[str, Any]]] = {}

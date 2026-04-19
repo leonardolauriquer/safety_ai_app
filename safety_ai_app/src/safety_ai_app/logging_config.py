@@ -53,6 +53,13 @@ class CorrelationIdFilter(logging.Filter):
         return True
 
 
+class _SuppressScriptRunContextFilter(logging.Filter):
+    """Suprime avisos ruidosos 'missing ScriptRunContext' de threads em background do Streamlit."""
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        return "missing ScriptRunContext" not in record.getMessage()
+
+
 class JSONFormatter(logging.Formatter):
     """Formatador que produz logs em formato JSON estruturado."""
     
@@ -94,13 +101,15 @@ def setup_logging() -> None:
     
     json_formatter = JSONFormatter()
     correlation_filter = CorrelationIdFilter()
-    
+    suppress_filter = _SuppressScriptRunContextFilter()
+
     console_handler = logging.StreamHandler()
     console_handler.setLevel(logging.INFO)
     console_handler.setFormatter(json_formatter)
     console_handler.addFilter(correlation_filter)
+    console_handler.addFilter(suppress_filter)
     root_logger.addHandler(console_handler)
-    
+
     log_file_path = os.path.join(logs_dir, 'app.log')
     file_handler = logging.handlers.RotatingFileHandler(
         log_file_path,
@@ -111,8 +120,13 @@ def setup_logging() -> None:
     file_handler.setLevel(logging.DEBUG)
     file_handler.setFormatter(json_formatter)
     file_handler.addFilter(correlation_filter)
+    file_handler.addFilter(suppress_filter)
     root_logger.addHandler(file_handler)
-    
+
+    # Suprime os avisos "missing ScriptRunContext" também no logger do Streamlit
+    logging.getLogger("streamlit").addFilter(suppress_filter)
+    logging.getLogger("streamlit.runtime").addFilter(suppress_filter)
+
     logging.getLogger(__name__).info("Logging configurado com sucesso")
 
 

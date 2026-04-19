@@ -30,6 +30,25 @@ _LOG_PATH = _PROJECT_ROOT / "logs" / "app.log"
 _SECURITY_LOG_PATH = _PROJECT_ROOT / "logs" / "security.log"
 _RAG_LOGS_DIR = _DATA_DIR / "rag_logs"
 _CHROMA_DB_DIR = _DATA_DIR / "chroma_db"
+_ADMIN_CONFIG_PATH = _DATA_DIR / "admin_config.json"
+
+
+def _load_persisted_admin_emails() -> List[str]:
+    """Carrega a lista de admin emails salva em disco (admin_config.json)."""
+    data = _load_json(_ADMIN_CONFIG_PATH, {"admin_emails": []})
+    return [e.strip().lower() for e in data.get("admin_emails", []) if e.strip()]
+
+
+def _save_persisted_admin_emails(emails: List[str]) -> bool:
+    """Salva a lista de admin emails em admin_config.json para persistência."""
+    try:
+        _ADMIN_CONFIG_PATH.parent.mkdir(parents=True, exist_ok=True)
+        with _ADMIN_CONFIG_PATH.open("w", encoding="utf-8") as f:
+            json.dump({"admin_emails": [e.strip().lower() for e in emails if e.strip()]}, f, indent=2)
+        return True
+    except Exception as exc:
+        logger.warning("Falha ao salvar admin_config.json: %s", exc)
+        return False
 
 
 # ---------------------------------------------------------------------------
@@ -44,6 +63,8 @@ def _is_admin() -> bool:
         return False
     raw = os.environ.get("ADMIN_EMAILS", "")
     admin_set = {e.strip().lower() for e in raw.split(",") if e.strip()}
+    # Também verifica admin_config.json persistido
+    admin_set.update(_load_persisted_admin_emails())
     return user_email in admin_set
 
 
@@ -685,37 +706,57 @@ def _tab_advanced_config() -> None:
         st.markdown('<div class="section-title">Gestão de Administradores</div>', unsafe_allow_html=True)
         st.markdown("""
             <div class="result-card" style="padding:12px 16px; margin-bottom:12px;">
-                <div style="color:#F59E0B; font-size:0.85em;">
-                    ⚠️ Alterações aqui actualizam apenas a sessão actual.<br>
-                    Para persistir, actualize o secret <code>ADMIN_EMAILS</code> no painel do Replit com os emails separados por vírgula.
+                <div style="color:#4ADE80; font-size:0.85em;">
+                    ✅ Administradores adicionados aqui são <strong>persistidos em disco</strong> (admin_config.json)
+                    e permanecem ativos após reinicialização do servidor.<br>
+                    A variável de ambiente <code>ADMIN_EMAILS</code> também continua sendo verificada.
                 </div>
             </div>
         """, unsafe_allow_html=True)
 
-        current_raw = os.environ.get("ADMIN_EMAILS", "")
-        current_admins = [e.strip() for e in current_raw.split(",") if e.strip()]
+        # Mescla emails da env var com os persistidos em disco
+        raw_env = os.environ.get("ADMIN_EMAILS", "")
+        env_admins = [e.strip().lower() for e in raw_env.split(",") if e.strip()]
+        persisted_admins = _load_persisted_admin_emails()
+        current_admins = sorted(set(env_admins + persisted_admins))
 
         st.markdown("**Administradores actuais:**")
         if current_admins:
             for email in current_admins:
-                st.markdown(f"- `{email}`")
+                source = "env" if email in env_admins else "arquivo"
+                st.markdown(f"- `{email}` _{source}_")
         else:
-            st.info("Nenhum administrador configurado via ADMIN_EMAILS.")
+            st.info("Nenhum administrador configurado.")
 
-        st.markdown("**Adicionar administrador (sessão actual):**")
+        st.markdown("**Adicionar administrador:**")
         new_admin_email = st.text_input("Email do novo administrador", key="admin_new_email",
                                          placeholder="email@exemplo.com")
-        if st.button("➕ Adicionar (sessão)", key="admin_add_btn"):
+        if st.button("➕ Adicionar e Salvar", key="admin_add_btn"):
             if new_admin_email and "@" in new_admin_email:
-                if new_admin_email not in current_admins:
-                    current_admins.append(new_admin_email.strip().lower())
-                    os.environ["ADMIN_EMAILS"] = ",".join(current_admins)
-                    st.success(f"✅ `{new_admin_email}` adicionado para esta sessão.")
-                    st.info("Lembre-se de actualizar o secret ADMIN_EMAILS no Replit para persistir.")
+                email_clean = new_admin_email.strip().lower()
+                if email_clean not in current_admins:
+                    updated = list(set(persisted_admins + [email_clean]))
+                    os.environ["ADMIN_EMAILS"] = ",".join(set(env_admins + [email_clean]))
+                    if _save_persisted_admin_emails(updated):
+                        st.success(f"✅ `{email_clean}` adicionado e salvo permanentemente.")
+                    else:
+                        st.warning(f"⚠️ `{email_clean}` adicionado na sessão, mas falhou ao salvar em disco.")
+                    st.rerun()
                 else:
                     st.warning("Este email já é administrador.")
             else:
                 st.error("Insira um email válido.")
+
+        if persisted_admins:
+            st.markdown("**Remover administrador (arquivo):**")
+            email_to_remove = st.selectbox("Selecione o email para remover", persisted_admins, key="admin_remove_select")
+            if st.button("🗑️ Remover do arquivo", key="admin_remove_btn"):
+                updated = [e for e in persisted_admins if e != email_to_remove]
+                if _save_persisted_admin_emails(updated):
+                    st.success(f"✅ `{email_to_remove}` removido do arquivo.")
+                    st.rerun()
+                else:
+                    st.error("Falha ao salvar alterações.")
 
     with conf_tab2:
         st.markdown('<div class="section-title">Sincronização Automática</div>', unsafe_allow_html=True)
