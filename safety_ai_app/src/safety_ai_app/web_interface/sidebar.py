@@ -105,8 +105,9 @@ def render_sidebar_menu(theme: dict, get_image_base64) -> None:
     try:
         from safety_ai_app.web_interface.pwa_support import get_pwa_install_button_html
         st.sidebar.markdown(get_pwa_install_button_html(), unsafe_allow_html=True)
-    except Exception:
-        pass
+    except Exception as _pwa_err:
+        import logging as _log
+        _log.getLogger(__name__).debug("PWA install button skipped: %s", _pwa_err)
 
     if st.session_state.logged_in:
         user_name = st.session_state.get("user_name", "Usuário")

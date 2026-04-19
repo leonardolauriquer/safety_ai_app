@@ -600,7 +600,7 @@ div[data-testid*="stButton"] > button span,
 
     /* Hub icon cards: stack below title */
     .hub-card { min-height: unset !important; padding: 14px 12px !important; }
-    .hub-icon { font-size: 2rem !important; }
+    .hub-card-icon { font-size: 2rem !important; }
 
     /* Metric cards: compact */
     [data-testid="stMetric"] { padding: 8px !important; }
