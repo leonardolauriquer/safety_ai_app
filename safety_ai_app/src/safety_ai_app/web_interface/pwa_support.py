@@ -90,6 +90,19 @@ def _load_apple_touch_icon_b64(project_root: str) -> str:
     return _load_icon_b64(path)
 
 
+def _load_sw_code(project_root: str) -> str:
+    """Lê o conteúdo do sw.js para injeção via blob URL.
+    project_root = safety_ai_app/, sw.js em src/safety_ai_app/static/sw.js
+    """
+    sw_path = os.path.join(project_root, "src", "safety_ai_app", "static", "sw.js")
+    try:
+        with open(sw_path, "r", encoding="utf-8") as f:
+            return f.read()
+    except Exception as e:
+        logger.warning(f"PWA: could not load sw.js '{sw_path}': {e}")
+        return ""
+
+
 def get_pwa_injection_html(project_root: str) -> str:
     """
     Injeta no <head> do documento pai:
@@ -103,15 +116,17 @@ def get_pwa_injection_html(project_root: str) -> str:
 
     Safe to call on every Streamlit re-render — deduplicado via data attributes.
     """
-    cache_key = "pwa_html_v3"
+    cache_key = "pwa_html_v4"
     if cache_key in _PWA_CACHE:
         return _PWA_CACHE[cache_key]
 
     manifest_json = _build_manifest(project_root)
     apple_icon_b64 = _load_apple_touch_icon_b64(project_root)
     apple_icon_data_url = f"data:image/png;base64,{apple_icon_b64}" if apple_icon_b64 else ""
+    sw_code = _load_sw_code(project_root)
 
     manifest_json_js = manifest_json.replace("\\", "\\\\").replace("`", "\\`")
+    sw_code_js = sw_code.replace("\\", "\\\\").replace("`", "\\`").replace("${", "\\${")
 
     apple_touch_js = ""
     if apple_icon_data_url:
@@ -179,17 +194,26 @@ def get_pwa_injection_html(project_root: str) -> str:
         }}
     }}
 
-    /* --- Service Worker Registration --- */
+    /* --- Service Worker Registration via Blob URL ---
+       Blob URL bypasses the directory scope restriction, allowing scope: '/'
+       regardless of where the SW file is physically served.              */
     if ('serviceWorker' in window.parent.navigator) {{
         window.parent.addEventListener('load', function() {{
-            window.parent.navigator.serviceWorker
-                .register('/app/static/sw.js', {{ scope: '/' }})
-                .then(function(reg) {{
-                    console.info('[SafetyAI PWA] Service worker registrado:', reg.scope);
-                }})
-                .catch(function(err) {{
-                    console.warn('[SafetyAI PWA] Service worker falhou:', err);
-                }});
+            try {{
+                var swSource = `{sw_code_js}`;
+                var swBlob = new Blob([swSource], {{type: 'application/javascript'}});
+                var swUrl = URL.createObjectURL(swBlob);
+                window.parent.navigator.serviceWorker
+                    .register(swUrl, {{ scope: '/' }})
+                    .then(function(reg) {{
+                        console.info('[SafetyAI PWA] Service worker registrado (blob):', reg.scope);
+                    }})
+                    .catch(function(err) {{
+                        console.warn('[SafetyAI PWA] Service worker blob falhou:', err);
+                    }});
+            }} catch(e) {{
+                console.warn('[SafetyAI PWA] Service worker não disponível:', e);
+            }}
         }});
     }}
 
