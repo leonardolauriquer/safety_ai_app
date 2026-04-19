@@ -10,7 +10,7 @@ readme = "README.md"
 packages = [{include = "safety_ai_app", from = "src"}]
 
 [tool.poetry.dependencies]
-python = ">=3.12,<3.13"
+python = ">=3.12,<3.14"
 
 # Core dependencies
 openai = ">=2.26.0"
@@ -38,7 +38,6 @@ chromadb = "^1.1.0"
 langchain-core = "^1.0.2"
 langchain-openai = ">=1.1.14"
 langchain-text-splitters = ">=1.1.2"
-langchain-classic = "^1.0.0"
 langchain = ">=1.0.0"
 langgraph-checkpoint = ">=4.0.0"
 transformers = ">=5.0.0"
@@ -69,7 +68,6 @@ docx2pdf = "^0.1.8"
 docxtpl = "^0.20.1"
 beautifulsoup4 = "^4.14.2"
 psycopg2-binary = "^2.9"
-pypdf2 = "^3.0.1"
 langchain-chroma = "^1.0.0"
 langchain-community = "^0.4.1"
 pymdown-extensions = "^10.16.1"

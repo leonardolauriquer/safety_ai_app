@@ -82,8 +82,8 @@ _project_root = os.path.abspath(os.path.join(_script_dir, '..', '..'))
 
 CHROMADB_PERSIST_DIRECTORY = os.path.join(_project_root, "data", "chroma_db")
 COLLECTION_NAME = "nrs_collection"
-EMBEDDING_MODEL_NAME = 'sentence-transformers/paraphrase-multilingual-mpnet-base-v2'
-RERANKER_MODEL_NAME = 'cross-encoder/ms-marco-MiniLM-L-6-v2'
+EMBEDDING_MODEL_NAME = 'intfloat/multilingual-e5-base'
+RERANKER_MODEL_NAME = 'cross-encoder/mmarco-mMiniLMv2-L12-H384-v1'
 RERANKER_TOP_N = 5
 
 _AI_CONFIG_PATH = os.path.join(_project_root, "data", "ai_config.json")
@@ -206,20 +206,27 @@ def _log_module_availability():
 # ---------------------------------------------------------------------------
 
 class CustomHuggingFaceEmbeddings:
+    """Wrapper de embeddings com suporte a modelos E5 (prefixos query/passage)."""
+
     def __init__(self, model_name: str):
         SentenceTransformer = _lazy_import_sentence_transformer()
         self.model = SentenceTransformer(model_name)
-        logger.info(f"CustomHuggingFaceEmbeddings: Modelo '{model_name}' carregado.")
+        self._is_e5 = "e5" in model_name.lower()
+        logger.info(f"CustomHuggingFaceEmbeddings: Modelo '{model_name}' carregado (e5={self._is_e5}).")
 
     def embed_documents(self, texts: List[str]) -> List[List[float]]:
         if not texts:
             return []
-        return self.model.encode(texts, convert_to_numpy=True).tolist()
+        if self._is_e5:
+            texts = ["passage: " + t for t in texts]
+        return self.model.encode(texts, convert_to_numpy=True, normalize_embeddings=True).tolist()
 
     def embed_query(self, text: str) -> List[float]:
         if not text:
             return []
-        return self.model.encode([text], convert_to_numpy=True)[0].tolist()
+        if self._is_e5:
+            text = "query: " + text
+        return self.model.encode([text], convert_to_numpy=True, normalize_embeddings=True)[0].tolist()
 
 
 # ---------------------------------------------------------------------------

@@ -3,8 +3,8 @@ from bs4 import BeautifulSoup
 import re
 import io
 import os
-from PyPDF2 import PdfReader
-import json  # Adicione esta importação para trabalhar com JSON
+from pypdf import PdfReader
+import json
 
 # URL da página que lista todas as NRs
 MAIN_NRS_LIST_URL = "https://www.gov.br/trabalho-e-emprego/pt-br/assuntos/inspecao-do-trabalho/seguranca-e-saude-no-trabalho/ctpp-nrs/normas-regulamentadoras-nrs/"
