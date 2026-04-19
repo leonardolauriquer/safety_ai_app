@@ -177,8 +177,6 @@ def start_streamlit() -> subprocess.Popen:
         "--server.port", str(STREAMLIT_PORT),
         "--server.address", "127.0.0.1",
         "--server.headless", "true",
-        "--server.enableCORS", "false",
-        "--server.enableXsrfProtection", "false",
     ]
     logger.info("Starting Streamlit: %s", " ".join(cmd))
     return subprocess.Popen(cmd)

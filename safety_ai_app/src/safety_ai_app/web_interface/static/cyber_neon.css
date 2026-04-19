@@ -528,11 +528,15 @@ div[data-testid*="stButton"] > button span,
     .feature-grid { grid-template-columns: repeat(2, 1fr); }
     .quiz-options { grid-template-columns: repeat(2, 1fr); }
 
-    /* Streamlit: wrap 3-col layouts to 2-col */
-    [data-testid="stHorizontalBlock"] { flex-wrap: wrap; gap: 12px; }
-    [data-testid="stHorizontalBlock"] > [data-testid="column"]:nth-child(n+3) {
+    /* Streamlit: force all columns to 50% width on tablet (true 2-column layout) */
+    [data-testid="stHorizontalBlock"] {
+        flex-wrap: wrap !important;
+        gap: 12px !important;
+    }
+    [data-testid="stHorizontalBlock"] > [data-testid="column"] {
         flex: 1 1 calc(50% - 8px) !important;
         min-width: calc(50% - 8px) !important;
+        max-width: calc(50% - 8px) !important;
     }
 }
 
