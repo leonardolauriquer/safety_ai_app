@@ -1,1 +1,1 @@
-{"running": true, "started_at": "2026-04-20T01:45:23", "total": 21, "done": 0, "errors": 0, "current": "NR-04.pdf", "results": {}}
+{"running": true, "started_at": "2026-04-20T01:45:23", "total": 21, "done": 1, "errors": 0, "current": "NR-07.pdf", "results": {"4": {"status": "ok", "chunks_added": 385, "elapsed_s": 361.7}}}
