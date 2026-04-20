@@ -39,25 +39,37 @@ Todos os chunks indexados via `process_document_to_chroma` agora incluem:
 | `item` | str | Item específico detectado (ex: `"15.1"`) |
 | `article` | str | Artigo detectado, se houver |
 
-### Status por NR (source=MTE-oficial)
+### Status por NR — Cobertura atual (2026-04-20)
 
-**Indexados (10 NRs)**:
-NR-02, NR-03, NR-05, NR-06, NR-08, NR-11, NR-14, NR-21, NR-25, NR-27
+**Indexados via PDF MTE-oficial (15 NRs)**:
+NR-01, NR-02, NR-03, NR-04, NR-05, NR-06, NR-07, NR-08, NR-09, NR-10, NR-11, NR-14, NR-21, NR-25, NR-27
 
-**Indexamento automático em andamento (22 NRs)**:
-NR-01, NR-04, NR-07, NR-09, NR-10, NR-12, NR-13, NR-15, NR-16, NR-17,
-NR-18, NR-19, NR-20, NR-22, NR-23, NR-24, NR-26, NR-28, NR-29, NR-30,
-NR-31, NR-32
+**Indexados via Google Drive / Biblioteca (6 NRs)**:
+NR-33, NR-34, NR-35, NR-36, NR-37, NR-38
 
-**NR-33 a NR-38**: Cobertos pelos PDFs via Google Drive (já indexados, mantidos).
+**Total coberto: 21 NRs — 3.601 chunks** (em atualização contínua pelo indexador automático)
+
+**Indexamento automático em andamento (17 NRs pendentes)**:
+NR-12, NR-13, NR-15, NR-16, NR-17, NR-18, NR-19, NR-20,
+NR-22, NR-23, NR-24, NR-26, NR-28, NR-29, NR-30, NR-31, NR-32
+
+### nr_number — Formato dos metadados
+
+O campo `nr_number` segue o formato de string com o número bruto extraído do nome do arquivo PDF
+via regex `NR[\s\-_]?(\d{1,2})` (ex: `"NR-05.pdf"` → `nr_number = "05"`).
+
+Notas de compatibilidade:
+- Chunks indexados antes de 2026-04-20 podem ter formato `"NR-5"` (com prefixo) — foi corrigido
+- `get_indexed_nr_numbers_from_mte()` e `get_already_indexed()` normalizam automaticamente ambos os formatos
+- Novos chunks sempre usam formato de dígito puro (ex: `"05"`, `"11"`)
 
 ### Mecanismo de Indexação Automática
 
 O `server.py` inicia um thread que:
-1. Aguarda 300s (5 min) após o startup para o modelo Streamlit aquecer
+1. Aguarda 120s após o startup para o modelo Streamlit aquecer
 2. Executa `_nr_indexer_runner.py` como subprocesso isolado
-3. O subprocesso indexa apenas as NRs ainda pendentes (idempotente)
-4. Resultado salvo em `data/nr_indexing_status.json`
+3. O subprocesso indexa apenas as NRs ainda pendentes (idempotente — verifica quais estão já indexadas)
+4. Estado de runtime salvo em `data/nr_indexing_status.json` (excluído do git — ver `.gitignore`)
 
 O Admin Panel (Pipeline de IA → 🗂️ Indexar NRs) também permite disparar manualmente.
 

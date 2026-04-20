@@ -75,6 +75,9 @@ tmp/
 *.tmp
 *.temp
 
+# Runtime state files (not for version control)
+safety_ai_app/data/nr_indexing_status.json
+
 # Backup files
 *.backup
 *.bak
