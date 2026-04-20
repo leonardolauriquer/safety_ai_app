@@ -15,7 +15,7 @@ Communication style: Simples, linguagem do dia-a-dia.
 The application features a "Cyber-Neon Glass" design system across all 24 pages, characterized by glassmorphism effects, a neon color palette (purple, cyan, green on a dark background), and "Orbitron" and "Inter" typography. Navigation and routing are managed via `st.session_state` in `web_app.py`, implementing a 3-phase authentication flow (Google OAuth, Drive synchronization, main app access).
 
 Key pages include:
-- **AI Chat:** RAG interface with token streaming.
+- **AI Chat:** RAG interface with token streaming, shortcut chips, follow-up suggestions, mode selector (Quick/Technical), DOCX export, and related library document links.
 - **Knowledge Base:** Document upload, indexing, and management.
 - **Quick Queries:** Hub for CBO, CID-10/ICD-11, CNAE, CA/EPI, and NR Fines.
 - **Sizing Tools:** CIPA, SESMT, and Emergency Brigade dimensioning.
@@ -23,7 +23,7 @@ Key pages include:
 - **Educational Games:** Quiz and Crosswords on OSH topics.
 - **Jobs Board:** OSH vacancies.
 - **News Feed:** RSS-based OSH news.
-- **Admin Panel:** Comprehensive administration and RAG pipeline evaluation.
+- **Admin Panel:** Comprehensive administration, RAG pipeline evaluation, and NR version update checker.
 
 ### Server Entry Point
 
@@ -41,7 +41,9 @@ Embedding model: `intfloat/multilingual-e5-large-instruct` (1.1 GB, 1024-dim, re
 
 ChromaDB covers all 38 NRs (NR-01 through NR-38). All 38 official MTE PDFs are present in `data/nrs/` and indexed as the sole authoritative source. NRs 33–38 also sync from Google Drive. Synthetic `*-referencia.txt` and legacy `NR-29-parte*.txt` are excluded from indexing (`SKIP_TXT_SUFFIXES`/`SKIP_TXT_PREFIXES_PARTS` in `vectorize_nrs.py`); a `purge_synthetic_txt_chunks()` function auto-cleans any contaminated chunks on each incremental run. RAG config: `retriever_top_k=8`, BM25/semantic weights 30/70. See `data/REINDEX_RECORD.md` for full inventory.
 
-**NR Update Checker** (`nr_update_checker.py`): Semi-automatic checker for new NR versions. Admins click "Verificar Atualizações" in Admin Panel → Pipeline de IA → 🗂️ Indexar NRs. The checker uses HEAD requests on the MTE portal to compare Content-Length and Last-Modified against local PDFs, caches results in `data/nr_update_cache.json` (24h TTL), persists local metadata in `data/nr_versions.json`, and triggers immediate ChromaDB reindexing after downloads.
+**NR Update Checker** (`nr_update_checker.py`): Semi-automatic checker for new NR versions. Admins click "Verificar Atualizações" in Admin Panel → Pipeline de IA → 🗂️ Indexar NRs. The checker fetches the MTE portal listing page once, extracts all NR PDF links, and compares Content-Length and Last-Modified against local PDFs. Results are cached in `data/nr_update_cache.json` (24h TTL) and local metadata in `data/nr_versions.json`. After download, stale ChromaDB chunks are purged before reindexing. All update events are persisted in `data/nr_update_history.json`.
+
+**Chat Advanced UI** (`chat_page.py`): The chat interface includes: (1) shortcut chips on the welcome screen for 8 common SST queries; (2) mode selector — ⚡ Consulta Rápida (concise answers) vs 🔬 Análise Técnica (full normative references); (3) follow-up question suggestions after each AI response (keyword-mapped, no extra LLM call); (4) "📁 Documentos Relacionados" panel showing Drive library files retrieved by the RAG pipeline or by keyword search; (5) DOCX export of the full conversation via `python-docx`.
 
 Data processors handle various data sources for quick queries and sizing tools, such as CBO, CID-10 (local and WHO API), CNAE (IBGE API), CA/EPI (Ministry of Labor FTP), and NR-specific tables for CIPA, SESMT, and fines. Document generators use `python-docx` and `docxtpl` for creating DOCX/PDF outputs.
 
