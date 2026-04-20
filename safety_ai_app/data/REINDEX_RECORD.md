@@ -59,29 +59,40 @@ Todos os chunks indexados via `process_document_to_chroma` agora incluem:
 | `item` | str | Item específico detectado (ex: `"15.1"`) |
 | `article` | str | Artigo detectado, se houver |
 
-### Status por NR — Cobertura atual (2026-04-20)
+### Status por NR — Cobertura planejada (2026-04-20)
 
-**Indexados via PDF MTE-oficial (15 NRs)**:
-NR-01, NR-02, NR-03, NR-04, NR-05, NR-06, NR-07, NR-08, NR-09, NR-10, NR-11, NR-14, NR-21, NR-25, NR-27
+**Todos os 38 PDFs oficiais MTE disponíveis em `data/nrs/`**:
+NR-01 a NR-38 — fonte única e autoritativa para indexação.
 
-**Indexados via Google Drive / Biblioteca (6 NRs)**:
+**Arquivos excluídos da indexação** (sínteses AI-geradas / fragmentos legados):
+- `NR-XX-referencia.txt` (todos) — excluídos via `SKIP_TXT_SUFFIXES`
+- `NR-29-parte1.txt` a `NR-29-parte4.txt` — excluídos via `SKIP_TXT_PREFIXES_PARTS`
+- Substituídos por `NR-29.pdf` (PDF oficial)
+
+**Guias técnicos indexados** (legítimos, mantidos):
+- `GUIA-PGR-elaboracao.txt` — Guia de elaboração de PGR (fonte: MTE/FUNDACENTRO)
+- `GUIA-LTCAT-AET.txt` — Guia técnico LTCAT/AET (fonte: MTE)
+
+**Cobertura via Google Drive / Biblioteca** (6 NRs com PDF atualizado):
 NR-33, NR-34, NR-35, NR-36, NR-37, NR-38
 
-**Total coberto: 21 NRs — 3.601 chunks** (em atualização contínua pelo indexador automático)
+**Mecanismo**: O indexador automático iniciado pelo `server.py` processa os 38 PDFs
+locais de forma incremental, limpando chunks sintéticos antes de indexar.
+O `purge_synthetic_txt_chunks()` é executado em cada run incremental.
+Chunk counts precisos disponíveis via Admin Panel → Pipeline de IA após a indexação.
 
-**Indexamento automático em andamento (17 NRs pendentes)**:
-NR-12, NR-13, NR-15, NR-16, NR-17, NR-18, NR-19, NR-20,
-NR-22, NR-23, NR-24, NR-26, NR-28, NR-29, NR-30, NR-31, NR-32
+### nr_number — Contrato de metadados (normalizado)
 
-### nr_number — Formato dos metadados
+O campo `nr_number` usa o formato `"NR-X"` (ex: `"NR-5"`, `"NR-15"`) em **ambos** os scripts
+de indexação (`vectorize_nrs.py` e `index_local_nrs.py`), alinhados desde 2026-04-20.
 
-O campo `nr_number` segue o formato de string com o número bruto extraído do nome do arquivo PDF
-via regex `NR[\s\-_]?(\d{1,2})` (ex: `"NR-05.pdf"` → `nr_number = "05"`).
+Derivação: `NR[-_\s]?(\d{1,2})` extraído do nome do arquivo → prefixado com `"NR-"`.
+Exemplos: `"NR-05.pdf"` → `nr_number = "NR-5"`, `"NR-15.pdf"` → `nr_number = "NR-15"`.
 
-Notas de compatibilidade:
-- Chunks indexados antes de 2026-04-20 podem ter formato `"NR-5"` (com prefixo) — foi corrigido
-- `get_indexed_nr_numbers_from_mte()` e `get_already_indexed()` normalizam automaticamente ambos os formatos
-- Novos chunks sempre usam formato de dígito puro (ex: `"05"`, `"11"`)
+- `get_indexed_nr_numbers_from_mte()` e `get_already_indexed()` normalizam automaticamente
+  formatos legados (dígito puro, int) para o formato `"NR-X"` atual.
+- Chunks indexados antes de 2026-04-20 podem ter `nr_number` em formato legado —
+  um `--force-reindex` os recria com o contrato atual.
 
 ### Mecanismo de Indexação Automática
 

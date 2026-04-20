@@ -43,16 +43,32 @@ SKIP_FILES = {
     "nr_35_chunks.json",
 }
 
+# Patterns (lowercase) that identify synthetic/split .txt files which should NOT be
+# indexed — same exclusions as vectorize_nrs.py to prevent inconsistency.
+_SKIP_TXT_SUFFIXES = ("-referencia.txt",)
+_SKIP_TXT_PREFIXES_PARTS = ("nr-29-parte",)
+
 
 def _infer_metadata(filename: str) -> dict:
-    """Infer NR number and document type from filename."""
+    """Infer NR number and document type from filename.
+
+    Metadata contract (aligned with vectorize_nrs.py):
+      - nr_number  : "NR-X" format (e.g. "NR-15") or "" for guides/portarias
+      - doc_type   : "norma_regulamentadora" | "guia_tecnico" | "portaria"
+      - source     : "local_nrs_dir"
+      - source_file: original filename
+    """
     import re
     base = os.path.splitext(filename)[0].upper()
     nr_match = re.search(r'NR[-_\s]?(\d{1,2})', base, re.IGNORECASE)
-    nr_number = nr_match.group(1) if nr_match else ""
+    if nr_match:
+        nr_number = f"NR-{nr_match.group(1)}"
+        doc_type = "norma_regulamentadora"
+    else:
+        nr_number = ""
+        doc_type = "guia_tecnico"
 
-    doc_type = "norma_regulamentadora" if nr_number else "guia_tecnico"
-    if any(kw in base for kw in ["PGR", "PCMSO", "LTCAT", "AET", "GUIA", "PORTARIA"]):
+    if any(kw in base for kw in ["PGR", "PCMSO", "LTCAT", "AET", "GUIA"]):
         doc_type = "guia_tecnico"
     if "PORTARIA" in base:
         doc_type = "portaria"
@@ -139,6 +155,18 @@ def main():
             ext = os.path.splitext(fname)[1].lower()
             if ext not in SUPPORTED_TYPES:
                 continue
+
+            # Skip synthetic reference summaries and legacy split txt fragments
+            fname_lower = fname.lower()
+            if ext == ".txt":
+                if any(fname_lower.endswith(s) for s in _SKIP_TXT_SUFFIXES):
+                    logger.info(f"SKIP '{fname}' — arquivo de referência sintética (não indexar).")
+                    skipped += 1
+                    continue
+                if any(fname_lower.startswith(p) for p in _SKIP_TXT_PREFIXES_PARTS):
+                    logger.info(f"SKIP '{fname}' — fragmento txt legado (não indexar).")
+                    skipped += 1
+                    continue
 
             filepath = os.path.join(NRS_DIR, fname)
             try:
