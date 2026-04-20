@@ -17,6 +17,26 @@
 
 ---
 
+## Correção: Exclusão de arquivos sintéticos da indexação (2026-04-20)
+
+**Problema identificado**: versões anteriores do `vectorize_nrs.py` indexavam tanto
+os PDFs oficiais quanto os arquivos `*-referencia.txt` (resumos AI-gerados por NR) e
+os fragmentos `NR-29-parte*.txt` (texto legado dividido), criando chunks duplicados e
+conflitantes que enfraqueciam a qualidade das citações RAG.
+
+**Correção aplicada**:
+- `SKIP_TXT_SUFFIXES = ("-referencia.txt",)` → exclui todos os `NR-XX-referencia.txt`
+- `SKIP_TXT_PREFIXES_PARTS = ("nr-29-parte",)` → exclui fragmentos legados da NR-29
+- Função `purge_synthetic_txt_chunks()` adicionada: remove automaticamente chunks
+  contaminados já existentes no ChromaDB em cada execução incremental do indexador
+- Guias técnicos legítimos (`GUIA-PGR-elaboracao.txt`, `GUIA-LTCAT-AET.txt`) são mantidos
+- Todos os 38 PDFs oficiais estão disponíveis em `data/nrs/` (NR-01 a NR-38)
+
+**Status**: O indexador automático (iniciado pelo `server.py`) executa a limpeza
+de chunks sintéticos e indexa as NRs pendentes via PDF oficial a cada inicialização.
+
+---
+
 ## Migração para PDFs Oficiais MTE (Task #80 — 2026-04-20)
 
 **Objetivo**: Substituir os `.txt` de referência pelos PDFs oficiais do MTE, com metadados

@@ -37,6 +37,14 @@ SUPPORTED_LOCAL_TYPES = {
 
 SKIP_LOCAL_FILES = {"nr_35_chunks.json"}
 
+# Patterns (lowercase) that identify synthetic/split .txt files which should NOT be
+# indexed because they contain AI-generated summaries or split text that conflicts
+# with official PDF citations.
+# - "*-referencia.txt"  : AI-generated reference/summary files for each NR
+# - "nr-29-parte*.txt"  : split legacy text fragments for NR-29 (replaced by PDF)
+_SKIP_TXT_SUFFIXES = ("-referencia.txt",)
+_SKIP_TXT_PREFIXES_PARTS = ("nr-29-parte",)
+
 
 def _read_indexed_model() -> str:
     try:
@@ -131,6 +139,18 @@ def index_local_nrs(qa: NRQuestionAnswering, force: bool = False) -> int:
         if ext not in SUPPORTED_LOCAL_TYPES:
             continue
 
+        # Skip synthetic reference summaries and legacy split txt fragments
+        fname_lower = fname.lower()
+        if ext == ".txt":
+            if any(fname_lower.endswith(s) for s in _SKIP_TXT_SUFFIXES):
+                logger.info(f"SKIP '{fname}' — arquivo de referência sintética (não indexar).")
+                skipped += 1
+                continue
+            if any(fname_lower.startswith(p) for p in _SKIP_TXT_PREFIXES_PARTS):
+                logger.info(f"SKIP '{fname}' — fragmento txt legado (não indexar).")
+                skipped += 1
+                continue
+
         filepath = os.path.join(LOCAL_NRS_DIR, fname)
         mime_type = SUPPORTED_LOCAL_TYPES[ext]
         meta = _infer_nr_metadata(fname)
@@ -171,6 +191,47 @@ def index_local_nrs(qa: NRQuestionAnswering, force: bool = False) -> int:
     return indexed
 
 
+def purge_synthetic_txt_chunks(qa: NRQuestionAnswering) -> int:
+    """
+    Remove from ChromaDB any chunks whose `source_file` matches synthetic/split
+    .txt files that should never have been indexed:
+      - *-referencia.txt  (AI-generated NR summaries)
+      - NR-29-parte*.txt  (legacy split text fragments)
+
+    Returns the number of chunk IDs deleted.
+    """
+    try:
+        all_docs = qa.vector_db._collection.get(include=["metadatas"])
+    except Exception as e:
+        logger.warning(f"purge_synthetic_txt_chunks: não foi possível listar coleção: {e}")
+        return 0
+
+    ids_to_delete = []
+    for doc_id, meta in zip(all_docs.get("ids", []), all_docs.get("metadatas", [])):
+        src = (meta or {}).get("source_file", "").lower()
+        if any(src.endswith(s) for s in _SKIP_TXT_SUFFIXES):
+            ids_to_delete.append(doc_id)
+            continue
+        if any(src.startswith(p) for p in _SKIP_TXT_PREFIXES_PARTS):
+            ids_to_delete.append(doc_id)
+
+    if not ids_to_delete:
+        logger.info("purge_synthetic_txt_chunks: nenhum chunk sintético encontrado.")
+        return 0
+
+    try:
+        qa.vector_db._collection.delete(ids=ids_to_delete)
+        logger.info(
+            f"purge_synthetic_txt_chunks: {len(ids_to_delete)} chunks removidos "
+            f"(*-referencia.txt / NR-29-parte*.txt)."
+        )
+    except Exception as e:
+        logger.error(f"purge_synthetic_txt_chunks: erro ao deletar chunks: {e}", exc_info=True)
+        return 0
+
+    return len(ids_to_delete)
+
+
 def main(force_reindex: bool = False, local_only: bool = False):
     """
     Pipeline completo de vetorização e indexação de NRs.
@@ -204,6 +265,13 @@ def main(force_reindex: bool = False, local_only: bool = False):
             logger.info(f"Coleção '{COLLECTION_NAME}' recriada com sucesso.")
         except Exception as e:
             logger.error(f"ERRO ao recriar a coleção ChromaDB: {e}", exc_info=True)
+    else:
+        # Incremental run: purge any synthetic *-referencia.txt / NR-29-parte*.txt
+        # chunks that may have been indexed by a previous version of this script.
+        logger.info("[Purge] Removendo chunks de arquivos sintéticos/legados do ChromaDB...")
+        purged = purge_synthetic_txt_chunks(qa_system)
+        if purged:
+            logger.info(f"[Purge] {purged} chunks sintéticos removidos com sucesso.")
 
     # ── Etapa 1: arquivos locais ──────────────────────────────────────────────
     initial_count = qa_system.vector_db._collection.count()
