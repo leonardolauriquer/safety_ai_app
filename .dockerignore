@@ -10,6 +10,9 @@
 dist
 build
 logs/
+.env
+.env.*
+*.env
 safety_ai_app/data/rag_logs/
 safety_ai_app/data/eval/results/
 .replit
