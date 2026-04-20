@@ -39,7 +39,7 @@ The core is a RAG pipeline (`nr_rag_qa.py`) built with LangChain, utilizing a pe
 
 Embedding model: `intfloat/multilingual-e5-large-instruct` (1.1 GB, 1024-dim, requires "query:"/"passage:" prefixes, normalize_embeddings=True). Reranker: `cross-encoder/mmarco-mMiniLMv2-L12-H384-v1` (multilingual mMARCO, good for Portuguese).
 
-ChromaDB has **2,931 chunks** covering all 38 NRs (NR-01 through NR-38) plus guides for PGR and LTCAT/AET — a total of 44 source documents. NRs 1–33 are indexed from structured reference `.txt` files in `data/nrs/`; NRs 34–38 are indexed from official PDFs synced from Google Drive. NR-29 was split into 4 parts due to its size (101 KB). RAG config: `retriever_top_k=8`, BM25/semantic weights 30/70. See `data/REINDEX_RECORD.md` for the full document inventory.
+ChromaDB has **~2,502 chunks** covering all 38 NRs (NR-01 through NR-38). NRs 33–38 are indexed from official PDFs synced from Google Drive. NRs 2, 3, 5, 6, 8, 11, 14, 21, 25, 27 are indexed from official MTE PDFs (`data/nrs/`) with source `"MTE-oficial"` and page metadata. Remaining 22 NRs (1, 4, 7, 9, 10, 12, 13, 15–20, 22–24, 26, 28–32) are pending migration from `.txt` reference files to official MTE PDFs — trigger via Admin Panel → Pipeline de IA → 🗂️ Indexar NRs. RAG config: `retriever_top_k=8`, BM25/semantic weights 30/70. See `data/REINDEX_RECORD.md` for full inventory.
 
 Data processors handle various data sources for quick queries and sizing tools, such as CBO, CID-10 (local and WHO API), CNAE (IBGE API), CA/EPI (Ministry of Labor FTP), and NR-specific tables for CIPA, SESMT, and fines. Document generators use `python-docx` and `docxtpl` for creating DOCX/PDF outputs.
 

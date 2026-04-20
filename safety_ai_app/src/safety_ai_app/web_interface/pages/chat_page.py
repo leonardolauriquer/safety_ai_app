@@ -8,6 +8,7 @@ import uuid
 import re
 
 from safety_ai_app.theme_config import THEME, _get_material_icon_html
+from safety_ai_app.web_interface.shared_styles import inject_glass_styles
 from safety_ai_app.input_validators import sanitize_text_input
 from safety_ai_app.security.rate_limiter import check_rate_limit, RateLimitExceeded
 try:
@@ -548,6 +549,7 @@ def render_page(process_markdown_for_external_links_func: Callable[[str], str] |
         render_upgrade_prompt("Chat SST")
         return
 
+    inject_glass_styles()
     _inject_chat_styles()
     
     if "messages" not in st.session_state:

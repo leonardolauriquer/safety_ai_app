@@ -933,6 +933,102 @@ def _tab_advanced_config() -> None:
 
 
 # ---------------------------------------------------------------------------
+# NR Indexing helper tab
+# ---------------------------------------------------------------------------
+
+def _render_nr_indexing_tab() -> None:
+    """Render the NR PDF indexing admin tab."""
+    from safety_ai_app.nr_rag_qa import (
+        get_indexed_nr_numbers_from_mte,
+        start_nr_indexing_background,
+        get_nr_indexing_status,
+        is_nr_indexing_running,
+    )
+    try:
+        from safety_ai_app.web_app import get_qa_instance_cached
+        qa = get_qa_instance_cached()
+    except Exception as e:
+        st.error(f"Não foi possível carregar o sistema RAG: {e}")
+        return
+
+    all_nrs = list(range(1, 39))
+    nrs_dir = _DATA_DIR / "nrs"
+
+    st.markdown('<div class="section-title">📄 Estado do Indexamento das NRs Oficiais (MTE)</div>', unsafe_allow_html=True)
+
+    try:
+        indexed_mte = get_indexed_nr_numbers_from_mte(qa.vector_db._collection)
+    except Exception:
+        indexed_mte = []
+
+    available_pdfs = [nr for nr in all_nrs if (nrs_dir / f"NR-{nr:02d}.pdf").exists()]
+    pending = [nr for nr in available_pdfs if nr not in indexed_mte and nr not in range(33, 39)]
+    drive_covered = list(range(33, 39))
+
+    col_a, col_b, col_c = st.columns(3)
+    col_a.metric("Total de NRs", 38)
+    col_b.metric("Indexadas (MTE-oficial)", len(indexed_mte))
+    col_c.metric("Pendentes", len(pending))
+
+    st.markdown('<div class="section-title">Status por NR</div>', unsafe_allow_html=True)
+    rows = []
+    for nr in all_nrs:
+        if nr in drive_covered:
+            rows.append({"NR": f"NR-{nr:02d}", "Status": "✅ Drive (Google Drive)", "PDF": "Via Drive"})
+        elif nr in indexed_mte:
+            rows.append({"NR": f"NR-{nr:02d}", "Status": "✅ Indexada (MTE)", "PDF": f"NR-{nr:02d}.pdf"})
+        elif (nrs_dir / f"NR-{nr:02d}.pdf").exists():
+            rows.append({"NR": f"NR-{nr:02d}", "Status": "⏳ Pendente", "PDF": f"NR-{nr:02d}.pdf"})
+        else:
+            rows.append({"NR": f"NR-{nr:02d}", "Status": "❌ PDF não encontrado", "PDF": "—"})
+
+    import pandas as pd
+    st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
+
+    if is_nr_indexing_running():
+        status = get_nr_indexing_status()
+        current = status.get("current", "...")
+        done = status.get("done", 0)
+        total = status.get("total", len(pending))
+        st.info(f"⚙️ Indexamento em andamento — NR atual: **{current}** ({done}/{total} concluídas)")
+        if st.button("🔄 Atualizar Status", key="nr_idx_refresh"):
+            st.rerun()
+    elif pending:
+        st.markdown('<div class="section-title">Iniciar Indexamento</div>', unsafe_allow_html=True)
+        st.markdown(
+            f"<p style='color:#94A3B8; font-size:0.87em;'>Serão indexadas {len(pending)} NRs pendentes "
+            f"({', '.join(f'NR-{n:02d}' for n in pending)}) usando o modelo de embedding já carregado. "
+            f"O processo roda em background — o app continua funcionando normalmente.</p>",
+            unsafe_allow_html=True,
+        )
+        if st.button("▶ Iniciar Indexamento de NRs Pendentes", key="nr_idx_start", type="primary", use_container_width=True):
+            ok = start_nr_indexing_background(qa, pending)
+            if ok:
+                st.success(f"✅ Indexamento iniciado em background para {len(pending)} NRs.")
+                st.rerun()
+            else:
+                st.warning("Indexamento já está em andamento.")
+    else:
+        st.success("✅ Todas as NRs com PDF disponível já estão indexadas!")
+
+    status = get_nr_indexing_status()
+    if status and not status.get("running") and status.get("results"):
+        with st.expander("📊 Último resultado do indexamento", expanded=False):
+            results = status.get("results", {})
+            ok_count = sum(1 for r in results.values() if r.get("status") == "ok")
+            err_count = sum(1 for r in results.values() if r.get("status") == "error")
+            st.markdown(
+                f"**Concluído em:** {status.get('finished_at', '?')} | "
+                f"**OK:** {ok_count} | **Erros:** {err_count}",
+                unsafe_allow_html=True,
+            )
+            for nr_str, res in sorted(results.items(), key=lambda x: int(x[0])):
+                icon = "✅" if res.get("status") == "ok" else ("⚠️" if res.get("status") == "not_found" else "❌")
+                detail = f"+{res.get('chunks_added', 0)} chunks" if res.get("status") == "ok" else res.get("error", "")[:80]
+                st.markdown(f"{icon} **NR-{int(nr_str):02d}** — {detail}")
+
+
+# ---------------------------------------------------------------------------
 # TAB 5 — Pipeline de IA
 # ---------------------------------------------------------------------------
 
@@ -948,11 +1044,12 @@ def _tab_ai_pipeline() -> None:
         _GOLDEN_SET_PATH,
     )
 
-    ai_tab1, ai_tab2, ai_tab3, ai_tab4 = st.tabs([
+    ai_tab1, ai_tab2, ai_tab3, ai_tab4, ai_tab5 = st.tabs([
         "📊 Última Avaliação",
         "📈 Tendência Histórica",
         "📋 Golden Set",
         "▶ Executar Avaliação",
+        "🗂️ Indexar NRs",
     ])
 
     all_results = _load_result_files()
@@ -1034,6 +1131,9 @@ def _tab_ai_pipeline() -> None:
                     st.error(f"❌ Erro na avaliação:\n{result.stderr[:1000]}")
             else:
                 st.error("Script `evaluate_rag.py` não encontrado.")
+
+    with ai_tab5:
+        _render_nr_indexing_tab()
 
 
 # ---------------------------------------------------------------------------

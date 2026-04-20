@@ -15,7 +15,32 @@
 - **Sentinel file**: `safety_ai_app/data/chroma_db/.embedding_model` written with `intfloat/multilingual-e5-large-instruct`
 - **ChromaDB**: Cleared and rebuilt from scratch (previous 768-dim collection deleted)
 
-## Expansion Update (2026-04-19 — Task #80: Todas as 38 NRs)
+## Expansion Update (2026-04-20 — Task #80: Indexação PDFs Oficiais MTE em andamento)
+
+Total ChromaDB chunks atual: **~2.502** (cobertura parcial — veja status abaixo)
+
+### Status da Migração para PDFs Oficiais MTE
+
+**Objetivo**: Substituir todos os `.txt` de referência pelos PDFs oficiais do MTE, com metadados
+de página real extraídos via pypdf, indexados no ChromaDB com source `"MTE-oficial"`.
+
+**Concluído (source=MTE-oficial, por PDF)**:
+NR-02, NR-03, NR-05, NR-06, NR-08, NR-11, NR-14, NR-21, NR-25, NR-27
+
+**Pendente** (22 NRs — indexação via painel Admin → Pipeline de IA → 🗂️ Indexar NRs):
+NR-01, NR-04, NR-07, NR-09, NR-10, NR-12, NR-13, NR-15, NR-16, NR-17,
+NR-18, NR-19, NR-20, NR-22, NR-23, NR-24, NR-26, NR-28, NR-29, NR-30,
+NR-31, NR-32
+
+**NR-33 a NR-38**: Cobertos pelos PDFs via Google Drive (já indexados, mantidos).
+
+**Nota**: Todos os PDFs oficiais MTE (NR-01 a NR-38) estão em `data/nrs/`.
+O admin panel tem um botão para iniciar o indexamento em background usando o modelo
+já carregado pelo app, evitando reinicialização do modelo.
+
+---
+
+## Estado Pré-Migração (2026-04-19 — índice de referência com .txt)
 
 Total ChromaDB chunks: **2.931** (cobertura completa: NR-01 a NR-38)
 
