@@ -7,9 +7,11 @@ GLASS_PANEL_CSS = """
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid rgba(74,222,128,0.15);
+    border-top: 2px solid rgba(74,222,128,0.35);
     border-radius: 16px;
     padding: 20px 24px;
     margin-bottom: 16px;
+    position: relative;
 }
 .page-header {
     display: flex;

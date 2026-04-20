@@ -61,9 +61,9 @@ _WHY_CARDS = [
 
 _HUB_BTN_CSS = """
 <style>
-div[data-testid="stButton"]:has(button[key*="feature_"]) > button {
+div[data-testid="stButton"][data-key^="feature_"] > button {
     border-radius: 0 0 10px 10px !important;
-    border-top: none !important;
+    border-top: 1px solid rgba(255,255,255,0.04) !important;
     background: rgba(11,18,32,0.5) !important;
     color: #64748B !important;
     font-size: 0.80em !important;
@@ -74,12 +74,11 @@ div[data-testid="stButton"]:has(button[key*="feature_"]) > button {
     box-shadow: none !important;
     transition: all 0.12s ease !important;
 }
-div[data-testid="stButton"]:has(button[key*="feature_"]) > button:hover {
+div[data-testid="stButton"][data-key^="feature_"] > button:hover {
     color: #4ADE80 !important;
     background: rgba(74,222,128,0.06) !important;
-    border-color: rgba(74,222,128,0.2) !important;
 }
-div[data-testid="stButton"]:has(button[key="start_chat"]) > button {
+div[data-testid="stButton"][data-key="start_chat"] > button {
     background: linear-gradient(135deg, #4ADE80, #22D3EE) !important;
     color: #020617 !important;
     font-weight: 700 !important;
@@ -89,7 +88,7 @@ div[data-testid="stButton"]:has(button[key="start_chat"]) > button {
     box-shadow: 0 0 18px rgba(74,222,128,0.35) !important;
     letter-spacing: 0.03em !important;
 }
-div[data-testid="stButton"]:has(button[key="start_chat"]) > button:hover {
+div[data-testid="stButton"][data-key="start_chat"] > button:hover {
     box-shadow: 0 0 28px rgba(74,222,128,0.55) !important;
     transform: translateY(-1px) !important;
 }

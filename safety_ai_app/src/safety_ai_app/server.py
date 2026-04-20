@@ -186,15 +186,17 @@ def _run_nr_indexer_when_ready(delay_seconds: int = 300) -> None:
     try:
         env = os.environ.copy()
         env.update({
-            "OMP_NUM_THREADS": "4",
-            "OPENBLAS_NUM_THREADS": "4",
-            "MKL_NUM_THREADS": "4",
+            "OMP_NUM_THREADS": "2",
+            "OPENBLAS_NUM_THREADS": "2",
+            "MKL_NUM_THREADS": "2",
             "TOKENIZERS_PARALLELISM": "false",
         })
+        import shutil
+        nice_cmd = ["nice", "-n", "19"] if shutil.which("nice") else []
         result = subprocess.run(
-            [sys.executable, _INDEXER_SCRIPT],
+            nice_cmd + [sys.executable, _INDEXER_SCRIPT],
             env=env,
-            timeout=3600,
+            timeout=7200,
             capture_output=True,
             text=True,
         )

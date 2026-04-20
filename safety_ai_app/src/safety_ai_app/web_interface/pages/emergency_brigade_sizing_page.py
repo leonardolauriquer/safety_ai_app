@@ -109,19 +109,20 @@ def emergency_brigade_sizing_page() -> None:
 
     with st.container():
         st.markdown(glass_marker(), unsafe_allow_html=True)
-        
-        st.markdown(f'''
+
+        st.markdown(
+            f"""
             <div class="page-header">
                 {_get_material_icon_html('fire')}
                 <h1>Brigada de Emergência</h1>
             </div>
-        ''', unsafe_allow_html=True)
-    
-    st.markdown(f"""
-        <p class="page-subtitle">
-            Calcule o número de brigadistas necessários conforme o nível de risco e a população fixa do estabelecimento.
-        </p>
-    """, unsafe_allow_html=True)
+            <div class="page-subtitle">
+                Calcule o número de brigadistas necessários conforme o nível de risco
+                e a população fixa do estabelecimento.
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
     
     with st.container():
         st.markdown(f'''

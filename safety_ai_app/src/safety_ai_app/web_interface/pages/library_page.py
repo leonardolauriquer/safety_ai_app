@@ -4,7 +4,7 @@ import time
 from typing import Dict, Any, List
 
 from safety_ai_app.theme_config import THEME, _get_material_icon_html
-from safety_ai_app.web_interface.shared_styles import inject_glass_styles
+from safety_ai_app.web_interface.shared_styles import inject_glass_styles, glass_marker
 from safety_ai_app.google_drive_integrator import (
     get_service_account_drive_integrator_instance,
     get_file_bytes_for_download,
@@ -200,6 +200,7 @@ def render_page() -> None:
     title = path[-1]['name'] if path else "Biblioteca"
     
     with st.container():
+        st.markdown(glass_marker(), unsafe_allow_html=True)
         st.markdown(f'''
         <div class="page-header">
             {lib_svg}

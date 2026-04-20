@@ -45,13 +45,14 @@ except ImportError:
 # Importa _get_material_icon_html e THEME do theme_config
 try:
     from safety_ai_app.theme_config import _get_material_icon_html, THEME
-    from safety_ai_app.web_interface.shared_styles import inject_glass_styles, glass_marker
+    from safety_ai_app.web_interface.shared_styles import inject_glass_styles, glass_marker, render_back_button
 except ImportError:
     st.error("Erro ao carregar configurações de tema. Verifique 'theme_config.py'.")
-    _get_material_icon_html = lambda icon: f"<span>{icon}</span>" # Fallback
-    THEME = {"phrases": {}, "icons": {}} # Fallback
+    _get_material_icon_html = lambda icon: f"<span>{icon}</span>"
+    THEME = {"phrases": {}, "icons": {}}
     inject_glass_styles = lambda: None
     glass_marker = lambda: ""
+    render_back_button = lambda label, page, key: None
 
 # Importa o gerador de documentos da APR
 try:
@@ -292,15 +293,22 @@ def apr_generator_page() -> None:
 
     inject_glass_styles()
 
+    render_back_button("← Início", "home", "back_from_apr")
+
     with st.container():
         st.markdown(glass_marker(), unsafe_allow_html=True)
-        st.markdown(f'''
-        <div class="page-header">
-            {_get_material_icon_html(apr_icon)}
-            <h1>{apr_title}</h1>
-        </div>
-        <div class="page-subtitle">Preencha os campos abaixo para gerar sua Análise Preliminar de Risco (APR).</div>
-        ''', unsafe_allow_html=True)
+        st.markdown(
+            f"""
+            <div class="page-header">
+                {_get_material_icon_html(apr_icon)}
+                <h1>{apr_title}</h1>
+            </div>
+            <div class="page-subtitle">
+                Preencha os campos abaixo para gerar sua Análise Preliminar de Risco (APR).
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
     st.markdown(f'<div class="section-title">{_get_material_icon_html("info")} 1. Identificação da APR</div>', unsafe_allow_html=True)
 

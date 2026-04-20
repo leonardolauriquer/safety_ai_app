@@ -10,7 +10,7 @@ from safety_ai_app.web_interface.shared_styles import inject_glass_styles, glass
 
 logger = logging.getLogger(__name__)
 
-_MAX_RESULTS = 40
+_MAX_RESULTS = 30
 
 
 def normalize_text(text: str) -> str:
@@ -21,6 +21,15 @@ def normalize_text(text: str) -> str:
     return text
 
 
+@st.cache_resource(show_spinner=False)
+def _load_cbo_db() -> Optional[CBODatabase]:
+    try:
+        return CBODatabase()
+    except Exception as e:
+        logger.critical(f"Erro ao inicializar CBODatabase: {e}", exc_info=True)
+        return None
+
+
 def cbo_consult_page() -> None:
     inject_glass_styles()
 
@@ -29,7 +38,8 @@ def cbo_consult_page() -> None:
     with st.container():
         st.markdown(glass_marker(), unsafe_allow_html=True)
 
-        st.markdown(f"""
+        st.markdown(
+            f"""
             <div class="page-header">
                 {_get_material_icon_html('briefcase')}
                 <h1>Consulta CBO</h1>
@@ -37,50 +47,49 @@ def cbo_consult_page() -> None:
             <div class="page-subtitle">
                 Pesquise cargos da Classificação Brasileira de Ocupações por código ou nome.
             </div>
-        """, unsafe_allow_html=True)
+            """,
+            unsafe_allow_html=True,
+        )
 
-        cbo_db: Optional[CBODatabase] = None
-        with st.spinner("Carregando dados da CBO..."):
-            try:
-                cbo_db = CBODatabase()
-            except Exception as e:
-                logger.critical(f"Erro crítico ao inicializar CBODatabase: {e}", exc_info=True)
-                st.markdown(f"""
-                    <div class="info-hint">
-                        {_get_material_icon_html('alert')}
-                        <b>Erro Crítico:</b> Não foi possível carregar os dados da CBO. Detalhes: {e}
-                    </div>
-                """, unsafe_allow_html=True)
-                st.stop()
-                return
+        cbo_db = _load_cbo_db()
 
         if cbo_db is None or not cbo_db._cargos_dict:
-            st.markdown(f"""
-                <div class="info-hint">
-                    {_get_material_icon_html('warning')}
-                    <b>Aviso:</b> Dados da CBO não disponíveis. Verifique se o arquivo 'CBO2025.xlsx' está acessível.
+            st.markdown(
+                f"""
+                <div class="info-hint" style="background:rgba(239,68,68,0.08);
+                    border-color:rgba(239,68,68,0.25);color:#F87171;">
+                    {_get_material_icon_html('alert')}
+                    <b>Erro:</b> Dados da CBO não disponíveis.
+                    Verifique se o arquivo 'CBO2025.xlsx' está acessível.
                 </div>
-            """, unsafe_allow_html=True)
+                """,
+                unsafe_allow_html=True,
+            )
             return
 
         all_cargos = cbo_db.get_all_cargos()
+        total_db = len(all_cargos)
 
         search_term = st.text_input(
             "Pesquise um cargo:",
             key="cbo_search_input",
-            placeholder="Ex: Engenheiro de Segurança, 212315...",
-            label_visibility="collapsed"
+            placeholder=f"Código ou nome — ex: Engenheiro de Segurança, 212315... ({total_db} cargos)",
+            label_visibility="collapsed",
         ).strip()
 
         normalized_search = normalize_text(search_term)
 
         if not normalized_search or len(normalized_search) < 2:
-            st.markdown(f"""
+            st.markdown(
+                f"""
                 <div class="info-hint">
                     {_get_material_icon_html('lightbulb')}
-                    <b>Dica:</b> Digite ao menos 2 caracteres para pesquisar entre <b>{len(all_cargos)}</b> cargos disponíveis.
+                    <b>Dica:</b> Digite ao menos 2 caracteres para pesquisar entre
+                    <b>{total_db}</b> cargos disponíveis.
                 </div>
-            """, unsafe_allow_html=True)
+                """,
+                unsafe_allow_html=True,
+            )
             return
 
         filtered = [
@@ -93,89 +102,88 @@ def cbo_consult_page() -> None:
         shown = filtered[:_MAX_RESULTS]
 
         if total == 0:
-            st.markdown(f"""
+            st.markdown(
+                f"""
                 <div class="empty-state">
                     {_get_material_icon_html('search_off')}
-                    <div>Nenhum cargo encontrado para <b>"{html_module.escape(search_term)}"</b>.</div>
+                    <div>Nenhum cargo encontrado para
+                    <b>"{html_module.escape(search_term)}"</b>.</div>
                 </div>
-            """, unsafe_allow_html=True)
+                """,
+                unsafe_allow_html=True,
+            )
             return
 
-        truncated_hint = f" · mostrando primeiros {_MAX_RESULTS}" if total > _MAX_RESULTS else ""
-        st.markdown(f"""
+        truncated_hint = (
+            f" · mostrando primeiros {_MAX_RESULTS} — refine para ver mais"
+            if total > _MAX_RESULTS else ""
+        )
+        st.markdown(
+            f"""
             <div class="stats-line">
                 <b>{total}</b> cargo{"s" if total != 1 else ""} encontrado{"s" if total != 1 else ""}{truncated_hint}
-                {f'— refine a busca para ver menos resultados' if total > _MAX_RESULTS else ''}
             </div>
-        """, unsafe_allow_html=True)
-
-        cargo_options = ["-- Selecione um Cargo --"] + [
-            f"{c['CARGO']} (Cód: {c['COD_OCUPACAO']})" for c in shown
-        ]
-        code_map = {
-            f"{c['CARGO']} (Cód: {c['COD_OCUPACAO']})": c["COD_OCUPACAO"]
-            for c in shown
-        }
-
-        selected_display = st.selectbox(
-            "Cargo:",
-            options=cargo_options,
-            index=0,
-            key="cbo_cargo_select",
-            label_visibility="collapsed"
+            """,
+            unsafe_allow_html=True,
         )
 
-        selected_code = code_map.get(selected_display)
+    for cargo in shown:
+        code = cargo["COD_OCUPACAO"]
+        name = cargo["CARGO"]
+        areas_dict = cbo_db._cargos_dict[code].get("AREAS_DE_ATUACAO", {})
+        area_count = len(areas_dict)
+        activity_count = sum(len(v.get("ATIVIDADES", {})) for v in areas_dict.values())
 
-        if not selected_code:
-            st.markdown(f"""
-                <div class="info-hint">
-                    {_get_material_icon_html('info')}
-                    <b>Dica:</b> Selecione um cargo na lista acima para ver detalhes e atividades.
+        with st.expander(
+            f"**{name}** — CBO {code}"
+            + (f"  ·  {area_count} área{'s' if area_count != 1 else ''}" if area_count else ""),
+            expanded=False,
+        ):
+            st.markdown(
+                f"""
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;">
+                    <span class="result-code" style="font-size:1em;">CBO {code}</span>
+                    <span class="result-meta">
+                        {area_count} área{"s" if area_count != 1 else ""} ·
+                        {activity_count} atividade{"s" if activity_count != 1 else ""}
+                    </span>
                 </div>
-            """, unsafe_allow_html=True)
-            return
+                """,
+                unsafe_allow_html=True,
+            )
 
-        cargo_name = cbo_db.get_cargo_name_by_code(selected_code)
+            if not areas_dict:
+                st.markdown(
+                    '<div class="result-meta">Nenhuma área de atuação registrada.</div>',
+                    unsafe_allow_html=True,
+                )
+                continue
 
-        st.markdown(f"""
-            <div class="result-card">
-                <div class="result-title">{cargo_name}</div>
-                <div class="result-code">CBO: {selected_code}</div>
-                <div class="result-meta">Áreas de atuação e atividades regulamentadas</div>
-            </div>
-        """, unsafe_allow_html=True)
-
-        st.markdown(f"""
-            <div class="section-title">
-                {_get_material_icon_html('category')}
-                Áreas de Atuação
-            </div>
-        """, unsafe_allow_html=True)
-
-        areas_dict = cbo_db._cargos_dict[selected_code].get("AREAS_DE_ATUACAO", {})
-
-        if not areas_dict:
-            st.markdown(f"""
-                <div class="info-hint">
-                    {_get_material_icon_html('info')}
-                    Nenhuma área de atuação registrada para este cargo.
-                </div>
-            """, unsafe_allow_html=True)
-            return
-
-        for area_name in sorted(areas_dict.keys()):
-            activities = cbo_db.get_activities_by_cargo_and_area(selected_code, area_name)
-            with st.expander(f"📍 {area_name} ({len(activities)} atividade{'s' if len(activities) != 1 else ''})"):
+            for area_name in sorted(areas_dict.keys()):
+                activities = cbo_db.get_activities_by_cargo_and_area(code, area_name)
+                st.markdown(
+                    f"""
+                    <div class="section-title" style="font-size:0.88em;margin:8px 0 6px 0;">
+                        {_get_material_icon_html('category')} {area_name}
+                        <span class="result-meta" style="margin-left:4px;">
+                            ({len(activities)} atividade{"s" if len(activities) != 1 else ""})
+                        </span>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
                 if activities:
                     rows_html = "".join([
                         f"""<div class="detail-row">
                                 {_get_material_icon_html('check')}
                                 <span><b>{a['NOME_ATIVIDADE']}</b>
-                                <small class="result-meta"> · Cód: {a['COD_ATIVIDADE']}</small></span>
+                                <small class="result-meta"> · {a['COD_ATIVIDADE']}</small></span>
                             </div>"""
                         for a in activities
                     ])
                     st.markdown(rows_html, unsafe_allow_html=True)
                 else:
-                    st.markdown('<div class="result-meta">Nenhuma atividade detalhada disponível.</div>', unsafe_allow_html=True)
+                    st.markdown(
+                        '<div class="result-meta">Nenhuma atividade detalhada.</div>',
+                        unsafe_allow_html=True,
+                    )
