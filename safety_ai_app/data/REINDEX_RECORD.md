@@ -106,6 +106,76 @@ O Admin Panel (Pipeline de IA → 🗂️ Indexar NRs) também permite disparar 
 
 ---
 
+## Inventário Completo das NRs — Versões e Datas (2026-04-20)
+
+> Dados extraídos dos metadados internos dos PDFs em `data/nrs/`.
+> "Data PDF" = data de publicação/atualização do PDF pelo MTE (campo CreationDate).
+> "Última Portaria" = última portaria/ato normativo citado na 1ª página do PDF.
+
+| NR | Título | Páginas | Data PDF | Última Portaria citada |
+|----|--------|---------|----------|------------------------|
+| NR-01 | Disposições Gerais e GRO | 21 | 30/07/2025 | Portaria MTE nº 765, de 15/05/2025 |
+| NR-02 | Inspeção Prévia | 2 | 02/08/2019 | Portaria SEPRT nº 915, de 30/07/2019 |
+| NR-03 | Embargo e Interdição | 6 | 22/04/2020 | Portaria SEPRT nº 1.068, de 23/09/2019 |
+| NR-04 | SESMT | 31 | 27/05/2025 | Portaria MTP nº 4.219, de 20/12/2022 |
+| NR-05 | CIPA e Assédio | 14 | 23/10/2024 | Portaria MTP nº 4.219, de 20/12/2022 |
+| NR-06 | EPI | 12 | 29/08/2025 | Portaria MTP nº 2.175, de 28/07/2022 |
+| NR-07 | PCMSO | 39 | 23/04/2025 | Portaria SEPRT nº 6.734, de 10/03/2020 |
+| NR-08 | Edificações | 2 | 22/08/2022 | Portaria MTP nº 2.188, de 28/07/2022 |
+| NR-09 | Exposições Ocupacionais (GRO) | 15 | 13/03/2026 | Portaria SEPRT nº 6.735, de 10/03/2020 |
+| NR-10 | Instalações Elétricas | 18 | 22/04/2020 | Portaria MTE nº 598, de 07/12/2004 |
+| NR-11 | Transporte e Armazenagem | 14 | 10/08/2023 | Portaria SIT nº 82, de 01/06/2004 |
+| NR-12 | Máquinas e Equipamentos | 165 | 17/01/2025 | Portaria MTb nº 3.214, de 08/06/1978 |
+| NR-13 | Caldeiras e Vasos de Pressão | 35 | 03/01/2025 | Portaria MTb nº 1.846, de 01/07/2022 |
+| NR-14 | Fornos | 1 | 22/08/2022 | Portaria MTP nº 2.189, de 28/07/2022 |
+| NR-15 | Atividades Insalubres | 112 | 05/12/2025 | Portaria MTE nº 2.021, de 03/12/2025 |
+| NR-16 | Atividades Perigosas | 22 | 05/12/2025 | — |
+| NR-17 | Ergonomia | 22 | 23/10/2024 | Portaria MTP nº 423, de 07/10/2021 |
+| NR-18 | Construção Civil | 54 | 23/03/2026 | Portaria SEPRT nº 3.733, de 10/02/2020 |
+| NR-19 | Explosivos | 28 | 23/10/2024 | Portaria MTP nº 424, de 07/10/2021 |
+| NR-20 | Inflamáveis e Combustíveis | 30 | 24/01/2025 | Portaria SEPRT nº 1.360, de 09/12/2019 |
+| NR-21 | Trabalho a Céu Aberto | 2 | 22/04/2020 | Portaria MTE nº 2.037, de 15/12/1999 |
+| NR-22 | Mineração | 70 | 13/03/2026 | Portaria MTE nº 225, de 26/02/2024 |
+| NR-23 | Proteção contra Incêndio | 1 | 12/09/2022 | Portaria MTP nº 2.769, de 05/09/2022 |
+| NR-24 | Condições Sanitárias | 14 | 12/09/2022 | Portaria MTP nº 2.772, de 05/09/2022 |
+| NR-25 | Resíduos Industriais | 2 | 20/12/2022 | Portaria MTP nº 3.994, de 05/12/2022 |
+| NR-26 | Sinalização de Segurança | 3 | 12/09/2022 | Portaria MTP nº 2.770, de 05/09/2022 |
+| NR-27 | Registro Profissional *(revogada 2022)* | 2 | 28/01/2019 | Portaria SSST nº 13, de 20/12/1995 |
+| NR-28 | Fiscalização e Penalidades | 138 | 30/03/2026 | — |
+| NR-29 | Trabalho Portuário | 43 | 23/10/2024 | Portaria MTP nº 671, de 30/03/2022 |
+| NR-30 | Trabalho Aquaviário | 51 | 23/10/2024 | Portaria MTP nº 4.219, de 20/12/2022 |
+| NR-31 | Trabalho Rural | 81 | 24/10/2025 | Portaria MTP nº 4.219, de 20/12/2022 |
+| NR-32 | Saúde em Serviços de Saúde | 50 | 03/01/2025 | Portaria MTP nº 806, de 13/04/2022 |
+| NR-33 | Espaços Confinados | 18 | 08/12/2022 | Portaria MTP nº 1.690, de 15/06/2022 |
+| NR-34 | Construção e Reparação Naval | 48 | 11/06/2025 | — |
+| NR-35 | Trabalho em Altura | 15 | 03/01/2024 | Portaria MTE nº 3.903, de 28/12/2023 |
+| NR-36 | Frigoríficos | 45 | 04/07/2024 | Portaria MTP nº 4.219, de 20/12/2022 |
+| NR-37 | Plataformas de Petróleo | 82 | 23/10/2024 | Portaria MTP nº 4.219, de 20/12/2022 |
+| NR-38 | Limpeza Urbana | 13 | 27/05/2025 | Portaria MTP nº 4.101, de 16/12/2022 |
+
+### NRs com PDFs mais antigos — candidatas a atualização
+
+| NR | Data PDF | Observação |
+|----|----------|------------|
+| NR-27 | 28/01/2019 | **Revogada** pela Portaria MTP nº 671/2022 — manter apenas para referência histórica |
+| NR-02 | 02/08/2019 | Verificar se houve atualização posterior a 2019 no portal MTE |
+| NR-10 | 22/04/2020 | Verificar se houve atualização posterior a 2020 |
+| NR-03 | 22/04/2020 | Verificar se houve atualização posterior a 2020 |
+| NR-21 | 22/04/2020 | NR simples (2 páginas) — verificar status |
+
+### NRs mais recentes (atualizadas em 2025-2026)
+
+NR-01 (07/2025), NR-06 (08/2025), NR-09 (03/2026), NR-15 (12/2025),
+NR-16 (12/2025), NR-18 (03/2026), NR-22 (03/2026), NR-28 (03/2026)
+
+### NRs 33-38 — versões locais vs. Google Drive
+
+Para as NRs 33-38 existem duas fontes: o PDF local em `data/nrs/` e o PDF no Google Drive.
+O indexador automático prioriza o Google Drive para essas NRs (via `drive_sync.py`).
+Ao atualizar, basta fazer upload do novo PDF no Google Drive — o sync acontece automaticamente.
+
+---
+
 ## Estado Pré-Migração (2026-04-19 — índice de referência com .txt)
 
 Total ChromaDB chunks: **2.931** (cobertura completa: NR-01 a NR-38)
