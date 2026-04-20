@@ -1,11 +1,13 @@
 import streamlit as st
 import logging
-from typing import Callable
+from typing import Callable, Optional
 import markdown
 import os
 import tempfile
 import uuid
 import re
+import io
+from datetime import datetime
 
 from safety_ai_app.theme_config import THEME, _get_material_icon_html
 from safety_ai_app.web_interface.shared_styles import inject_glass_styles
@@ -39,7 +41,8 @@ from safety_ai_app.google_drive_integrator import (
     list_drive_folders,
     get_file_bytes_for_download,
     get_processable_drive_files_in_folder,
-    get_file_bytes_by_id
+    get_file_bytes_by_id,
+    list_drive_files_by_keyword,
 )
 from safety_ai_app.nr_rag_qa import NRQuestionAnswering, make_streamlit_status_callback, is_warmup_complete
 from safety_ai_app.text_extractors import get_text_from_file_path
@@ -438,14 +441,19 @@ def _inject_chat_styles():
     """, unsafe_allow_html=True)
 
 
+_SHORTCUT_CHIPS = [
+    ("📋", "Como elaborar um PGR?"),
+    ("🩺", "Qual a estrutura do PCMSO?"),
+    ("⚠️", "O que mudou na NR-1 sobre riscos psicossociais?"),
+    ("🔥", "Quais os requisitos da NR-35 para trabalho em altura?"),
+    ("🏭", "Como dimensionar a CIPA?"),
+    ("📄", "Como fazer uma APR - Análise Preliminar de Risco?"),
+    ("🦺", "Quais EPIs obrigatórios para espaço confinado?"),
+    ("💰", "Como calcular adicional de insalubridade?"),
+]
+
+
 def _render_welcome_screen():
-    suggestions = [
-        "O que é a NR-35?",
-        "Como dimensionar CIPA?",
-        "Quais EPIs para trabalho em altura?",
-        "Prazo para PPRA?"
-    ]
-    
     st.markdown(f"""
     <div class="welcome-screen">
         <div class="welcome-icon">
@@ -453,20 +461,178 @@ def _render_welcome_screen():
         </div>
         <div class="welcome-title">Olá! Como posso ajudar?</div>
         <div class="welcome-subtitle">
-            Sou seu assistente especializado em Saúde e Segurança do Trabalho. 
-            Pergunte sobre NRs, dimensionamento, EPIs e muito mais.
+            Sou seu assistente especializado em Saúde e Segurança do Trabalho.<br>
+            Pergunte sobre NRs, dimensionamento, EPIs, documentos e muito mais.
         </div>
         <div class="suggestions-container">
     """, unsafe_allow_html=True)
-    
-    cols = st.columns(len(suggestions))
-    for i, suggestion in enumerate(suggestions):
-        with cols[i]:
-            if st.button(suggestion, key=f"suggestion_{i}", use_container_width=True):
-                st.session_state.pending_query = suggestion
+
+    row1 = _SHORTCUT_CHIPS[:4]
+    row2 = _SHORTCUT_CHIPS[4:]
+    cols1 = st.columns(4)
+    for i, (icon, label) in enumerate(row1):
+        with cols1[i]:
+            if st.button(f"{icon} {label}", key=f"shortcut_{i}", use_container_width=True):
+                st.session_state.pending_query = label
                 st.rerun()
-    
+    cols2 = st.columns(4)
+    for i, (icon, label) in enumerate(row2):
+        with cols2[i]:
+            if st.button(f"{icon} {label}", key=f"shortcut_{i+4}", use_container_width=True):
+                st.session_state.pending_query = label
+                st.rerun()
+
     st.markdown("</div></div>", unsafe_allow_html=True)
+
+
+def _generate_follow_ups(query: str, response: str) -> list[str]:
+    """Generate 3 follow-up question suggestions based on the query/response content."""
+    text = (query + " " + response).lower()
+
+    nr_map = {
+        "nr-1": ["Quais os prazos para implementação da NR-1?", "Como elaborar o inventário de riscos da NR-1?", "NR-1 exige treinamento de gestão de riscos?"],
+        "nr-4": ["Como calcular o quadro do SESMT?", "Quais profissionais compõem o SESMT?", "SESMT é obrigatório para todas as empresas?"],
+        "nr-5": ["Como é o processo de eleição da CIPA?", "Quais as atribuições da CIPA?", "Qual a frequência de reuniões da CIPA?"],
+        "nr-6": ["Quem é responsável pelo fornecimento de EPI?", "Como documentar o fornecimento de EPIs?", "O que é CA - Certificado de Aprovação de EPI?"],
+        "nr-9": ["Qual a diferença entre PGR e PPRA?", "O PPRA foi substituído pelo PGR?", "O que deve conter o inventário de riscos?"],
+        "nr-10": ["Quais os requisitos para trabalho em instalações elétricas?", "O que é Prontuário de Instalações Elétricas?", "NR-10 exige treinamento de quantas horas?"],
+        "nr-12": ["Quais as proteções obrigatórias em máquinas?", "O que é distância de segurança em máquinas?", "NR-12 exige laudo de conformidade?"],
+        "nr-15": ["Como calcular adicional de periculosidade?", "Quais atividades são consideradas insalubres?", "Qual o limite de tolerância para ruído?"],
+        "nr-17": ["O que é ergonomia no trabalho?", "NR-17 se aplica a home office?", "Como realizar análise ergonômica do trabalho?"],
+        "nr-35": ["O que é Permissão de Trabalho em Altura?", "NR-35 exige qual treinamento?", "Quais EPIs para trabalho em altura?"],
+        "pgr": ["Quais os riscos que devem constar no PGR?", "Com que frequência o PGR deve ser revisado?", "O PGR substitui o PPRA e o PCMSO?"],
+        "pcmso": ["Com que frequência o PCMSO deve ser revisado?", "Quais exames são obrigatórios no PCMSO?", "O PCMSO precisa de coordenador médico?"],
+        "cipa": ["Quais as atribuições do presidente da CIPA?", "Como é o processo de eleição da CIPA?", "O que é SIPAT?"],
+        "sesmt": ["Quais os profissionais do SESMT?", "Como dimensionar o SESMT pela NR-4?", "SESMT pode ser terceirizado?"],
+        "apr": ["Quais as etapas de uma APR?", "APR é obrigatória por lei?", "Qual a diferença entre APR e PTW?"],
+        "epi": ["Como fazer controle de fornecimento de EPI?", "O que é ficha de EPI?", "Qual o prazo de validade do CA?"],
+        "insalubridade": ["Quais os graus de insalubridade?", "Como é feita a eliminação de insalubridade?", "Insalubridade e periculosidade podem ser acumulados?"],
+        "periculosidade": ["Quais atividades geram adicional de periculosidade?", "Qual o percentual do adicional de periculosidade?", "Como eliminar periculosidade?"],
+        "cat": ["Como preencher uma CAT?", "Qual o prazo para emissão da CAT?", "Empresa pode se recusar a emitir CAT?"],
+        "espaço confinado": ["O que é a NR-33?", "Quais funções são necessárias em espaço confinado?", "Espaço confinado exige PET?"],
+        "lgpd": ["LGPD se aplica a dados de saúde ocupacional?", "Como proteger dados do PCMSO?", "Qual o prazo de guarda dos prontuários?"],
+    }
+
+    generic = [
+        "Quais as penalidades pelo descumprimento?",
+        "Esse tema exige algum documento específico?",
+        "Qual NR regulamenta esse assunto?",
+        "Quem é responsável por implementar?",
+        "Qual o prazo para adequação?",
+    ]
+
+    found: list[str] = []
+    for kw, questions in nr_map.items():
+        if kw in text and len(found) < 3:
+            for q in questions:
+                if q not in found:
+                    found.append(q)
+                    if len(found) == 3:
+                        break
+
+    while len(found) < 3:
+        for q in generic:
+            if q not in found:
+                found.append(q)
+                break
+
+    return found[:3]
+
+
+_DRIVE_SEARCH_PATTERNS = re.compile(
+    r'\b(?:tem\s+(?:algum|algun[s]?)|(?:me\s+)?(?:mostra|envia|passa|manda)|'
+    r'(?:existe[m]?|há|tem)\s+(?:algum|algun[s]?)|encontra|busca|procura|baixar?|'
+    r'download\s+d[eo]|arquivo[s]?|documento[s]?|modelo[s]?|planilha|formulário|template)\b',
+    re.IGNORECASE,
+)
+
+def _extract_drive_search_keyword(query: str) -> Optional[str]:
+    """If the query is asking for a document/file, extract the search keyword. Returns None otherwise."""
+    if not _DRIVE_SEARCH_PATTERNS.search(query):
+        return None
+    stopwords = {
+        'tem', 'algum', 'alguns', 'arquivo', 'arquivos', 'documento', 'documentos',
+        'modelo', 'modelos', 'planilha', 'formulário', 'template', 'sobre', 'para',
+        'existe', 'existem', 'há', 'mostra', 'envia', 'passa', 'manda', 'encontra',
+        'busca', 'procura', 'baixar', 'baixa', 'download', 'de', 'do', 'da', 'um',
+        'uma', 'me', 'você', 'voce', 'consegue', 'pode', 'poderia', 'relacionado',
+        'relacionados', 'relativo', 'relativos', 'disponível', 'disponivel', 'qualquer',
+    }
+    tokens = re.findall(r'\b\w[\w\-\.]+\b', query, flags=re.IGNORECASE)
+    meaningful = [t for t in tokens if t.lower() not in stopwords and len(t) > 2]
+    if not meaningful:
+        return None
+    return " ".join(meaningful[:4])
+
+
+def _export_chat_docx(messages: list) -> bytes:
+    """Generate a formatted DOCX with all chat messages."""
+    try:
+        from docx import Document
+        from docx.shared import Pt, RGBColor, Inches
+        from docx.enum.text import WD_ALIGN_PARAGRAPH
+    except ImportError:
+        return b""
+
+    doc = Document()
+
+    style = doc.styles['Normal']
+    style.font.name = 'Calibri'
+    style.font.size = Pt(11)
+
+    title = doc.add_heading('SafetyAI — Conversa Exportada', level=1)
+    title.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    title.runs[0].font.color.rgb = RGBColor(0x5B, 0x21, 0xB6)
+
+    sub = doc.add_paragraph(f"Exportado em: {datetime.now().strftime('%d/%m/%Y às %H:%M')}")
+    sub.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    sub.runs[0].font.color.rgb = RGBColor(0x64, 0x74, 0x8B)
+    sub.runs[0].font.size = Pt(9)
+
+    doc.add_paragraph()
+    doc.add_paragraph("─" * 60)
+    doc.add_paragraph()
+
+    for msg in messages:
+        role = msg.get("role", "")
+        content = msg.get("content", "")
+        if isinstance(content, dict):
+            content = content.get("answer", content.get("content", str(content)))
+        content = str(content) if content else ""
+
+        if role == "user":
+            p = doc.add_paragraph()
+            p.add_run("Você:  ").bold = True
+            r = p.runs[0]
+            r.font.color.rgb = RGBColor(0x06, 0xB6, 0xD4)
+            r.font.size = Pt(10)
+            p.add_run(content)
+        else:
+            p = doc.add_paragraph()
+            p.add_run("SafetyAI:  ").bold = True
+            r = p.runs[0]
+            r.font.color.rgb = RGBColor(0x4A, 0xDE, 0x80)
+            r.font.size = Pt(10)
+            clean = re.sub(r'[*_`#>]+', '', content)
+            p.add_run(clean)
+
+            downloads = msg.get("suggested_downloads", [])
+            if downloads:
+                dp = doc.add_paragraph()
+                dp.add_run("📎 Documentos relacionados: ").italic = True
+                dp.add_run(", ".join(d.get("document_name", "") for d in downloads))
+
+        doc.add_paragraph()
+
+    doc.add_paragraph("─" * 60)
+    footer = doc.add_paragraph("Gerado pelo SafetyAI App — Assistente de Saúde e Segurança do Trabalho")
+    footer.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    footer.runs[0].font.color.rgb = RGBColor(0x64, 0x74, 0x8B)
+    footer.runs[0].font.size = Pt(8)
+
+    buf = io.BytesIO()
+    doc.save(buf)
+    return buf.getvalue()
 
 
 def _render_message(msg: dict, idx: int, markdown_func: Callable):
@@ -499,10 +665,39 @@ def _render_message(msg: dict, idx: int, markdown_func: Callable):
 
 
 def _render_downloads(downloads: list, msg_idx: int):
-    st.markdown(f"<p style='font-size:0.85rem; color: #94A3B8; margin: 8px 0;'>📄 Documentos relacionados:</p>", unsafe_allow_html=True)
+    mime_icons = {
+        'application/pdf': '📕',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document': '📘',
+        'text/plain': '📄',
+        'application/vnd.google-apps.document': '📝',
+    }
+    mime_labels = {
+        'application/pdf': 'PDF',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'DOCX',
+        'text/plain': 'TXT',
+        'application/vnd.google-apps.document': 'Google Doc',
+    }
+
+    st.markdown("""
+    <div style="
+        background: rgba(139,92,246,0.08);
+        border: 1px solid rgba(139,92,246,0.25);
+        border-radius: 12px;
+        padding: 12px 16px;
+        margin: 10px 0 4px 0;
+    ">
+        <div style="font-size:0.82rem; color:#a78bfa; font-weight:600; margin-bottom:8px; letter-spacing:0.03em;">
+            📁 Documentos Relacionados na Biblioteca
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
     cols = st.columns(min(len(downloads), 3))
     for i, doc in enumerate(downloads):
         with cols[i % 3]:
+            icon = mime_icons.get(doc.get('file_type', ''), '📄')
+            label_type = mime_labels.get(doc.get('file_type', ''), 'Arquivo')
+            short_name = doc['document_name'][:22] + "…" if len(doc['document_name']) > 22 else doc['document_name']
             try:
                 file_bytes = get_file_bytes_for_download(
                     st.session_state.user_drive_service,
@@ -518,15 +713,35 @@ def _render_downloads(downloads: list, msg_idx: int):
                 }.get(doc['file_type'], '')
                 filename = doc['document_name'] + ext if not doc['document_name'].endswith(ext) else doc['document_name']
                 st.download_button(
-                    label=doc['document_name'][:20] + "..." if len(doc['document_name']) > 20 else doc['document_name'],
+                    label=f"{icon} {short_name} [{label_type}]",
                     data=file_bytes,
                     file_name=filename,
                     mime=doc['file_type'],
                     key=f"dl_{msg_idx}_{i}_{doc['drive_file_id']}",
-                    use_container_width=True
+                    use_container_width=True,
+                    help=doc['document_name'],
                 )
             except Exception as e:
                 logger.error(f"Erro download: {e}")
+                st.markdown(f"<span style='font-size:0.78rem;color:#64748b;'>{icon} {short_name}</span>", unsafe_allow_html=True)
+
+
+def _render_follow_ups(follow_ups: list[str]):
+    """Render follow-up question chips below AI response."""
+    if not follow_ups:
+        return
+    st.markdown("""
+    <div style="margin: 6px 0 2px 0; font-size:0.78rem; color:#64748b; font-style:italic;">
+        Perguntas de acompanhamento:
+    </div>
+    """, unsafe_allow_html=True)
+    cols = st.columns(len(follow_ups))
+    for i, q in enumerate(follow_ups):
+        with cols[i]:
+            if st.button(q, key=f"followup_{id(q)}_{i}", use_container_width=True):
+                st.session_state.pending_query = q
+                st.session_state.last_follow_ups = []
+                st.rerun()
 
 
 def _render_typing_indicator():
@@ -560,7 +775,11 @@ def render_page(process_markdown_for_external_links_func: Callable[[str], str] |
         st.session_state.show_tools = False
     if "pending_query" not in st.session_state:
         st.session_state.pending_query = None
-    
+    if "chat_mode" not in st.session_state:
+        st.session_state.chat_mode = "deep"
+    if "last_follow_ups" not in st.session_state:
+        st.session_state.last_follow_ups = []
+
     st.markdown(f"""
     <div class="chat-header">
         <div class="chat-header-icon">
@@ -572,6 +791,50 @@ def render_page(process_markdown_for_external_links_func: Callable[[str], str] |
         </div>
     </div>
     """, unsafe_allow_html=True)
+
+    hcols = st.columns([1, 1, 1, 1])
+    with hcols[0]:
+        quick_active = st.session_state.chat_mode == "quick"
+        if st.button(
+            "⚡ Consulta Rápida",
+            key="mode_quick",
+            use_container_width=True,
+            type="primary" if quick_active else "secondary",
+            help="Respostas objetivas e diretas",
+        ):
+            st.session_state.chat_mode = "quick"
+            st.rerun()
+    with hcols[1]:
+        deep_active = st.session_state.chat_mode == "deep"
+        if st.button(
+            "🔬 Análise Técnica",
+            key="mode_deep",
+            use_container_width=True,
+            type="primary" if deep_active else "secondary",
+            help="Análise completa com referências normativas",
+        ):
+            st.session_state.chat_mode = "deep"
+            st.rerun()
+    with hcols[2]:
+        if st.session_state.messages:
+            docx_bytes = _export_chat_docx(st.session_state.messages)
+            if docx_bytes:
+                fname = f"SafetyAI_Chat_{datetime.now().strftime('%Y%m%d_%H%M')}.docx"
+                st.download_button(
+                    "⬇ Exportar",
+                    data=docx_bytes,
+                    file_name=fname,
+                    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                    use_container_width=True,
+                    key="export_chat_docx",
+                    help="Baixar conversa como documento Word",
+                )
+    with hcols[3]:
+        if st.session_state.messages:
+            if st.button("🗑️ Limpar Chat", key="clear_chat_top", use_container_width=True, help="Apagar todo o histórico"):
+                st.session_state.messages = []
+                st.session_state.last_follow_ups = []
+                st.rerun()
 
     if not is_warmup_complete():
         st.info(
@@ -739,8 +1002,21 @@ def render_page(process_markdown_for_external_links_func: Callable[[str], str] |
             return
 
         st.session_state.messages.append({"role": "user", "content": query_to_process})
+        st.session_state.last_follow_ups = []
 
-        context_texts = []
+        _mode_instructions = {
+            "quick": (
+                "MODO CONSULTA RÁPIDA: Seja objetivo e conciso. "
+                "Limite sua resposta a no máximo 3 parágrafos ou 10 itens de lista. "
+                "Vá direto ao ponto sem introduções longas."
+            ),
+            "deep": (
+                "MODO ANÁLISE TÉCNICA: Forneça análise aprofundada com referências normativas "
+                "completas, incluindo artigos, subitens e anexos específicos das NRs quando relevante. "
+                "Estruture a resposta com seções claras."
+            ),
+        }
+        context_texts = [_mode_instructions.get(st.session_state.chat_mode, "")]
         for ctx_file in st.session_state.active_context_files:
             try:
                 if ctx_file['source'] == 'local' and 'bytes' in ctx_file:
@@ -767,6 +1043,23 @@ def render_page(process_markdown_for_external_links_func: Callable[[str], str] |
 
         full_text = ""
         downloads = []
+
+        drive_search_kw = _extract_drive_search_keyword(query_to_process)
+        drive_search_results: list[dict] = []
+        if drive_search_kw:
+            try:
+                drive_svc = st.session_state.get("user_drive_service") or "app_service"
+                raw_files = list_drive_files_by_keyword(drive_svc, drive_search_kw, max_results=6)
+                for f in raw_files:
+                    if f.get("webViewLink"):
+                        drive_search_results.append({
+                            "document_name": f.get("name", "Arquivo"),
+                            "file_type": f.get("mimeType", "application/octet-stream"),
+                            "drive_file_id": f.get("id", ""),
+                            "url_viewer": f.get("webViewLink", ""),
+                        })
+            except Exception as _e:
+                logger.debug(f"[chat] Drive keyword search failed: {_e}")
 
         with chat_container:
             for idx, msg in enumerate(st.session_state.messages):
@@ -812,6 +1105,14 @@ def render_page(process_markdown_for_external_links_func: Callable[[str], str] |
                     )
 
                 downloads = qa_instance.get_last_suggested_downloads()
+                seen_ids = {d.get("drive_file_id") for d in downloads}
+                for dr in drive_search_results:
+                    if dr["drive_file_id"] not in seen_ids:
+                        downloads.append(dr)
+                        seen_ids.add(dr["drive_file_id"])
+                if full_text:
+                    follow_ups = _generate_follow_ups(query_to_process, full_text)
+                    st.session_state.last_follow_ups = follow_ups
 
             except Exception as e:
                 logger.error(f"Erro ao processar: {e}", exc_info=True)
@@ -837,3 +1138,5 @@ def render_page(process_markdown_for_external_links_func: Callable[[str], str] |
             else:
                 for idx, msg in enumerate(st.session_state.messages):
                     _render_message(msg, idx, markdown_func)
+                if st.session_state.last_follow_ups:
+                    _render_follow_ups(st.session_state.last_follow_ups)

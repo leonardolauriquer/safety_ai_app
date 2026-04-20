@@ -348,6 +348,45 @@ def get_processable_drive_files_in_folder(drive_service: Any, folder_id: str) ->
     return DriveDownloader(drive_service, '').get_processable_files(folder_id)
 
 
+def list_drive_files_by_keyword(drive_service: Any, keyword: str, max_results: int = 10) -> List[Dict[str, str]]:
+    """Search Drive for files whose names or full-text contain *keyword*.
+
+    Returns a list of dicts with keys: id, name, mimeType, webViewLink.
+    Works with both user OAuth service and app service account.
+    """
+    if not keyword or not keyword.strip():
+        return []
+
+    safe_kw = keyword.replace("'", "\\'")
+    query = (
+        f"(name contains '{safe_kw}' or fullText contains '{safe_kw}') "
+        f"and trashed = false"
+    )
+    fields = "files(id,name,mimeType,webViewLink)"
+
+    def _execute(svc: Any) -> List[Dict[str, str]]:
+        try:
+            resp = svc.files().list(
+                q=query,
+                spaces='drive',
+                fields=fields,
+                pageSize=max_results,
+            ).execute()
+            return resp.get('files', [])
+        except Exception as e:
+            logger.warning(f"[list_drive_files_by_keyword] Drive search error: {e}")
+            return []
+
+    if _is_app_service(drive_service):
+        integrator = get_service_account_drive_integrator_instance()
+        if integrator and integrator.service:
+            return _execute(integrator.service)
+        return []
+    if not drive_service:
+        return []
+    return _execute(drive_service)
+
+
 def get_file_bytes_by_id(drive_service_object: Any, file_id: str, original_mime_type: str) -> bytes:
     _, export_mime = get_download_metadata("dummy", original_mime_type)
     if _is_app_service(drive_service_object):
