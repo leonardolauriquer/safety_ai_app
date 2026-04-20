@@ -266,7 +266,8 @@ def _extract_nr_metadata_from_content(text: str, doc_name: str = "") -> Dict[str
     if m:
         item = m.group(0).strip()
 
-    return {"nr_number": nr_number, "article": article, "item": item}
+    section = f"NR-{nr_number} {item}".strip() if nr_number else item
+    return {"nr_number": nr_number, "article": article, "item": item, "section": section}
 
 
 def _split_nr_document_structurally(
@@ -1268,12 +1269,18 @@ class NRQuestionAnswering:
             for doc in documents:
                 doc.metadata.update(base_metadata)
                 if "page" in doc.metadata:
-                    doc.metadata["page_number"] = str(doc.metadata.pop("page"))
+                    doc.metadata["page_number"] = str(doc.metadata["page"])
+                    doc.metadata["page"] = doc.metadata["page_number"]
                 elif "loc" in doc.metadata and isinstance(doc.metadata["loc"], dict):
-                    doc.metadata["page_number"] = str(doc.metadata["loc"].get("page_number", "1"))
+                    pn = str(doc.metadata["loc"].get("page_number", "1"))
+                    doc.metadata["page_number"] = pn
+                    doc.metadata["page"] = pn
                     del doc.metadata["loc"]
                 elif "page_number" not in doc.metadata:
                     doc.metadata["page_number"] = "1"
+                    doc.metadata["page"] = "1"
+                else:
+                    doc.metadata["page"] = doc.metadata["page_number"]
 
             total_text = "\n".join(d.page_content for d in documents).strip()
             total_len = len(total_text)

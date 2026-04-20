@@ -46,7 +46,7 @@ except Exception as e:
     st.stop()
 
 try:
-    from safety_ai_app.nr_rag_qa import NRQuestionAnswering, start_model_warmup, is_warmup_complete
+    from safety_ai_app.nr_rag_qa import NRQuestionAnswering, start_model_warmup, is_warmup_complete, CHROMADB_PERSIST_DIRECTORY
 except Exception as e:
     logger.critical(f"[ERRO CRÍTICO] Falha ao importar nr_rag_qa: {e}.")
     st.error(f"Erro crítico: Não foi possível carregar o módulo RAG QA. Detalhes: {e}")
@@ -85,6 +85,38 @@ def _trigger_model_warmup_once() -> bool:
     """Start background model pre-loading exactly once per app lifecycle."""
     start_model_warmup()
     return True
+
+
+@st.cache_resource
+def _trigger_nr_autoindex_once() -> bool:
+    """Start background NR PDF indexing exactly once per app lifecycle.
+    Automatically indexes any pending NRs that have not yet been indexed from official MTE PDFs."""
+    import os as _os
+    from safety_ai_app.nr_rag_qa import (
+        get_indexed_nr_numbers_from_mte,
+        start_nr_indexing_background,
+    )
+    try:
+        qa = get_qa_instance_cached()
+        if qa is None:
+            return False
+        nrs_dir = _os.path.join(_os.path.dirname(CHROMADB_PERSIST_DIRECTORY), "nrs")
+        indexed = get_indexed_nr_numbers_from_mte(qa.vector_db._collection)
+        all_nrs = list(range(1, 33))
+        pending = [
+            nr for nr in all_nrs
+            if nr not in indexed
+            and _os.path.exists(_os.path.join(nrs_dir, f"NR-{nr:02d}.pdf"))
+        ]
+        if not pending:
+            logger.info("[AUTOINDEX] Todas as NRs já estão indexadas. Nada a fazer.")
+            return True
+        logger.info(f"[AUTOINDEX] Iniciando indexamento em background de {len(pending)} NRs: {pending}")
+        start_nr_indexing_background(qa, pending)
+        return True
+    except Exception as e:
+        logger.error(f"[AUTOINDEX] Erro ao iniciar auto-indexamento: {e}", exc_info=True)
+        return False
 
 
 @st.cache_resource
@@ -207,6 +239,7 @@ def main_app_entrypoint() -> None:
     from safety_ai_app.web_interface.pwa_support import get_pwa_injection_html
 
     _trigger_model_warmup_once()
+    _trigger_nr_autoindex_once()
     _start_auto_sync_scheduler()
     _cleanup_temp_files()
 
