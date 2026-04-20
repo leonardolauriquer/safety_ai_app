@@ -15,28 +15,51 @@
 - **Sentinel file**: `safety_ai_app/data/chroma_db/.embedding_model` written with `intfloat/multilingual-e5-large-instruct`
 - **ChromaDB**: Cleared and rebuilt from scratch (previous 768-dim collection deleted)
 
-## Expansion Update (2026-04-20 — Task #80: Indexação PDFs Oficiais MTE em andamento)
+---
 
-Total ChromaDB chunks atual: **~2.502** (cobertura parcial — veja status abaixo)
+## Migração para PDFs Oficiais MTE (Task #80 — 2026-04-20)
 
-### Status da Migração para PDFs Oficiais MTE
+**Objetivo**: Substituir os `.txt` de referência pelos PDFs oficiais do MTE, com metadados
+de página real (pypdf), source `"MTE-oficial"`, e metadados completos:
+`source`, `nr_number`, `page`, `page_number`, `section`, `doc_type`.
 
-**Objetivo**: Substituir todos os `.txt` de referência pelos PDFs oficiais do MTE, com metadados
-de página real extraídos via pypdf, indexados no ChromaDB com source `"MTE-oficial"`.
+### Metadata Contract (por chunk)
 
-**Concluído (source=MTE-oficial, por PDF)**:
+Todos os chunks indexados via `process_document_to_chroma` agora incluem:
+
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `source` | str | `"MTE-oficial"` para PDFs oficiais |
+| `nr_number` | int/str | Número da NR (ex: `15` ou `"15"`) |
+| `page` | str | Número da página no PDF (alias de `page_number`) |
+| `page_number` | str | Número da página no PDF |
+| `section` | str | Seção derivada de nr_number + item (ex: `"NR-15 15.1"`) |
+| `doc_type` | str | `"norma_regulamentadora"` |
+| `source_file` | str | Nome do arquivo PDF (ex: `"NR-15.pdf"`) |
+| `item` | str | Item específico detectado (ex: `"15.1"`) |
+| `article` | str | Artigo detectado, se houver |
+
+### Status por NR (source=MTE-oficial)
+
+**Indexados (10 NRs)**:
 NR-02, NR-03, NR-05, NR-06, NR-08, NR-11, NR-14, NR-21, NR-25, NR-27
 
-**Pendente** (22 NRs — indexação via painel Admin → Pipeline de IA → 🗂️ Indexar NRs):
+**Indexamento automático em andamento (22 NRs)**:
 NR-01, NR-04, NR-07, NR-09, NR-10, NR-12, NR-13, NR-15, NR-16, NR-17,
 NR-18, NR-19, NR-20, NR-22, NR-23, NR-24, NR-26, NR-28, NR-29, NR-30,
 NR-31, NR-32
 
 **NR-33 a NR-38**: Cobertos pelos PDFs via Google Drive (já indexados, mantidos).
 
-**Nota**: Todos os PDFs oficiais MTE (NR-01 a NR-38) estão em `data/nrs/`.
-O admin panel tem um botão para iniciar o indexamento em background usando o modelo
-já carregado pelo app, evitando reinicialização do modelo.
+### Mecanismo de Indexação Automática
+
+O `server.py` inicia um thread que:
+1. Aguarda 300s (5 min) após o startup para o modelo Streamlit aquecer
+2. Executa `_nr_indexer_runner.py` como subprocesso isolado
+3. O subprocesso indexa apenas as NRs ainda pendentes (idempotente)
+4. Resultado salvo em `data/nr_indexing_status.json`
+
+O Admin Panel (Pipeline de IA → 🗂️ Indexar NRs) também permite disparar manualmente.
 
 ---
 
@@ -102,7 +125,7 @@ Total ChromaDB chunks: **2.931** (cobertura completa: NR-01 a NR-38)
 
 - `retriever_top_k`: 8
 - `bm25_weight`: 0.3 / `semantic_weight`: 0.7
-- `chunk_size`: 1000, `chunk_overlap`: 150
+- `chunk_size`: 1000, `chunk_overlap`: 150 (structural NR chunker)
 
 ## Notes
 
@@ -112,7 +135,6 @@ Total ChromaDB chunks: **2.931** (cobertura completa: NR-01 a NR-38)
   ensuring runtime retrieval and indexing are always in sync.
 - The script auto-detects model changes via a sentinel file and forces reindex automatically
   on startup if the last model has changed.
-- NR-29 (Trabalho Portuário) was split into 4 parts due to its size (101KB) to work within
-  the embedding pipeline's memory constraints. All parts share `nr_number: "NR-29"` metadata.
-- NR-29, NR-30, NR-31 reference files were created from scraped portal content (substantial
-  PDF text extracted). NRs 2–28 and 32 were written as structured reference documents.
+- The `_split_nr_document_structurally` chunker detects NR item/chapter boundaries and enriches
+  each chunk with `nr_number`, `article`, `item`, and `section` metadata.
+- Both `page` and `page_number` fields are set on every chunk for compatibility.

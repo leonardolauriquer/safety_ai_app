@@ -16,6 +16,8 @@ import os
 import signal
 import subprocess
 import sys
+import threading
+import time
 
 import aiohttp
 from aiohttp import web
@@ -170,6 +172,45 @@ async def on_shutdown(app: web.Application) -> None:
     await app["session"].close()
 
 
+_INDEXER_SCRIPT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "_nr_indexer_runner.py")
+
+
+def _run_nr_indexer_when_ready(delay_seconds: int = 300) -> None:
+    """Wait for Streamlit warmup, then run NR PDF indexer as a subprocess."""
+    logger.info("[AUTOINDEX] Aguardando %ds para o Streamlit aquecer...", delay_seconds)
+    time.sleep(delay_seconds)
+    if not os.path.exists(_INDEXER_SCRIPT):
+        logger.warning("[AUTOINDEX] Script indexador não encontrado: %s", _INDEXER_SCRIPT)
+        return
+    logger.info("[AUTOINDEX] Iniciando indexador de NRs em subprocesso...")
+    try:
+        env = os.environ.copy()
+        env.update({
+            "OMP_NUM_THREADS": "4",
+            "OPENBLAS_NUM_THREADS": "4",
+            "MKL_NUM_THREADS": "4",
+            "TOKENIZERS_PARALLELISM": "false",
+        })
+        result = subprocess.run(
+            [sys.executable, _INDEXER_SCRIPT],
+            env=env,
+            timeout=3600,
+            capture_output=True,
+            text=True,
+        )
+        if result.stdout:
+            for line in result.stdout.strip().splitlines():
+                logger.info("[AUTOINDEX] %s", line)
+        if result.stderr:
+            for line in result.stderr.strip().splitlines()[-20:]:
+                logger.warning("[AUTOINDEX-ERR] %s", line)
+        logger.info("[AUTOINDEX] Subprocesso finalizado (exit code %d)", result.returncode)
+    except subprocess.TimeoutExpired:
+        logger.error("[AUTOINDEX] Timeout ao indexar NRs (1h).")
+    except Exception as exc:
+        logger.error("[AUTOINDEX] Erro ao executar indexador: %s", exc)
+
+
 def start_streamlit() -> subprocess.Popen:
     web_app = os.path.join(_SCRIPT_DIR, "web_app.py")
     cmd = [
@@ -184,6 +225,14 @@ def start_streamlit() -> subprocess.Popen:
 
 def main() -> None:
     streamlit_proc = start_streamlit()
+
+    indexer_thread = threading.Thread(
+        target=_run_nr_indexer_when_ready,
+        kwargs={"delay_seconds": 120},
+        daemon=True,
+        name="nr-autoindex",
+    )
+    indexer_thread.start()
 
     app = web.Application()
     app.router.add_get("/sw.js", handle_sw)
