@@ -11,6 +11,23 @@ logger = logging.getLogger(__name__)
 
 EMPLOYEE_RANGE_OPTIONS = list(EMPLOYEE_RANGE_COLUMNS.keys()) + ["Mais de 5.000"]
 
+_RISK_COLORS = {"1": "#4ADE80", "2": "#22D3EE", "3": "#F59E0B", "4": "#EF4444"}
+
+
+def _alert(msg: str, kind: str = "info") -> None:
+    styles = {
+        "error":   ("rgba(239,68,68,0.08)",   "rgba(239,68,68,0.25)",   "#F87171", "alert"),
+        "warning": ("rgba(245,158,11,0.08)",  "rgba(245,158,11,0.25)",  "#FBBF24", "warning"),
+        "info":    ("rgba(34,211,238,0.06)",  "rgba(34,211,238,0.20)",  "#22D3EE", "info"),
+        "success": ("rgba(74,222,128,0.08)",  "rgba(74,222,128,0.25)",  "#4ADE80", "check"),
+    }
+    bg, border, color, icon = styles.get(kind, styles["info"])
+    st.markdown(
+        f'<div class="info-hint" style="background:{bg};border-color:{border};color:{color};">'
+        f'{_get_material_icon_html(icon)} {msg}</div>',
+        unsafe_allow_html=True,
+    )
+
 def get_num_employees_from_selection(selected_range_str: str, exact_num_employees_above_5000: Optional[int]) -> int:
     """
     Converte a string da faixa de funcionários selecionada em um número inteiro
@@ -164,10 +181,10 @@ def sesmt_sizing_page() -> None:
                             try:
                                 exact_num_employees_above_5000 = int(exact_num_employees_input)
                                 if exact_num_employees_above_5000 <= 5000:
-                                    st.warning("Por favor, insira um número de funcionários acima de 5.000 para esta opção.")
+                                    _alert("Insira um número acima de 5.000 para esta opção.", "warning")
                                     exact_num_employees_above_5000 = None
                             except ValueError:
-                                st.error("Por favor, insira um número válido para funcionários.")
+                                _alert("Insira um número válido para funcionários.", "error")
                                 exact_num_employees_above_5000 = None
 
                 submitted = st.form_submit_button("Calcular Dimensionamento Individual")
@@ -179,55 +196,56 @@ def sesmt_sizing_page() -> None:
                 st.session_state['sesmt_grau_risco'] = None
 
                 if not cnae_input or not selected_employee_range:
-                    st.error("Por favor, preencha o CNAE e selecione a Faixa de Funcionários para realizar o cálculo.")
+                    _alert("Preencha o CNAE e selecione a Faixa de Funcionários para realizar o cálculo.", "warning")
                     logger.warning("Tentativa de cálculo do SESMT individual com campos vazios.")
                     return
-                
+
                 if selected_employee_range == "Mais de 5.000" and exact_num_employees_above_5000 is None:
-                    st.error("Por favor, insira o número exato de funcionários para a faixa 'Mais de 5.000'.")
-                    logger.warning("Tentativa de cálculo do SESMT individual com faixa 'Mais de 5.000' sem número exato válido.")
+                    _alert("Insira o número exato de funcionários para a faixa 'Mais de 5.000'.", "warning")
+                    logger.warning("SESMT individual com faixa Mais de 5.000 sem número exato válido.")
                     return
 
                 try:
                     cnae: str = cnae_input.strip()
-                    
+
                     if not cnae.isdigit():
-                        st.error("O CNAE deve conter apenas números. Por favor, verifique o valor informado.")
-                        logger.warning(f"CNAE inválido fornecido para cálculo individual: {cnae_input}")
+                        _alert("O CNAE deve conter apenas números. Verifique o valor informado.", "error")
+                        logger.warning(f"CNAE inválido para cálculo individual: {cnae_input}")
                         return
-                    
+
                     num_employees: int = get_num_employees_from_selection(selected_employee_range, exact_num_employees_above_5000)
 
                     if num_employees < 0:
-                        st.error("O número de funcionários deve ser um valor positivo. Por favor, verifique o valor informado.")
-                        logger.warning(f"Número de funcionários inválido fornecido para cálculo individual: {num_employees}")
+                        _alert("O número de funcionários deve ser um valor positivo.", "error")
+                        logger.warning(f"Número de funcionários inválido: {num_employees}")
                         return
 
-                    logger.info(f"Iniciando cálculo do SESMT individual para CNAE: {cnae}, Faixa de Funcionários: {selected_employee_range}, Número para cálculo: {num_employees}")
+                    logger.info(f"Iniciando cálculo SESMT individual: CNAE {cnae}, Faixa {selected_employee_range}, Nº {num_employees}")
 
                     grau_risco: Optional[int] = cnae_processor.get_risk_level(cnae)
 
                     if grau_risco is None:
-                        st.warning(f"Não foi possível determinar o Grau de Risco para o CNAE **{cnae}**. Por favor, verifique se o CNAE informado está correto.")
-                        logger.warning(f"Grau de Risco não encontrado para CNAE: {cnae} no cálculo individual.")
+                        _alert(f"Não foi possível determinar o Grau de Risco para o CNAE <b>{cnae}</b>. Verifique se está correto.", "warning")
+                        logger.warning(f"GR não encontrado para CNAE: {cnae}")
                         return
 
-                    st.info(f"Grau de Risco determinado para o CNAE **{cnae}**: **{grau_risco}**.")
-                    logger.info(f"Grau de Risco para CNAE {cnae} é {grau_risco}.")
+                    risk_color = _RISK_COLORS.get(str(grau_risco), "#64748B")
+                    _alert(f"Grau de Risco para o CNAE <b>{cnae}</b>: <b style='color:{risk_color}'>GR {grau_risco}</b>", "info")
+                    logger.info(f"GR para CNAE {cnae} é {grau_risco}.")
 
                     sesmt_dimensioning: Dict[str, Any] = get_sesmt_dimensioning(grau_risco, num_employees)
                     st.session_state['sesmt_dimensioning_result'] = sesmt_dimensioning
                     st.session_state['sesmt_grau_risco'] = grau_risco
 
                 except ValueError as e:
-                    st.error(f"Erro ao processar os dados: {e}. Verifique se os valores estão corretos e são numéricos.")
-                    logger.error(f"Erro de ValueError no processamento de dados do SESMT individual: {e}")
+                    _alert(f"Erro ao processar os dados: {e}. Verifique se os valores são numéricos.", "error")
+                    logger.error(f"ValueError no SESMT individual: {e}")
                 except KeyError as ke:
-                    st.error(f"Ocorreu um erro interno ao processar os dados. Por favor, tente novamente ou contate o suporte.")
-                    logger.critical(f"[ERRO CRÍTICO] Erro de dados na página SESMT individual: {ke}. Verifique a estrutura do arquivo Excel de dimensionamento.", exc_info=True)
+                    _alert("Erro interno ao processar os dados. Verifique os logs para detalhes.", "error")
+                    logger.critical(f"KeyError no SESMT individual: {ke}.", exc_info=True)
                 except Exception as e:
-                    st.error(f"Ocorreu um erro inesperado: {e}. Por favor, tente novamente ou contate o suporte.")
-                    logger.error(f"Erro inesperado no dimensionamento do SESMT individual: {e}", exc_info=True)
+                    _alert(f"Erro inesperado: {e}. Tente novamente.", "error")
+                    logger.error(f"Erro inesperado no SESMT individual: {e}", exc_info=True)
 
         else: # Dimensionamento Regionalizado/Estadual/Compartilhado
             st.markdown(f'''
@@ -255,16 +273,16 @@ def sesmt_sizing_page() -> None:
 
                 if add_est_button:
                     if not est_cnae or not str(est_cnae).isdigit():
-                        st.error("CNAE inválido. Deve conter apenas números.")
+                        _alert("CNAE inválido. Deve conter apenas números.", "error")
                     elif not est_num_employees or est_num_employees <= 0:
-                        st.error("Número de funcionários inválido. Deve ser um valor positivo.")
+                        _alert("Número de funcionários inválido. Deve ser um valor positivo.", "error")
                     else:
                         st.session_state['regional_establishments'].append({
                             'cnae': est_cnae,
                             'num_employees': est_num_employees,
                             'is_me_epp': est_is_me_epp
                         })
-                        st.success(f"Estabelecimento com CNAE {est_cnae} e {est_num_employees} funcionários adicionado.")
+                        _alert(f"Estabelecimento CNAE {est_cnae} ({est_num_employees} funcionários) adicionado.", "success")
                         # Increment the counter to force a new form instance on rerun, clearing inputs
                         st.session_state['add_establishment_form_key_counter'] += 1
                         st.rerun() # Forces a rerun to clear the form inputs
@@ -287,7 +305,7 @@ def sesmt_sizing_page() -> None:
                             st.session_state['regional_establishments'].pop(i)
                             st.rerun()
             else:
-                st.info("Nenhum estabelecimento adicionado ainda.")
+                _alert("Nenhum estabelecimento adicionado ainda.", "info")
 
             calculate_regional_button = st.button("Calcular Dimensionamento Regionalizado")
 
@@ -298,7 +316,7 @@ def sesmt_sizing_page() -> None:
                 st.session_state['individual_sesmt_results'] = []
 
                 if not st.session_state['regional_establishments']:
-                    st.error("Por favor, adicione pelo menos um estabelecimento para calcular o dimensionamento regionalizado.")
+                    _alert("Adicione pelo menos um estabelecimento para calcular o dimensionamento regionalizado.", "warning")
                     return
 
                 aggregated_grau_risco, aggregated_num_employees, errors = _aggregate_regional_data(
@@ -307,16 +325,20 @@ def sesmt_sizing_page() -> None:
 
                 if errors:
                     for err in errors:
-                        st.error(err)
-                    return
-                
-                if aggregated_grau_risco is None or aggregated_num_employees is None:
-                    st.error("Erro desconhecido ao agregar os dados dos estabelecimentos. Verifique os logs para mais detalhes.")
+                        _alert(err, "error")
                     return
 
-                st.info(f"Grau de Risco Agregado: **{aggregated_grau_risco}**")
-                st.info(f"Número Total de Funcionários Agregado: **{aggregated_num_employees}**")
-                logger.info(f"Iniciando cálculo do SESMT regionalizado para GR: {aggregated_grau_risco}, Empregados: {aggregated_num_employees}")
+                if aggregated_grau_risco is None or aggregated_num_employees is None:
+                    _alert("Erro ao agregar os dados dos estabelecimentos. Verifique os logs para detalhes.", "error")
+                    return
+
+                risk_color = _RISK_COLORS.get(str(aggregated_grau_risco), "#64748B")
+                _alert(
+                    f"Grau de Risco Agregado: <b style='color:{risk_color}'>GR {aggregated_grau_risco}</b> &nbsp;|&nbsp; "
+                    f"Total de Funcionários Efetivos: <b>{aggregated_num_employees}</b>",
+                    "info"
+                )
+                logger.info(f"Cálculo SESMT regionalizado: GR {aggregated_grau_risco}, {aggregated_num_employees} funcionários")
 
                 sesmt_dimensioning: Dict[str, Any] = get_sesmt_dimensioning(aggregated_grau_risco, aggregated_num_employees)
                 st.session_state['sesmt_dimensioning_result'] = sesmt_dimensioning
@@ -351,7 +373,7 @@ def sesmt_sizing_page() -> None:
         sesmt_dimensioning = st.session_state['sesmt_dimensioning_result']
 
         if "error" in sesmt_dimensioning:
-            st.error(sesmt_dimensioning["error"])
+            _alert(sesmt_dimensioning["error"], "error")
         else:
             is_regional = calculation_mode != "Dimensionamento Individual"
             section_label = "Composição do SESMT Total (Agregado)" if is_regional else "Composição do SESMT"

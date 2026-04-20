@@ -7,6 +7,23 @@ from safety_ai_app.web_interface.shared_styles import inject_glass_styles, glass
 
 logger = logging.getLogger(__name__)
 
+_RISK_COLORS = {"baixo": "#4ADE80", "medio": "#F59E0B", "alto": "#EF4444"}
+
+
+def _alert(msg: str, kind: str = "info") -> None:
+    styles = {
+        "error":   ("rgba(239,68,68,0.08)",   "rgba(239,68,68,0.25)",   "#F87171", "alert"),
+        "warning": ("rgba(245,158,11,0.08)",  "rgba(245,158,11,0.25)",  "#FBBF24", "warning"),
+        "info":    ("rgba(34,211,238,0.06)",  "rgba(34,211,238,0.20)",  "#22D3EE", "info"),
+        "success": ("rgba(74,222,128,0.08)",  "rgba(74,222,128,0.25)",  "#4ADE80", "check"),
+    }
+    bg, border, color, icon = styles.get(kind, styles["info"])
+    st.markdown(
+        f'<div class="info-hint" style="background:{bg};border-color:{border};color:{color};">'
+        f'{_get_material_icon_html(icon)} {msg}</div>',
+        unsafe_allow_html=True,
+    )
+
 BRIGADE_TABLE = {
     "baixo": {
         (0, 10): {"brigadistas": 0, "obs": "Sem exigência formal. Recomenda-se treinamento básico."},
@@ -138,7 +155,12 @@ def emergency_brigade_sizing_page() -> None:
                 if grau_risco:
                     detected_risk = RISK_LEVEL_MAPPING.get(grau_risco, "medio")
                     risk_labels = {"baixo": "Baixo", "medio": "Médio", "alto": "Alto"}
-                    st.success(f"Grau de Risco detectado: **{grau_risco}** ({risk_labels.get(detected_risk, 'Desconhecido')})")
+                    risk_color = _RISK_COLORS.get(detected_risk, "#64748B")
+                    _alert(
+                        f"Grau de Risco detectado para o CNAE: "
+                        f"<b style='color:{risk_color}'>GR {grau_risco} — {risk_labels.get(detected_risk, 'Desconhecido')}</b>",
+                        "success"
+                    )
             except Exception as e:
                 logger.warning(f"Erro ao buscar grau de risco: {e}")
         
@@ -162,13 +184,13 @@ def emergency_brigade_sizing_page() -> None:
                     final_risk = "alto"
             
             if not final_risk:
-                st.error("Por favor, informe o CNAE ou selecione o nível de risco manualmente.")
+                _alert("Informe o CNAE ou selecione o nível de risco manualmente.", "warning")
             else:
                 with st.spinner("Calculando dimensionamento da brigada de emergência..."):
                     result = get_brigade_dimensioning(final_risk, population)
-                
+
                 if "error" in result:
-                    st.error(result["error"])
+                    _alert(result["error"], "error")
                 else:
                     st.markdown(f'''
                         <div class="section-title">
@@ -199,7 +221,7 @@ def emergency_brigade_sizing_page() -> None:
                         )
                     
                     if result.get("observacao"):
-                        st.info(f"**Observação:** {result['observacao']}")
+                        _alert(result['observacao'], "info")
                     
                     with st.expander(f"{_get_material_icon_html('info')} Informações sobre Brigada de Emergência", expanded=False):
                         st.markdown("""

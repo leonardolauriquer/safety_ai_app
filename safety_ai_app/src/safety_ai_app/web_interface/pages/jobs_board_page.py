@@ -15,6 +15,24 @@ import json
 
 logger = logging.getLogger(__name__)
 
+
+def _alert(msg: str, kind: str = "info") -> None:
+    _CFG = {
+        "error":   {"bg": "rgba(239,68,68,0.12)",  "border": "#EF4444", "color": "#FCA5A5", "icon": "error"},
+        "warning": {"bg": "rgba(245,158,11,0.12)", "border": "#F59E0B", "color": "#FCD34D", "icon": "warning"},
+        "info":    {"bg": "rgba(34,211,238,0.12)",  "border": "#22D3EE", "color": "#67E8F9", "icon": "info"},
+        "success": {"bg": "rgba(74,222,128,0.12)", "border": "#4ADE80", "color": "#86EFAC", "icon": "check_circle"},
+    }
+    c = _CFG.get(kind, _CFG["info"])
+    st.markdown(
+        f'<div style="background:{c["bg"]};border-left:3px solid {c["border"]};'
+        f'padding:0.5rem 0.75rem;border-radius:6px;margin:0.25rem 0;'
+        f'color:{c["color"]};font-size:0.85rem;">'
+        f'{_get_material_icon_html(c["icon"])} {msg}</div>',
+        unsafe_allow_html=True,
+    )
+
+
 script_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.abspath(os.path.join(script_dir, '..', '..', '..', '..'))
 if project_root not in sys.path:
@@ -96,9 +114,9 @@ def load_brazilian_cities() -> Dict[str, List[str]]:
     logger.info(f"Tentando carregar arquivo de cidades de: {cities_file_path}")
     if not os.path.exists(cities_file_path):
         logger.error(f"Arquivo de cidades NÃO encontrado em: {cities_file_path}. Por favor, execute 'python scripts/generate_cities_data.py'.")
-        st.error("Erro: Arquivo de dados de cidades brasileiras não encontrado. Por favor, execute o script 'scripts/generate_cities_data.py' na pasta 'scripts/' do projeto para gerá-lo.")
+        _alert("Dados de cidades não encontrados. Execute o script 'scripts/generate_cities_data.py' para gerá-los.", "error")
         return {}
-    
+
     try:
         with open(cities_file_path, "r", encoding="utf-8") as f:
             cities_data = json.load(f)
@@ -106,11 +124,11 @@ def load_brazilian_cities() -> Dict[str, List[str]]:
         return cities_data
     except json.JSONDecodeError as e:
         logger.error(f"Erro ao decodificar JSON do arquivo de cidades {cities_file_path}: {e}")
-        st.error(f"Erro ao ler o arquivo de cidades. Verifique se 'brazilian_cities.json' está formatado corretamente.")
+        _alert("Erro ao ler o arquivo de cidades. Verifique se 'brazilian_cities.json' está bem formatado.", "error")
         return {}
     except Exception as e:
         logger.error(f"Erro inesperado ao carregar o arquivo de cidades {cities_file_path}: {e}", exc_info=True)
-        st.error(f"Erro inesperado ao carregar dados de cidades: {e}")
+        _alert(f"Erro inesperado ao carregar dados de cidades: {e}", "error")
         return {}
 
 BRAZILIAN_CITIES_BY_STATE: Dict[str, List[str]] = load_brazilian_cities()
@@ -286,7 +304,7 @@ def render_page() -> None:
         search_term = st.session_state.selected_role_job_board # Usa o cargo persistente
         
         if not search_term:
-            st.warning("Por favor, selecione um cargo para buscar.")
+            _alert("Por favor, selecione um cargo para buscar.", "warning")
             return
 
         locations_to_search = []
@@ -440,7 +458,7 @@ def render_page() -> None:
                 </div>
                 """, unsafe_allow_html=True)
         else:
-            st.info(f"Nenhuma vaga encontrada para '{search_term}' em '{final_display_location_text}' nos últimos 30 dias com os filtros selecionados.")
+            _alert(f"Nenhuma vaga encontrada para '{search_term}' em '{final_display_location_text}' nos últimos 30 dias com os filtros selecionados.", "info")
 
     st.markdown("""
     <style>

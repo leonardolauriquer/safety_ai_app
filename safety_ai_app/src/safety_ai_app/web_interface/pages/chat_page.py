@@ -49,6 +49,24 @@ from safety_ai_app.text_extractors import get_text_from_file_path
 
 logger = logging.getLogger(__name__)
 
+
+def _alert(msg: str, kind: str = "info") -> None:
+    _CFG = {
+        "error":   {"bg": "rgba(239,68,68,0.12)",  "border": "#EF4444", "color": "#FCA5A5", "icon": "error"},
+        "warning": {"bg": "rgba(245,158,11,0.12)", "border": "#F59E0B", "color": "#FCD34D", "icon": "warning"},
+        "info":    {"bg": "rgba(34,211,238,0.12)",  "border": "#22D3EE", "color": "#67E8F9", "icon": "info"},
+        "success": {"bg": "rgba(74,222,128,0.12)", "border": "#4ADE80", "color": "#86EFAC", "icon": "check_circle"},
+    }
+    c = _CFG.get(kind, _CFG["info"])
+    st.markdown(
+        f'<div style="background:{c["bg"]};border-left:3px solid {c["border"]};'
+        f'padding:0.5rem 0.75rem;border-radius:6px;margin:0.25rem 0;'
+        f'color:{c["color"]};font-size:0.85rem;">'
+        f'{_get_material_icon_html(c["icon"])} {msg}</div>',
+        unsafe_allow_html=True,
+    )
+
+
 PROCESSABLE_MIME_TYPES_FOR_RAG = [
     'application/pdf',
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
@@ -837,10 +855,10 @@ def render_page(process_markdown_for_external_links_func: Callable[[str], str] |
                 st.rerun()
 
     if not is_warmup_complete():
-        st.info(
-            "⏳ Os modelos de IA estão sendo carregados em segundo plano. "
-            "A primeira resposta pode levar alguns segundos a mais enquanto o carregamento termina.",
-            icon=None,
+        _alert(
+            "Os modelos de IA estão sendo carregados em segundo plano. "
+            "A primeira resposta pode levar alguns segundos a mais.",
+            "info",
         )
 
     _daily_limit = get_daily_chat_limit()
@@ -903,12 +921,12 @@ def render_page(process_markdown_for_external_links_func: Callable[[str], str] |
                         'bytes': f.getvalue()
                     })
                 if rejected:
-                    st.error(f"❌ Arquivo(s) rejeitado(s) — tamanho máximo {MAX_FILE_SIZE_MB} MB: {', '.join(rejected)}")
+                    _alert(f"Arquivo(s) rejeitado(s) — tamanho máximo {MAX_FILE_SIZE_MB} MB: {', '.join(rejected)}", "error")
                 if new_files:
                     st.session_state.active_context_files = [
                         x for x in st.session_state.active_context_files if x['source'] != 'local'
                     ] + new_files
-                    st.success(f"✓ {len(new_files)} arquivo(s) carregado(s)")
+                    _alert(f"{len(new_files)} arquivo(s) carregado(s) com sucesso.", "success")
         
         with tab_drive:
             if st.session_state.get("user_drive_service"):
@@ -931,11 +949,11 @@ def render_page(process_markdown_for_external_links_func: Callable[[str], str] |
                                 x for x in st.session_state.active_context_files if x['source'] != 'drive'
                             ] + [{'id': f['id'], 'name': f['name'], 'source': 'drive', 'mime_type': f['mimeType']} for f in selected_files]
                     else:
-                        st.info("Nenhum arquivo encontrado nesta pasta.")
+                        _alert("Nenhum arquivo encontrado nesta pasta.", "info")
                 except Exception as e:
-                    st.error(f"Erro: {e}")
+                    _alert(f"Erro ao carregar arquivos do Drive: {e}", "error")
             else:
-                st.warning("Google Drive não conectado.")
+                _alert("Google Drive não conectado.", "warning")
     
     if st.session_state.active_context_files:
         st.markdown('<div class="active-files">', unsafe_allow_html=True)
@@ -992,7 +1010,7 @@ def render_page(process_markdown_for_external_links_func: Callable[[str], str] |
                 feature="chat_llm",
                 detail=str(rle),
             )
-            st.warning(f"⏳ Muitas perguntas em um curto período. Aguarde {rle.retry_after:.0f} segundos e tente novamente.")
+            _alert(f"Muitas perguntas em um curto período. Aguarde {rle.retry_after:.0f} segundos e tente novamente.", "warning")
             with chat_container:
                 if not st.session_state.messages:
                     _render_welcome_screen()

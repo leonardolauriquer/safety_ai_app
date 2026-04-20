@@ -174,7 +174,12 @@ def ca_consult_page() -> None:
             ca_processor = CADataProcessor()
         except Exception as e:
             logger.critical(f"Erro crítico ao inicializar CADataProcessor: {e}", exc_info=True)
-            st.error(f"Erro crítico ao carregar o serviço de dados de CA. Detalhes: {e}")
+            st.markdown(f"""
+            <div class="info-hint" style="background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.25);color:#F87171;">
+                {_get_material_icon_html('alert')}
+                <b>Erro crítico:</b> Não foi possível carregar o serviço de dados de CA. {e}
+            </div>
+            """, unsafe_allow_html=True)
             st.stop()
             return
 
@@ -199,7 +204,12 @@ def ca_consult_page() -> None:
                     results_df = ca_processor.search_ca(search_term)
                 except Exception as e:
                     logger.error(f"Ocorreu um erro ao buscar CA: {e}", exc_info=True)
-                    st.error(f"Erro ao realizar busca.")
+                    st.markdown(f"""
+                    <div class="info-hint" style="background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.25);color:#F87171;">
+                        {_get_material_icon_html('alert')}
+                        <b>Erro ao realizar busca:</b> {e}
+                    </div>
+                    """, unsafe_allow_html=True)
                     return
             
             CA_LIMIT = 50

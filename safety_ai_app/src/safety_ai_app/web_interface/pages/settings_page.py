@@ -11,6 +11,24 @@ from safety_ai_app.web_interface.shared_styles import inject_glass_styles, glass
 
 logger = logging.getLogger(__name__)
 
+
+def _alert(msg: str, kind: str = "info") -> None:
+    _CFG = {
+        "error":   {"bg": "rgba(239,68,68,0.12)",  "border": "#EF4444", "color": "#FCA5A5", "icon": "error"},
+        "warning": {"bg": "rgba(245,158,11,0.12)", "border": "#F59E0B", "color": "#FCD34D", "icon": "warning"},
+        "info":    {"bg": "rgba(34,211,238,0.12)",  "border": "#22D3EE", "color": "#67E8F9", "icon": "info"},
+        "success": {"bg": "rgba(74,222,128,0.12)", "border": "#4ADE80", "color": "#86EFAC", "icon": "check_circle"},
+    }
+    c = _CFG.get(kind, _CFG["info"])
+    st.markdown(
+        f'<div style="background:{c["bg"]};border-left:3px solid {c["border"]};'
+        f'padding:0.5rem 0.75rem;border-radius:6px;margin:0.25rem 0;'
+        f'color:{c["color"]};font-size:0.85rem;">'
+        f'{_get_material_icon_html(c["icon"])} {msg}</div>',
+        unsafe_allow_html=True,
+    )
+
+
 DEFAULT_SETTINGS = {
     "accessibility": {
         "font_size": "medium",
@@ -344,7 +362,7 @@ def render_subscription_section(settings: Dict[str, Any]) -> Dict[str, Any]:
             col1, col2 = st.columns(2)
             with col1:
                 if st.button("Confirmar", use_container_width=True, type="primary"):
-                    st.success("Renovacao processada com sucesso!")
+                    _alert("Renovação processada com sucesso!", "success")
                     st.session_state.show_renewal = False
             with col2:
                 if st.button("Voltar", use_container_width=True, key="cancel_renewal"):
@@ -354,14 +372,14 @@ def render_subscription_section(settings: Dict[str, Any]) -> Dict[str, Any]:
     if st.session_state.get("show_cancel", False):
         with st.container():
             st.markdown(f'<div class="section-title">{_get_material_icon_html("cancel")} Cancelar Assinatura</div>', unsafe_allow_html=True)
-            st.warning("Ao cancelar, você perderá acesso aos recursos premium.")
+            _alert("Ao cancelar, você perderá acesso aos recursos premium.", "warning")
             
             confirm = st.checkbox("Confirmo que desejo cancelar a assinatura", key="confirm_cancel")
             
             col1, col2 = st.columns(2)
             with col1:
                 if st.button("Confirmar Cancelamento", disabled=not confirm, use_container_width=True):
-                    st.error("Assinatura cancelada.")
+                    _alert("Assinatura cancelada.", "error")
                     st.session_state.show_cancel = False
             with col2:
                 if st.button("Manter Assinatura", use_container_width=True, type="primary"):
@@ -442,15 +460,15 @@ def render_general_section(settings: Dict[str, Any]) -> Dict[str, Any]:
                 if st.button("Aplicar", use_container_width=True):
                     if save_user_settings(imported):
                         st.session_state.user_settings = load_user_settings()
-                        st.success("Importado!")
+                        _alert("Configurações importadas com sucesso!", "success")
                         st.rerun()
             except Exception as e:
-                st.error(f"Arquivo invalido: {e}")
-    
+                _alert(f"Arquivo inválido: {e}", "error")
+
     with col3:
         if st.button("Limpar Cache", use_container_width=True):
             st.cache_data.clear()
-            st.success("Cache limpo!")
+            _alert("Cache limpo com sucesso!", "success")
     
     return general
 
@@ -564,27 +582,27 @@ def render_page() -> None:
             if save_user_settings(settings):
                 st.session_state.user_settings = settings
                 _apply_admin_settings(settings.get("admin", {}))
-                st.success("Configurações salvas!")
+                _alert("Configurações salvas com sucesso!", "success")
                 st.rerun()
             else:
-                st.error("Erro ao salvar")
-    
+                _alert("Erro ao salvar as configurações. Tente novamente.", "error")
+
     with col2:
         if st.button("Restaurar Padrões", use_container_width=True, key="restore_defaults_btn"):
             if st.session_state.get("confirm_reset"):
                 st.session_state.user_settings = copy.deepcopy(DEFAULT_SETTINGS)
                 save_user_settings(DEFAULT_SETTINGS)
-                st.success("Restaurado!")
+                _alert("Configurações restauradas para o padrão!", "success")
                 st.session_state.confirm_reset = False
                 st.rerun()
             else:
                 st.session_state.confirm_reset = True
-                st.warning("Clique novamente para confirmar")
-    
+                _alert("Clique novamente para confirmar a restauração.", "warning")
+
     with col3:
         if st.button("Cancelar", use_container_width=True, key="cancel_changes_btn"):
             st.session_state.user_settings = load_user_settings()
-            st.info("Alterações canceladas")
+            _alert("Alterações canceladas.", "info")
             st.rerun()
     
     st.markdown(f"""

@@ -33,11 +33,21 @@ def cid_consult_page() -> None:
         cid_db = CIDDatabase()
     except Exception as e:
         logger.critical(f"Erro ao inicializar CIDDatabase: {e}", exc_info=True)
-        st.error(f"Erro ao carregar dados do CID: {e}")
+        st.markdown(f'''
+        <div class="info-hint" style="background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.25);color:#F87171;">
+            {_get_material_icon_html("alert")}
+            <b>Erro:</b> Não foi possível carregar os dados do CID. {e}
+        </div>
+        ''', unsafe_allow_html=True)
         return
 
     if cid_db is None:
-        st.error("Serviço de dados do CID não disponível.")
+        st.markdown(f'''
+        <div class="info-hint" style="background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.25);color:#F87171;">
+            {_get_material_icon_html("alert")}
+            <b>Erro:</b> Serviço de dados do CID não disponível.
+        </div>
+        ''', unsafe_allow_html=True)
         return
 
     with st.container():

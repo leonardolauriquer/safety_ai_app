@@ -50,11 +50,21 @@ def fines_consult_page() -> None:
                             integrator, _DRIVE_FILE_PATH, local_temp_dir
                         )
                     else:
-                        st.error("Não foi possível inicializar o integrador do Google Drive.")
+                        st.markdown(
+                            f'<div class="info-hint" style="background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.25);color:#F87171;">'
+                            f'{_get_material_icon_html("alert")}'
+                            f'<b>Erro:</b> Não foi possível inicializar o integrador do Google Drive.</div>',
+                            unsafe_allow_html=True,
+                        )
                 except Exception as e:
                     err_msg = str(e)
                     logger.error(f"Erro ao inicializar FinesDataProcessor: {err_msg}", exc_info=True)
-                    st.error(f"Erro ao carregar dados de multas: {err_msg}")
+                    st.markdown(
+                        f'<div class="info-hint" style="background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.25);color:#F87171;">'
+                        f'{_get_material_icon_html("alert")}'
+                        f'<b>Erro ao carregar dados de multas:</b> {err_msg}</div>',
+                        unsafe_allow_html=True,
+                    )
 
         fines_processor: FinesDataProcessor = st.session_state.fines_processor
         if not fines_processor:

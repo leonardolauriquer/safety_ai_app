@@ -57,6 +57,24 @@ except ImportError as e:
 
 logger = logging.getLogger(__name__)
 
+
+def _alert(msg: str, kind: str = "info") -> None:
+    _CFG = {
+        "error":   {"bg": "rgba(239,68,68,0.12)",  "border": "#EF4444", "color": "#FCA5A5", "icon": "error"},
+        "warning": {"bg": "rgba(245,158,11,0.12)", "border": "#F59E0B", "color": "#FCD34D", "icon": "warning"},
+        "info":    {"bg": "rgba(34,211,238,0.12)",  "border": "#22D3EE", "color": "#67E8F9", "icon": "info"},
+        "success": {"bg": "rgba(74,222,128,0.12)", "border": "#4ADE80", "color": "#86EFAC", "icon": "check_circle"},
+    }
+    c = _CFG.get(kind, _CFG["info"])
+    st.markdown(
+        f'<div style="background:{c["bg"]};border-left:3px solid {c["border"]};'
+        f'padding:0.5rem 0.75rem;border-radius:6px;margin:0.25rem 0;'
+        f'color:{c["color"]};font-size:0.85rem;">'
+        f'{_get_material_icon_html(c["icon"])} {msg}</div>',
+        unsafe_allow_html=True,
+    )
+
+
 GAMES = [
     {
         "key": "quiz",
@@ -64,7 +82,7 @@ GAMES = [
         "icon": "quiz",
         "description": "Show do Milhão com NRs, EPIs e conceitos de SST. Com ligas e placar da sessão.",
         "btn_label": "Jogar Quiz",
-        "renderer": lambda: render_quiz_game() if render_quiz_game else st.error("Quiz indisponível."),
+        "renderer": lambda: render_quiz_game() if render_quiz_game else _alert("Quiz indisponível.", "error"),
     },
     {
         "key": "crossword",
@@ -72,7 +90,7 @@ GAMES = [
         "icon": "extension",
         "description": "Desvende termos técnicos de segurança em grades de palavras cruzadas com dicas.",
         "btn_label": "Jogar Palavras Cruzadas",
-        "renderer": lambda: render_crossword_game() if render_crossword_game else st.error("Palavras Cruzadas indisponível."),
+        "renderer": lambda: render_crossword_game() if render_crossword_game else _alert("Palavras Cruzadas indisponíveis.", "error"),
     },
     {
         "key": "hangman",
@@ -80,7 +98,7 @@ GAMES = [
         "icon": "sports_esports",
         "description": "Descubra NRs, EPIs e siglas de SST letra por letra antes do boneco ser completado.",
         "btn_label": "Jogar Forca",
-        "renderer": lambda: render_hangman_game() if render_hangman_game else st.error("Jogo da Forca indisponível."),
+        "renderer": lambda: render_hangman_game() if render_hangman_game else _alert("Jogo da Forca indisponível.", "error"),
     },
     {
         "key": "wordsearch",
@@ -88,7 +106,7 @@ GAMES = [
         "icon": "search",
         "description": "Encontre termos de SST escondidos em uma grade de letras contra o relógio.",
         "btn_label": "Jogar Caça-Palavras",
-        "renderer": lambda: render_word_search_game() if render_word_search_game else st.error("Caça-Palavras indisponível."),
+        "renderer": lambda: render_word_search_game() if render_word_search_game else _alert("Caça-Palavras indisponível.", "error"),
     },
     {
         "key": "accident",
@@ -96,7 +114,7 @@ GAMES = [
         "icon": "policy",
         "description": "Analise cenários reais de acidentes e identifique NRs violadas e EPIs faltantes.",
         "btn_label": "Investigar Acidente",
-        "renderer": lambda: render_accident_investigation_game() if render_accident_investigation_game else st.error("Investigação indisponível."),
+        "renderer": lambda: render_accident_investigation_game() if render_accident_investigation_game else _alert("Investigação indisponível.", "error"),
     },
     {
         "key": "memory",
@@ -104,7 +122,7 @@ GAMES = [
         "icon": "grid_view",
         "description": "Associe siglas a definições, EPIs a funções e NRs a temas em um jogo de memória.",
         "btn_label": "Jogar Memória",
-        "renderer": lambda: render_memory_game() if render_memory_game else st.error("Jogo da Memória indisponível."),
+        "renderer": lambda: render_memory_game() if render_memory_game else _alert("Jogo da Memória indisponível.", "error"),
     },
 ]
 
@@ -203,5 +221,5 @@ def games_page() -> None:
             if game_entry:
                 game_entry["renderer"]()
             else:
-                st.error("Jogo não encontrado.")
+                _alert("Jogo não encontrado.", "error")
                 st.session_state.current_game_selection = None

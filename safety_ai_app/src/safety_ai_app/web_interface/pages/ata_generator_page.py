@@ -69,6 +69,23 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
+
+def _alert(msg: str, kind: str = "info") -> None:
+    styles = {
+        "error":   ("rgba(239,68,68,0.08)",   "rgba(239,68,68,0.25)",   "#F87171", "alert"),
+        "warning": ("rgba(245,158,11,0.08)",  "rgba(245,158,11,0.25)",  "#FBBF24", "warning"),
+        "info":    ("rgba(34,211,238,0.06)",  "rgba(34,211,238,0.20)",  "#22D3EE", "info"),
+        "success": ("rgba(74,222,128,0.08)",  "rgba(74,222,128,0.25)",  "#4ADE80", "check"),
+    }
+    bg, border, color, icon_key = styles.get(kind, styles["info"])
+    icon_html = _get_material_icon_html(icon_key) if callable(_get_material_icon_html) else ""
+    st.markdown(
+        f'<div class="info-hint" style="background:{bg};border-color:{border};color:{color};">'
+        f'{icon_html} {msg}</div>',
+        unsafe_allow_html=True,
+    )
+
+
 # --- Listas pré-definidas para seleção ---
 EVENT_TYPES = ["DDS (Diálogo Diário de Segurança)", "Treinamento", "Reunião", "Outro"]
 ATTACHMENT_TYPES = ["Foto", "Documento (PDF/DOCX/TXT)", "Nota de Texto"]
@@ -195,8 +212,8 @@ def _render_signature_canvas(key_prefix: str, current_signature_b64: Optional[st
             
         return new_b64, new_json
     else:
-        st.warning("Componente de assinatura digital não disponível. Instale 'streamlit-drawable-canvas'.")
-        return current_signature_b64, current_signature_json # If canvas not available, preserve existing state
+        _alert("Componente de assinatura digital não disponível. Instale 'streamlit-drawable-canvas'.", "warning")
+        return current_signature_b64, current_signature_json
 
 def ata_generator_page() -> None:
     """
@@ -245,7 +262,7 @@ def ata_generator_page() -> None:
                 )
             except Exception as log_err:
                 logger.warning(f"Falha ao registrar evento de segurança (logo): {log_err}")
-            st.error(f"❌ Logo rejeitado: tamanho máximo é {MAX_FILE_SIZE_MB} MB (enviado: {logo_size_mb:.1f} MB).")
+            _alert(f"Logo rejeitado: tamanho máximo é {MAX_FILE_SIZE_MB} MB (enviado: {logo_size_mb:.1f} MB).", "error")
         else:
             st.image(uploaded_logo, width=100, caption="Pré-visualização do Logo")
             st.caption("Recomendado: Largura máxima de 2.5 cm (aproximadamente 95 pixels) e fundo transparente para melhor ajuste no cabeçalho.")
@@ -312,7 +329,7 @@ def ata_generator_page() -> None:
         st.rerun()
 
     if not st.session_state.ata_data["participants"]:
-        st.info("Clique em 'Adicionar Participante' para incluir os presentes.")
+        _alert("Clique em 'Adicionar Participante' para incluir os presentes.", "info")
 
     for i, participant in enumerate(st.session_state.ata_data["participants"]):
         with st.container(border=True):
@@ -342,7 +359,7 @@ def ata_generator_page() -> None:
         st.rerun()
 
     if not st.session_state.ata_data["attachments"]:
-        st.info("Clique em 'Adicionar Anexo' para incluir arquivos ou notas.")
+        _alert("Clique em 'Adicionar Anexo' para incluir arquivos ou notas.", "info")
 
     for i, attachment in enumerate(st.session_state.ata_data["attachments"]):
         with st.container(border=True):
@@ -394,7 +411,7 @@ def ata_generator_page() -> None:
                             )
                         except Exception as log_err:
                             logger.warning(f"Falha ao registrar evento de segurança (anexo): {log_err}")
-                        st.error(f"❌ Anexo '{uploaded_file.name}' rejeitado: máximo {MAX_FILE_SIZE_MB} MB (enviado: {attach_size_mb:.1f} MB).")
+                        _alert(f"Anexo '{uploaded_file.name}' rejeitado: máximo {MAX_FILE_SIZE_MB} MB (enviado: {attach_size_mb:.1f} MB).", "error")
                     else:
                         bytes_data = uploaded_file.getvalue()
                         file_base64_encoded = base64.b64encode(bytes_data).decode('utf-8')
@@ -466,19 +483,21 @@ def ata_generator_page() -> None:
                                 st.session_state.generated_pdf_buffer = BytesIO(f.read())
                             st.session_state.generated_pdf_filename = pdf_filename
                             
-                            st.success("Ata gerada e convertida para PDF com sucesso!")
+                            _alert("Ata gerada e convertida para PDF com sucesso!", "success")
                             logger.info(f"Documento Ata '{pdf_filename}' gerado e pronto para download.")
 
                         except FileNotFoundError as fnfe:
-                            st.error(f"Erro ao converter para PDF: Ferramenta externa (LibreOffice/Microsoft Word) não encontrada. "
-                                     f"Por favor, instale o LibreOffice (Linux/macOS) ou o Microsoft Word (Windows) para habilitar a conversão para PDF. Detalhes: {fnfe}")
-                            logger.error(f"FileNotFoundError durante a conversão para PDF: {fnfe}", exc_info=True)
+                            _alert(
+                                f"Ferramenta externa (LibreOffice/Microsoft Word) não encontrada. "
+                                f"O documento será baixado como DOCX. Detalhes: {fnfe}",
+                                "warning"
+                            )
+                            logger.error(f"FileNotFoundError durante conversão para PDF: {fnfe}", exc_info=True)
                             st.session_state.generated_pdf_buffer = docx_buffer
                             st.session_state.generated_pdf_filename = docx_filename
-                            st.warning("O documento será baixado como DOCX. Para PDF, instale a ferramenta externa.")
                         except Exception as e:
-                            st.error(f"Erro inesperado ao converter para PDF: {e}. O documento será baixado como DOCX.")
-                            logger.error(f"Erro inesperado durante a conversão para PDF: {e}", exc_info=True)
+                            _alert(f"Erro ao converter para PDF: {e}. O documento será baixado como DOCX.", "warning")
+                            logger.error(f"Erro inesperado durante conversão para PDF: {e}", exc_info=True)
                             st.session_state.generated_pdf_buffer = docx_buffer
                             st.session_state.generated_pdf_filename = docx_filename
                         finally:
@@ -487,14 +506,14 @@ def ata_generator_page() -> None:
                             if 'temp_pdf_path' in locals() and os.path.exists(temp_pdf_path):
                                 os.remove(temp_pdf_path)
                     else:
-                        st.warning("A biblioteca 'docx2pdf' não está instalada ou houve um erro ao carregá-la. O documento será baixado como DOCX.")
+                        _alert("A biblioteca 'docx2pdf' não está instalada. O documento será baixado como DOCX.", "warning")
                         st.session_state.generated_pdf_buffer = docx_buffer
                         st.session_state.generated_pdf_filename = docx_filename
                 except Exception as e:
-                    st.error(f"Erro ao gerar o documento da Ata: {e}")
+                    _alert(f"Erro ao gerar o documento da Ata: {e}", "error")
                     logger.error(f"Erro ao gerar documento da Ata: {e}", exc_info=True)
         else:
-            st.warning("O gerador de documentos da Ata não foi carregado corretamente. Verifique os logs.")
+            _alert("O gerador de documentos da Ata não foi carregado corretamente. Verifique os logs.", "warning")
     
     if st.session_state.generated_pdf_buffer:
         col_download, col_share = st.columns([0.5, 0.5])
@@ -518,12 +537,12 @@ def ata_generator_page() -> None:
                         )
                         if share_link:
                             st.session_state.shared_drive_link = share_link
-                            st.success("Documento enviado para o Google Drive e link gerado!")
+                            _alert("Documento enviado para o Google Drive e link gerado!", "success")
                         else:
-                            st.error("Falha ao enviar para o Google Drive ou gerar link. Verifique sua autenticação.")
+                            _alert("Falha ao enviar para o Google Drive. Verifique sua autenticação.", "error")
                 else:
-                    st.error("Você precisa estar autenticado com o Google Drive para compartilhar. Por favor, sincronize sua conta primeiro.")
-        
+                    _alert("Autentique-se com o Google Drive antes de compartilhar. Sincronize sua conta primeiro.", "warning")
+
         if st.session_state.shared_drive_link:
             st.markdown(f"**Link de Compartilhamento:** [Abrir no Google Drive]({st.session_state.shared_drive_link}){{target='_blank'}}")
-            st.info("O compartilhamento nativo do celular (com opções como WhatsApp, Gmail) não é diretamente suportado pelo Streamlit sem componentes customizados de JavaScript. O botão acima compartilha o documento no seu Google Drive.")
+            _alert("O compartilhamento via WhatsApp/Gmail não é suportado diretamente pelo Streamlit. O botão acima compartilha no Google Drive.", "info")

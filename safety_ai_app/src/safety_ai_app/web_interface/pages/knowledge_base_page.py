@@ -22,6 +22,24 @@ from safety_ai_app.text_extractors import PROCESSABLE_MIME_TYPES
 
 logger = logging.getLogger(__name__)
 
+
+def _alert(msg: str, kind: str = "info") -> None:
+    _CFG = {
+        "error":   {"bg": "rgba(239,68,68,0.12)",  "border": "#EF4444", "color": "#FCA5A5", "icon": "error"},
+        "warning": {"bg": "rgba(245,158,11,0.12)", "border": "#F59E0B", "color": "#FCD34D", "icon": "warning"},
+        "info":    {"bg": "rgba(34,211,238,0.12)",  "border": "#22D3EE", "color": "#67E8F9", "icon": "info"},
+        "success": {"bg": "rgba(74,222,128,0.12)", "border": "#4ADE80", "color": "#86EFAC", "icon": "check_circle"},
+    }
+    c = _CFG.get(kind, _CFG["info"])
+    st.markdown(
+        f'<div style="background:{c["bg"]};border-left:3px solid {c["border"]};'
+        f'padding:0.5rem 0.75rem;border-radius:6px;margin:0.25rem 0;'
+        f'color:{c["color"]};font-size:0.85rem;">'
+        f'{_get_material_icon_html(c["icon"])} {msg}</div>',
+        unsafe_allow_html=True,
+    )
+
+
 # --- Helper functions para renderização consistente de ícones e mensagens ---
 def _render_info_like_message(message_type, message, icon_name=None):
     """
@@ -60,12 +78,10 @@ def _render_auto_sync_status_panel() -> None:
         failed_message = status.get("last_run_message", "Erro desconhecido.")
         last_run_time = status.get("last_run_time")
         last_run_str = last_run_time.strftime("%d/%m/%Y %H:%M:%S") if last_run_time else "hora desconhecida"
-        st.error(
-            f"**Alerta: A sincronização automática da Base de Conhecimento falhou!**\n\n"
-            f"Última tentativa em {last_run_str}: {failed_message}\n\n"
-            "Verifique as credenciais do Google Drive e a conectividade de rede. "
-            "Use o botão abaixo para tentar uma nova sincronização.",
-            icon="🚨",
+        _alert(
+            f"Sincronização automática falhou — última tentativa em {last_run_str}: {failed_message}. "
+            "Verifique as credenciais do Google Drive e tente uma nova sincronização abaixo.",
+            "error",
         )
 
     accent_green = THEME["colors"].get("accent_green", "#4ADE80")

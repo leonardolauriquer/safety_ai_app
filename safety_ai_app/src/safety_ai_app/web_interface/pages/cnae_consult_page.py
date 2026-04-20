@@ -54,11 +54,21 @@ def cnae_consult_page() -> None:
         cnae_processor = CNAEDataProcessor()
     except Exception as e:
         logger.critical(f"Erro ao inicializar CNAEDataProcessor: {e}", exc_info=True)
-        st.error(f"Erro ao carregar dados da CNAE: {e}")
+        st.markdown(f'''
+        <div class="info-hint" style="background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.25);color:#F87171;">
+            {_get_material_icon_html("alert")}
+            <b>Erro:</b> Não foi possível carregar os dados da CNAE. {e}
+        </div>
+        ''', unsafe_allow_html=True)
         return
 
     if cnae_processor is None:
-        st.error("Serviço de dados da CNAE não disponível.")
+        st.markdown(f'''
+        <div class="info-hint" style="background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.25);color:#F87171;">
+            {_get_material_icon_html("alert")}
+            <b>Erro:</b> Serviço de dados da CNAE não disponível.
+        </div>
+        ''', unsafe_allow_html=True)
         return
 
     with st.container():
@@ -104,7 +114,12 @@ def cnae_consult_page() -> None:
                         results = cnae_processor.search_cnae_by_id(cleaned, api_level)
                 except Exception as e:
                     logger.error(f"Erro ao buscar CNAE: {e}", exc_info=True)
-                    st.error(f"Erro na busca: {e}")
+                    st.markdown(f'''
+                    <div class="info-hint" style="background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.25);color:#F87171;">
+                        {_get_material_icon_html("alert")}
+                        <b>Erro na busca:</b> {e}
+                    </div>
+                    ''', unsafe_allow_html=True)
 
             CNAE_LIMIT = 50
             if results:
