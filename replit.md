@@ -41,6 +41,8 @@ Embedding model: `intfloat/multilingual-e5-large-instruct` (1.1 GB, 1024-dim, re
 
 ChromaDB covers all 38 NRs (NR-01 through NR-38). All 38 official MTE PDFs are present in `data/nrs/` and indexed as the sole authoritative source. NRs 33–38 also sync from Google Drive. Synthetic `*-referencia.txt` and legacy `NR-29-parte*.txt` are excluded from indexing (`SKIP_TXT_SUFFIXES`/`SKIP_TXT_PREFIXES_PARTS` in `vectorize_nrs.py`); a `purge_synthetic_txt_chunks()` function auto-cleans any contaminated chunks on each incremental run. RAG config: `retriever_top_k=8`, BM25/semantic weights 30/70. See `data/REINDEX_RECORD.md` for full inventory.
 
+**NR Update Checker** (`nr_update_checker.py`): Semi-automatic checker for new NR versions. Admins click "Verificar Atualizações" in Admin Panel → Pipeline de IA → 🗂️ Indexar NRs. The checker uses HEAD requests on the MTE portal to compare Content-Length and Last-Modified against local PDFs, caches results in `data/nr_update_cache.json` (24h TTL), persists local metadata in `data/nr_versions.json`, and triggers immediate ChromaDB reindexing after downloads.
+
 Data processors handle various data sources for quick queries and sizing tools, such as CBO, CID-10 (local and WHO API), CNAE (IBGE API), CA/EPI (Ministry of Labor FTP), and NR-specific tables for CIPA, SESMT, and fines. Document generators use `python-docx` and `docxtpl` for creating DOCX/PDF outputs.
 
 Document processing (`document_processors/`) supports various formats (PDF, DOCX, Excel, images with Tesseract OCR, PPTX) with automatic type detection. Google Drive integration (`google_drive_integrator.py`, `drive_sync.py`) manages document upload, download, sharing, and scheduled bidirectional synchronization.

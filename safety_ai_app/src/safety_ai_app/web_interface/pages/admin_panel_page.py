@@ -933,6 +933,302 @@ def _tab_advanced_config() -> None:
 
 
 # ---------------------------------------------------------------------------
+# NR Update Checker section
+# ---------------------------------------------------------------------------
+
+def _render_nr_update_checker_section(qa_instance: Any) -> None:
+    """
+    Render the "Verificar Atualizações no Portal MTE" section inside the NR
+    indexing tab.  The admin clicks a button → the checker fetches HEAD metadata
+    from MTE → shows a table with status per NR → individual or bulk download
+    buttons trigger download + immediate reindexing.
+    """
+    from safety_ai_app.nr_update_checker import (
+        check_nr_updates,
+        download_nr_update,
+        trigger_reindex_for_nr,
+        get_cached_check_results,
+        load_update_history,
+        invalidate_cache,
+        CACHE_TTL_SECONDS,
+    )
+    import time as _time
+
+    st.markdown(
+        '<div class="section-title">🔎 Verificar Atualizações no Portal MTE</div>',
+        unsafe_allow_html=True,
+    )
+
+    cached = get_cached_check_results()
+    cache_info = ""
+    if cached:
+        age_h = (_time.time() - cached.get("cached_at", 0)) / 3600
+        remaining_h = (CACHE_TTL_SECONDS / 3600) - age_h
+        cache_info = (
+            f"Cache de {cached.get('cached_at_str', '?')} "
+            f"(válido por mais {remaining_h:.1f}h)"
+        )
+
+    btn_col1, btn_col2, btn_col3 = st.columns([2, 2, 3])
+    with btn_col1:
+        run_check = st.button(
+            "🔍 Verificar Atualizações",
+            key="nr_check_updates_btn",
+            type="primary",
+            use_container_width=True,
+        )
+    with btn_col2:
+        force_check = st.button(
+            "🔄 Forçar Nova Verificação",
+            key="nr_force_check_btn",
+            use_container_width=True,
+            disabled=(cached is None),
+        )
+    with btn_col3:
+        if cache_info:
+            st.markdown(
+                f'<div style="color:#64748B; font-size:0.8em; padding:8px 0;">'
+                f'📦 {cache_info}</div>',
+                unsafe_allow_html=True,
+            )
+
+    if force_check:
+        invalidate_cache()
+        st.session_state.pop("nr_check_results", None)
+        st.rerun()
+
+    if run_check:
+        use_cache = not force_check
+        with st.spinner(
+            "Verificando atualizações no portal MTE… (pode levar 15-30s)"
+        ):
+            try:
+                results = check_nr_updates(force=not use_cache)
+                st.session_state["nr_check_results"] = results
+            except Exception as exc:
+                st.error(f"❌ Erro durante a verificação: {exc}")
+                return
+
+    results: Optional[List[Dict[str, Any]]] = st.session_state.get(
+        "nr_check_results"
+    )
+    if results is None and cached:
+        results = cached.get("results")
+        if results:
+            st.session_state["nr_check_results"] = results
+
+    if not results:
+        st.markdown(
+            '<div style="color:#64748B; font-size:0.85em; margin-top:8px;">'
+            "Clique em <strong>Verificar Atualizações</strong> para checar o portal MTE."
+            "</div>",
+            unsafe_allow_html=True,
+        )
+        return
+
+    import pandas as pd
+
+    outdated = [r for r in results if r.get("status") == "outdated"]
+    updated = [r for r in results if r.get("status") == "updated"]
+    no_remote = [r for r in results if r.get("status") in ("no_remote", "error")]
+
+    sum_col1, sum_col2, sum_col3, sum_col4 = st.columns(4)
+    sum_col1.metric("Total verificadas", len(results))
+    sum_col2.metric("✅ Atualizadas", len(updated))
+    sum_col3.metric("🆕 Com nova versão", len(outdated))
+    sum_col4.metric("⚠️ Sem URL remota", len(no_remote))
+
+    if outdated:
+        st.markdown(
+            '<div class="section-title" style="margin-top:16px;">🆕 NRs com Nova Versão Disponível</div>',
+            unsafe_allow_html=True,
+        )
+
+        for r in outdated:
+            nr_num = r["nr"]
+            nr_label = r["nr_label"]
+            pdf_url = r.get("pdf_url", "")
+            local_size = r.get("local_size")
+            remote_size = r.get("remote_size")
+            local_mtime = r.get("local_mtime_str", "—")
+            remote_lm = r.get("remote_last_modified_str", "—")
+
+            local_size_str = (
+                f"{local_size / 1024:.1f} KB" if local_size else "—"
+            )
+            remote_size_str = (
+                f"{remote_size / 1024:.1f} KB" if remote_size else "—"
+            )
+
+            with st.container():
+                st.markdown(
+                    f"""
+                    <div class="result-card" style="padding:12px 16px; margin-bottom:8px;">
+                        <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+                            <span style="color:#FBBF24; font-weight:700; font-size:1em;">{nr_label}</span>
+                            <span style="color:#94A3B8; font-size:0.82em;">
+                                Local: {local_size_str} · {local_mtime} &nbsp;→&nbsp;
+                                MTE: {remote_size_str} · {remote_lm}
+                            </span>
+                        </div>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
+
+                dl_key = f"nr_dl_{nr_num}"
+                if st.button(
+                    f"⬇ Baixar e Reindexar {nr_label}",
+                    key=dl_key,
+                    use_container_width=False,
+                ):
+                    _do_download_and_reindex(nr_num, pdf_url, qa_instance)
+
+        if len(outdated) > 1:
+            st.markdown("---")
+            bulk_label = f"⬇ Baixar Todas ({len(outdated)} novas)"
+            if st.button(
+                bulk_label,
+                key="nr_dl_all_btn",
+                type="primary",
+                use_container_width=True,
+            ):
+                from safety_ai_app.nr_update_checker import append_update_history as _auh
+                progress = st.progress(0, text="Iniciando downloads...")
+                log_lines: List[str] = []
+                for i, r in enumerate(outdated):
+                    nr_num = r["nr"]
+                    pdf_url = r.get("pdf_url", "")
+                    progress.progress(
+                        i / len(outdated),
+                        text=f"Baixando NR-{nr_num:02d} ({i+1}/{len(outdated)})...",
+                    )
+                    ok, msg = download_nr_update(nr_num, pdf_url)
+                    if ok:
+                        ok2, msg2 = trigger_reindex_for_nr(nr_num, qa_instance)
+                        _result = "✅ Atualizada e reindexada" if ok2 else "⚠️ Baixada, reindexação falhou"
+                        log_lines.append(
+                            f"{'✅' if ok2 else '⚠️'} NR-{nr_num:02d}: {msg} | {msg2}"
+                        )
+                        _auh({
+                            "timestamp_str": datetime.now(timezone.utc).strftime("%d/%m/%Y %H:%M UTC"),
+                            "nr_label": f"NR-{nr_num:02d}",
+                            "result": _result,
+                            "detail": f"{msg} | {msg2}",
+                        })
+                    else:
+                        log_lines.append(f"❌ NR-{nr_num:02d}: {msg}")
+                        _auh({
+                            "timestamp_str": datetime.now(timezone.utc).strftime("%d/%m/%Y %H:%M UTC"),
+                            "nr_label": f"NR-{nr_num:02d}",
+                            "result": "❌ Falha no download",
+                            "detail": msg,
+                        })
+
+                progress.progress(1.0, text="Concluído!")
+                for line in log_lines:
+                    if line.startswith("✅"):
+                        st.success(line)
+                    elif line.startswith("⚠️"):
+                        st.warning(line)
+                    else:
+                        st.error(line)
+                st.session_state.pop("nr_check_results", None)
+                st.rerun()
+
+    else:
+        st.success("✅ Todas as NRs verificadas estão atualizadas!")
+
+    with st.expander("📋 Tabela completa de status", expanded=False):
+        table_rows = []
+        for r in results:
+            nr_num = r["nr"]
+            local_size = r.get("local_size")
+            remote_size = r.get("remote_size")
+            table_rows.append(
+                {
+                    "NR": r["nr_label"],
+                    "Status": r.get("status_label", "—"),
+                    "Tamanho local": (
+                        f"{local_size / 1024:.1f} KB" if local_size else "—"
+                    ),
+                    "Data local": r.get("local_mtime_str", "—"),
+                    "Tamanho MTE": (
+                        f"{remote_size / 1024:.1f} KB" if remote_size else "—"
+                    ),
+                    "Data MTE": r.get("remote_last_modified_str", "—"),
+                }
+            )
+        st.dataframe(pd.DataFrame(table_rows), use_container_width=True, hide_index=True)
+
+    history = load_update_history()
+    if history:
+        with st.expander(f"📜 Histórico de atualizações ({len(history)} eventos)", expanded=False):
+            hist_rows = []
+            for h in history[:20]:
+                hist_rows.append({
+                    "Data/hora": h.get("timestamp_str", "—"),
+                    "NR": h.get("nr_label", "—"),
+                    "Resultado": h.get("result", "—"),
+                    "Detalhes": str(h.get("detail", ""))[:120],
+                })
+            st.dataframe(pd.DataFrame(hist_rows), use_container_width=True, hide_index=True)
+
+
+def _do_download_and_reindex(nr_num: int, pdf_url: str, qa_instance: Any) -> None:
+    """Helper: download a single NR PDF and reindex it, showing feedback."""
+    from safety_ai_app.nr_update_checker import (
+        download_nr_update,
+        trigger_reindex_for_nr,
+        append_update_history,
+    )
+
+    if not pdf_url:
+        st.error(f"❌ NR-{nr_num:02d}: URL do PDF não disponível.")
+        return
+
+    with st.spinner(f"Baixando NR-{nr_num:02d}..."):
+        ok, msg = download_nr_update(nr_num, pdf_url)
+
+    if not ok:
+        st.error(f"❌ {msg}")
+        append_update_history({
+            "timestamp_str": datetime.now(timezone.utc).strftime("%d/%m/%Y %H:%M UTC"),
+            "nr_label": f"NR-{nr_num:02d}",
+            "result": "❌ Falha no download",
+            "detail": msg,
+        })
+        return
+
+    st.success(f"✅ {msg}")
+    logger.info(msg)
+
+    with st.spinner(f"Reindexando NR-{nr_num:02d} no ChromaDB..."):
+        ok2, msg2 = trigger_reindex_for_nr(nr_num, qa_instance)
+
+    if ok2:
+        st.success(f"✅ {msg2}")
+        logger.info(msg2)
+        append_update_history({
+            "timestamp_str": datetime.now(timezone.utc).strftime("%d/%m/%Y %H:%M UTC"),
+            "nr_label": f"NR-{nr_num:02d}",
+            "result": "✅ Atualizada e reindexada",
+            "detail": f"{msg} | {msg2}",
+        })
+    else:
+        st.warning(f"⚠️ Download OK mas falha na reindexação: {msg2}")
+        logger.warning(msg2)
+        append_update_history({
+            "timestamp_str": datetime.now(timezone.utc).strftime("%d/%m/%Y %H:%M UTC"),
+            "nr_label": f"NR-{nr_num:02d}",
+            "result": "⚠️ Baixada, reindexação falhou",
+            "detail": f"{msg} | {msg2}",
+        })
+
+    st.session_state.pop("nr_check_results", None)
+
+
+# ---------------------------------------------------------------------------
 # NR Indexing helper tab
 # ---------------------------------------------------------------------------
 
@@ -1026,6 +1322,9 @@ def _render_nr_indexing_tab() -> None:
                 icon = "✅" if res.get("status") == "ok" else ("⚠️" if res.get("status") == "not_found" else "❌")
                 detail = f"+{res.get('chunks_added', 0)} chunks" if res.get("status") == "ok" else res.get("error", "")[:80]
                 st.markdown(f"{icon} **NR-{int(nr_str):02d}** — {detail}")
+
+    st.markdown("---")
+    _render_nr_update_checker_section(qa)
 
 
 # ---------------------------------------------------------------------------
