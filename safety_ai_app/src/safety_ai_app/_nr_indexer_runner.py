@@ -6,6 +6,7 @@ import sys
 import os
 import time
 import json
+import signal
 import logging
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -16,6 +17,16 @@ try:
     torch.set_num_threads(2)
 except Exception:
     pass
+
+PER_PDF_TIMEOUT = int(os.environ.get("AUTOINDEX_PER_PDF_TIMEOUT", "600"))  # 10 min por PDF
+
+
+class _PDFTimeout(Exception):
+    pass
+
+
+def _alarm_handler(signum, frame):
+    raise _PDFTimeout("Timeout por PDF excedido")
 
 _PACKAGE_DIR = os.path.dirname(os.path.abspath(__file__))   # .../safety_ai_app/src/safety_ai_app
 _SRC_DIR = os.path.dirname(_PACKAGE_DIR)                      # .../safety_ai_app/src
@@ -99,16 +110,23 @@ def main() -> None:
     }
     save_status(status)
 
+    _has_sigalrm = hasattr(signal, "SIGALRM")
+    if _has_sigalrm:
+        signal.signal(signal.SIGALRM, _alarm_handler)
+
     for nr in pending:
         fname = f"NR-{nr:02d}.pdf"
         fp = os.path.join(NRS_DIR, fname)
         status["current"] = fname
         save_status(status)
 
-        log(f"{fname}: iniciando ({os.path.getsize(fp) // 1024}KB)...")
+        size_kb = os.path.getsize(fp) // 1024
+        log(f"{fname}: iniciando ({size_kb}KB, timeout={PER_PDF_TIMEOUT}s)...")
         t1 = time.time()
         before = qa.vector_db._collection.count()
 
+        if _has_sigalrm:
+            signal.alarm(PER_PDF_TIMEOUT)
         try:
             qa.process_document_to_chroma(
                 file_path=fp,
@@ -124,11 +142,22 @@ def main() -> None:
                     "source_type": "local_pdf",
                 },
             )
+            if _has_sigalrm:
+                signal.alarm(0)
             added = qa.vector_db._collection.count() - before
             elapsed = time.time() - t1
             log(f"{fname}: OK +{added} chunks em {elapsed:.1f}s (total: {qa.vector_db._collection.count()})")
             status["results"][str(nr)] = {"status": "ok", "chunks_added": added, "elapsed_s": round(elapsed, 1)}
+        except _PDFTimeout:
+            if _has_sigalrm:
+                signal.alarm(0)
+            elapsed = time.time() - t1
+            log(f"{fname}: TIMEOUT após {elapsed:.0f}s — pulando para não travar o servidor.")
+            status["results"][str(nr)] = {"status": "timeout", "elapsed_s": round(elapsed, 1)}
+            status["errors"] += 1
         except Exception as exc:
+            if _has_sigalrm:
+                signal.alarm(0)
             log(f"{fname}: ERRO - {exc}")
             status["results"][str(nr)] = {"status": "error", "error": str(exc)}
             status["errors"] += 1

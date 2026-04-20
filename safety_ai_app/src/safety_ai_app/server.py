@@ -175,14 +175,28 @@ async def on_shutdown(app: web.Application) -> None:
 _INDEXER_SCRIPT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "_nr_indexer_runner.py")
 
 
-def _run_nr_indexer_when_ready(delay_seconds: int = 300) -> None:
-    """Wait for Streamlit warmup, then run NR PDF indexer as a subprocess."""
+_AUTOINDEX_TIMEOUT = int(os.environ.get("AUTOINDEX_TIMEOUT_SECONDS", "1800"))  # 30 min
+
+
+def _run_nr_indexer_when_ready(delay_seconds: int = 120) -> None:
+    """Wait for Streamlit warmup, then run NR PDF indexer as a subprocess.
+
+    Respects:
+      DISABLE_AUTOINDEX=1  → skip indexer entirely (no CPU burn on restart).
+      AUTOINDEX_TIMEOUT_SECONDS → subprocess timeout (default 1800 = 30 min).
+    """
+    if os.environ.get("DISABLE_AUTOINDEX", "").strip() in ("1", "true", "yes"):
+        logger.info("[AUTOINDEX] Desativado via variável DISABLE_AUTOINDEX. Pulando.")
+        return
+
     logger.info("[AUTOINDEX] Aguardando %ds para o Streamlit aquecer...", delay_seconds)
     time.sleep(delay_seconds)
+
     if not os.path.exists(_INDEXER_SCRIPT):
         logger.warning("[AUTOINDEX] Script indexador não encontrado: %s", _INDEXER_SCRIPT)
         return
-    logger.info("[AUTOINDEX] Iniciando indexador de NRs em subprocesso...")
+
+    logger.info("[AUTOINDEX] Iniciando indexador (timeout=%ds)...", _AUTOINDEX_TIMEOUT)
     try:
         env = os.environ.copy()
         env.update({
@@ -193,22 +207,27 @@ def _run_nr_indexer_when_ready(delay_seconds: int = 300) -> None:
         })
         import shutil
         nice_cmd = ["nice", "-n", "19"] if shutil.which("nice") else []
-        result = subprocess.run(
+        proc = subprocess.Popen(
             nice_cmd + [sys.executable, _INDEXER_SCRIPT],
             env=env,
-            timeout=7200,
-            capture_output=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
             text=True,
         )
-        if result.stdout:
-            for line in result.stdout.strip().splitlines():
+        try:
+            stdout, stderr = proc.communicate(timeout=_AUTOINDEX_TIMEOUT)
+        except subprocess.TimeoutExpired:
+            proc.kill()
+            proc.communicate()
+            logger.error("[AUTOINDEX] Timeout após %ds — processo encerrado para evitar consumo excessivo.", _AUTOINDEX_TIMEOUT)
+            return
+        if stdout:
+            for line in stdout.strip().splitlines():
                 logger.info("[AUTOINDEX] %s", line)
-        if result.stderr:
-            for line in result.stderr.strip().splitlines()[-20:]:
+        if stderr:
+            for line in stderr.strip().splitlines()[-20:]:
                 logger.warning("[AUTOINDEX-ERR] %s", line)
-        logger.info("[AUTOINDEX] Subprocesso finalizado (exit code %d)", result.returncode)
-    except subprocess.TimeoutExpired:
-        logger.error("[AUTOINDEX] Timeout ao indexar NRs (1h).")
+        logger.info("[AUTOINDEX] Subprocesso finalizado (exit code %d)", proc.returncode)
     except Exception as exc:
         logger.error("[AUTOINDEX] Erro ao executar indexador: %s", exc)
 
