@@ -78,6 +78,10 @@ Google OAuth 2.0 handles user login and service account access for Google Drive.
 
 The application is deployed on Google Cloud Platform, using Artifact Registry for Docker images, Cloud Run for serving the application, Secret Manager for handling sensitive keys, and Firebase Hosting for domain redirection. The Docker image includes Python 3.12, Tesseract OCR, and Poppler.
 
+**Deploy pipeline:** GitHub Actions (`.github/workflows/deploy.yml`) — any push to `main` triggers automated build → Artifact Registry → Cloud Run → Firebase Hosting. Requires `GCP_SA_KEY` secret in GitHub repository secrets.
+
+**Dev environment:** Development has moved to Antigravity IDE. Replit is used only as a code repository — no workflows are running here to avoid costs.
+
 ## External Dependencies
 
 ### APIs
