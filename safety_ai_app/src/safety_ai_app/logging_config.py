@@ -100,12 +100,17 @@ def setup_logging() -> None:
     root_logger.setLevel(logging.DEBUG)
     
     json_formatter = JSONFormatter()
+    # Formato legível para o console
+    standard_formatter = logging.Formatter(
+        '[%(levelname)s] %(asctime)s [%(correlation_id)s] %(name)s: %(message)s',
+        datefmt='%H:%M:%S'
+    )
     correlation_filter = CorrelationIdFilter()
     suppress_filter = _SuppressScriptRunContextFilter()
 
     console_handler = logging.StreamHandler()
     console_handler.setLevel(logging.INFO)
-    console_handler.setFormatter(json_formatter)
+    console_handler.setFormatter(standard_formatter)
     console_handler.addFilter(correlation_filter)
     console_handler.addFilter(suppress_filter)
     root_logger.addHandler(console_handler)

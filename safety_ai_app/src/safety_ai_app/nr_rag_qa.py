@@ -30,6 +30,10 @@ from langchain_community.retrievers import BM25Retriever
 from langchain_core.retrievers import BaseRetriever
 from langchain_core.callbacks.manager import CallbackManagerForRetrieverRun
 
+# Cache models and heavy workers in module-level scope to avoid duplicate initialization
+_SENTENCE_TRANSFORMER_INSTANCE = None
+_COLLECTION_DOCS_CACHE = None
+
 
 class EnsembleRetriever(BaseRetriever):
     """Retriever leve que combina BM25 e retriever semântico sem depender de langchain 0.3.x."""
@@ -74,6 +78,7 @@ from safety_ai_app.document_processors import (
     log_module_availability,
 )
 from safety_ai_app.text_extractors import PROCESSABLE_MIME_TYPES
+from .storage_manager import GCSStorageManager
 
 logger = logging.getLogger(__name__)
 
@@ -209,10 +214,19 @@ class CustomHuggingFaceEmbeddings:
     """Wrapper de embeddings com suporte a modelos E5 (prefixos query/passage)."""
 
     def __init__(self, model_name: str):
-        SentenceTransformer = _lazy_import_sentence_transformer()
-        self.model = SentenceTransformer(model_name)
+        self.model_name = model_name
+        self._model = None
         self._is_e5 = "e5" in model_name.lower()
-        logger.info(f"CustomHuggingFaceEmbeddings: Modelo '{model_name}' carregado (e5={self._is_e5}).")
+
+    @property
+    def model(self):
+        global _SENTENCE_TRANSFORMER_INSTANCE
+        if _SENTENCE_TRANSFORMER_INSTANCE is None:
+            logger.info(f"[LAZY] Carregando modelo de embeddings '{self.model_name}' (pela primeira vez)...")
+            SentenceTransformer = _lazy_import_sentence_transformer()
+            _SENTENCE_TRANSFORMER_INSTANCE = SentenceTransformer(self.model_name)
+            logger.info(f"CustomHuggingFaceEmbeddings: Modelo '{self.model_name}' carregado.")
+        return _SENTENCE_TRANSFORMER_INSTANCE
 
     def embed_documents(self, texts: List[str]) -> List[List[float]]:
         if not texts:
@@ -578,16 +592,28 @@ class NRQuestionAnswering:
         model_name: str = EMBEDDING_MODEL_NAME,
         chroma_persist_directory: str = CHROMADB_PERSIST_DIRECTORY,
         on_status: StatusCallback = None,
+        sync_on_init: bool = True,
     ):
         self._on_status: Callable[[str, str], None] = on_status or (
             lambda level, msg: logger.info(f"[{level.upper()}] {msg}")
         )
+        t_init = time.time()
 
         self.collection_name = collection_name
+        self.model_name = model_name
         self.chroma_persist_directory = chroma_persist_directory
 
-        self.embedding_function = CustomHuggingFaceEmbeddings(model_name=model_name)
-        logger.info(f"Loaded embeddings model: {EMBEDDING_MODEL_NAME}")
+        # Gerenciador de armazenamento GCS para persistência do ChromaDB
+        self.storage_manager = GCSStorageManager(self.chroma_persist_directory)
+        # Sincroniza do GCS para o local apenas se solicitado explicitamente
+        if sync_on_init:
+            self.storage_manager.sync_from_gcs()
+        else:
+            logger.info("Sincronização com GCSV de inicialização ignorada (modo rápido).")
+
+        # Note: We do NOT load the embedding model here (Lazy Loading).
+        # We only define the helper instance.
+        self._embedding_function_instance = None
 
         self.text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=1000, chunk_overlap=200,
@@ -601,29 +627,73 @@ class NRQuestionAnswering:
         self._ai_cfg = _load_ai_config()
         self._apply_ai_config(self._ai_cfg)
 
-        self.chroma_client = self._initialize_chroma()
-        self.vector_db = Chroma(
-            collection_name=self.collection_name,
-            embedding_function=self.embedding_function,
-            client=self.chroma_client,
-            persist_directory=self.chroma_persist_directory,
-        )
-        self.chroma_doc_count = self.vector_db._collection.count()
-        if self.chroma_doc_count > 0:
-            logger.info(f"ChromaDB: Collection '{COLLECTION_NAME}' loaded with {self.chroma_doc_count} documents.")
-        else:
-            logger.warning(f"ChromaDB: Collection '{COLLECTION_NAME}' is empty.")
+        # Chroma initialisation remains relatively fast.
+        self._chroma_client = None
+        self._vector_db = None
+        self._chroma_doc_count = None
 
-        self.llm = self._initialize_llm()
-        self.vector_retriever = self.vector_db.as_retriever(
-            search_type="similarity", search_kwargs={"k": self._retriever_top_k}
-        )
-        self.bm25_retriever = self._initialize_bm25_retriever()
-        self.retriever = self._create_ensemble_retriever()
-        self.retriever_type = "Ensemble Retriever" if self.bm25_retriever else "Vector Retriever (fallback)"
-        self.rag_chain = self._setup_rag_chain()
+        # These will be initialized on demand.
+        self._llm = None
+        self._bm25_retriever = None
+        self._ensemble_retriever = None
+        self._rag_chain = None
 
-        logger.info(f"NRQuestionAnswering inicializado. Retriever: {self.retriever_type}")
+        logger.info(f"NRQuestionAnswering instanciado em {time.time() - t_init:.3f}s (componentes pesados em modo lazy).")
+
+    @property
+    def embedding_function(self):
+        if self._embedding_function_instance is None:
+            self._embedding_function_instance = CustomHuggingFaceEmbeddings(model_name=self.model_name)
+        return self._embedding_function_instance
+
+    @property
+    def chroma_client(self):
+        if self._chroma_client is None:
+            self._chroma_client = self._initialize_chroma()
+        return self._chroma_client
+
+    @property
+    def vector_db(self):
+        if self._vector_db is None:
+            # We must use self.embedding_function (which is lazy)
+            self._vector_db = Chroma(
+                collection_name=self.collection_name,
+                embedding_function=self.embedding_function,
+                client=self.chroma_client,
+                persist_directory=self.chroma_persist_directory,
+            )
+        return self._vector_db
+
+    @property
+    def chroma_doc_count(self):
+        if self._chroma_doc_count is None:
+            self._chroma_doc_count = self.vector_db._collection.count()
+        return self._chroma_doc_count
+
+    @property
+    def llm(self):
+        if self._llm is None:
+            self._llm = self._initialize_llm()
+        return self._llm
+
+    @property
+    def bm25_retriever(self):
+        if self._bm25_retriever is None:
+            self._bm25_retriever = self._initialize_bm25_retriever()
+        return self._bm25_retriever
+
+    @property
+    def retriever(self):
+        """Standard property name used by the app to get the main retriever."""
+        if self._ensemble_retriever is None:
+            self._ensemble_retriever = self._create_ensemble_retriever()
+        return self._ensemble_retriever
+
+    @property
+    def rag_chain(self):
+        if self._rag_chain is None:
+            self._rag_chain = self._setup_rag_chain()
+        return self._rag_chain
 
     # ------------------------------------------------------------------
     # Status helper
@@ -669,17 +739,14 @@ class NRQuestionAnswering:
             self._apply_ai_config(new_cfg)
             self._ai_cfg = new_cfg
 
-            self.llm = self._initialize_llm()
-            self.vector_retriever = self.vector_db.as_retriever(
-                search_type="similarity", search_kwargs={"k": self._retriever_top_k}
-            )
-            self.bm25_retriever = self._initialize_bm25_retriever()
-            self.retriever = self._create_ensemble_retriever()
-            self.retriever_type = "Ensemble Retriever" if self.bm25_retriever else "Vector Retriever (fallback)"
-            self.rag_chain = self._setup_rag_chain()
+            # Reset lazy components to force re-initialisation on next access
+            self._llm = None
+            self._bm25_retriever = None
+            self._ensemble_retriever = None
+            self._rag_chain = None
 
-            logger.info("Pipeline reloaded from config. model=%s, top_k=%d", self._llm_model_name, self._retriever_top_k)
-            self._notify("success", f"Pipeline recarregado com modelo '{self._llm_model_name}'.")
+            logger.info("Pipeline config marked for reload. New settings will be applied on next query.")
+            self._notify("success", f"Pipeline configurado com modelo '{self._llm_model_name}'.")
             return True
         except Exception as exc:
             logger.error("Failed to reload pipeline from config: %s", exc, exc_info=True)
@@ -703,6 +770,7 @@ class NRQuestionAnswering:
             raise
 
     def _initialize_llm(self):
+        t0 = time.time()
         ai_key = os.getenv("AI_INTEGRATIONS_OPENROUTER_API_KEY")
         ai_base = os.getenv("AI_INTEGRATIONS_OPENROUTER_BASE_URL")
         openrouter_key = os.getenv("OPENROUTER_API_KEY")
@@ -732,6 +800,9 @@ class NRQuestionAnswering:
                     temperature=init_temperature,
                     max_tokens=8192,
                     model_kwargs={
+        )
+        logger.info(f"LLM inicializado em {time.time() - t0:.3f}s")
+        return llm
                         "extra_headers": {
                             "HTTP-Referer": "https://safetyai.streamlit.app/",
                             "X-Title": "SafetyAI - SST",
@@ -771,6 +842,10 @@ class NRQuestionAnswering:
         top_k = getattr(self, "_retriever_top_k", _AI_CONFIG_DEFAULTS["retriever_top_k"])
         vr = vector_retriever or self.vector_db.as_retriever(search_type="similarity", search_kwargs={"k": top_k})
         br = bm25_retriever if bm25_retriever is not None else self.bm25_retriever
+
+        # Update retriever type for logging purposes
+        self._retriever_type = "Ensemble Retriever" if br else "Vector Retriever (fallback)"
+
         if br:
             sem_w = getattr(self, "_semantic_weight", _AI_CONFIG_DEFAULTS["semantic_weight"])
             bm25_w = getattr(self, "_bm25_weight", _AI_CONFIG_DEFAULTS["bm25_weight"])
@@ -1331,6 +1406,9 @@ class NRQuestionAnswering:
                 if hasattr(self.vector_db, 'persist'):
                     self.vector_db.persist()
 
+                # Sincroniza as alterações no ChromaDB para o GCS
+                self.storage_manager.sync_to_gcs()
+
                 extraction_methods = set(d.metadata.get('extraction_method', 'standard') for d in documents)
                 extraction_info = ", ".join(extraction_methods) or "standard"
                 self._notify("success", f"'{document_name}' processado com sucesso ({len(chunks)} chunks, extração: {extraction_info}).")
@@ -1372,6 +1450,10 @@ class NRQuestionAnswering:
         doc = Document(page_content=content, metadata=doc_metadata)
         self.vector_db.add_documents([doc])
         logger.info(f"Texto '{document_name}' (ID: {doc_meta_id}) adicionado ao ChromaDB.")
+
+        # Sincroniza as alterações no ChromaDB para o GCS
+        self.storage_manager.sync_to_gcs()
+
         self.update_retrievers()
 
     # ------------------------------------------------------------------
@@ -1437,6 +1519,9 @@ class NRQuestionAnswering:
             self.rag_chain = self._setup_rag_chain()
             logger.info("ChromaDB reinicializado como coleção vazia.")
 
+            # Sincroniza a remoção total do ChromaDB para o GCS
+            self.storage_manager.sync_to_gcs()
+
         except Exception as e:
             err_msg = str(e)
             logger.error(f"Erro ao limpar ChromaDB: {err_msg}", exc_info=True)
@@ -1451,6 +1536,8 @@ class NRQuestionAnswering:
             deleted_ids = self.vector_db.delete(where={"source_type": source_type_to_remove})
             if deleted_ids:
                 logger.info(f"Removidos {len(deleted_ids)} chunks com source_type '{source_type_to_remove}'.")
+                # Sincroniza as remoções no ChromaDB para o GCS
+                self.storage_manager.sync_to_gcs()
                 self.update_retrievers()
                 return len(deleted_ids)
             return 0
@@ -1468,6 +1555,8 @@ class NRQuestionAnswering:
             deleted_ids = self.vector_db.delete(where={"document_metadata_id": document_metadata_id})
             if deleted_ids:
                 logger.info(f"Removidos {len(deleted_ids)} chunks para id '{document_metadata_id}'.")
+                # Sincroniza as remoções no ChromaDB para o GCS
+                self.storage_manager.sync_to_gcs()
                 self.update_retrievers()
                 return len(deleted_ids)
             return 0

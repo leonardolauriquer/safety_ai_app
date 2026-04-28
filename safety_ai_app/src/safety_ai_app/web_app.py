@@ -1,9 +1,14 @@
 import os
 import sys
-import time
 import streamlit as st
 import logging
+import time
 from typing import Optional, Any
+
+# Início do rastreio de performance
+if "start_time" not in st.session_state:
+    st.session_state.start_time = time.time()
+    print(f"\n[SAFETY-AI] >>> NOVO BOOT: {time.strftime('%H:%M:%S')}")
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.abspath(os.path.join(script_dir, '..', '..'))
@@ -32,7 +37,13 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-try:
+from safety_ai_app.web_interface.utils import get_image_base64 as _get_image_base64, process_markdown_for_external_links
+from safety_ai_app.web_interface import session_state as _ss
+from safety_ai_app.security.security_logger import log_security_event, SecurityEvent
+
+# --- Lazy Imports for Heavy Modules ---
+
+def _lazy_import_google_drive():
     from safety_ai_app.google_drive_integrator import (
         get_google_drive_user_creds_and_auth_info,
         get_google_drive_service_user,
@@ -40,21 +51,27 @@ try:
         GoogleDriveIntegrator,
         get_file_bytes_by_id,
     )
-except Exception as e:
-    logger.critical(f"[ERRO CRÍTICO] Falha ao importar google_drive_integrator: {e}.")
-    st.error(f"Erro crítico: Não foi possível carregar o integrador do Google Drive. Detalhes: {e}")
-    st.stop()
+    return {
+        "get_creds": get_google_drive_user_creds_and_auth_info,
+        "get_service_user": get_google_drive_service_user,
+        "get_service_account": get_service_account_drive_service,
+        "Integrator": GoogleDriveIntegrator,
+        "get_file_bytes": get_file_bytes_by_id,
+    }
 
-try:
-    from safety_ai_app.nr_rag_qa import NRQuestionAnswering, start_model_warmup, is_warmup_complete, CHROMADB_PERSIST_DIRECTORY
-except Exception as e:
-    logger.critical(f"[ERRO CRÍTICO] Falha ao importar nr_rag_qa: {e}.")
-    st.error(f"Erro crítico: Não foi possível carregar o módulo RAG QA. Detalhes: {e}")
-    st.stop()
-
-from safety_ai_app.web_interface.utils import get_image_base64 as _get_image_base64, process_markdown_for_external_links
-from safety_ai_app.web_interface import session_state as _ss
-from safety_ai_app.security.security_logger import log_security_event, SecurityEvent
+def _lazy_import_nr_rag():
+    from safety_ai_app.nr_rag_qa import (
+        NRQuestionAnswering,
+        start_model_warmup,
+        is_warmup_complete,
+        CHROMADB_PERSIST_DIRECTORY
+    )
+    return {
+        "NRQA": NRQuestionAnswering,
+        "start_warmup": start_model_warmup,
+        "is_warmup_complete": is_warmup_complete,
+        "DB_DIR": CHROMADB_PERSIST_DIRECTORY,
+    }
 
 
 def get_image_base64(image_path: str) -> str:
@@ -62,9 +79,11 @@ def get_image_base64(image_path: str) -> str:
 
 
 @st.cache_resource
-def get_qa_instance_cached() -> Optional[NRQuestionAnswering]:
+def get_qa_instance_cached() -> Optional[Any]:
     try:
-        return NRQuestionAnswering()
+        NRQA = _lazy_import_nr_rag()["NRQA"]
+        # Inicialização rápida: Deferir sincronização com GCS para o botão manual
+        return NRQA(sync_on_init=False)
     except Exception as e:
         logger.critical(f"[ERRO CRÍTICO] ERRO ao inicializar NRQuestionAnswering: {e}", exc_info=True)
         st.error(f"Erro crítico ao inicializar o serviço de IA. Detalhes: {e}")
@@ -74,7 +93,8 @@ def get_qa_instance_cached() -> Optional[NRQuestionAnswering]:
 @st.cache_resource
 def get_app_drive_service_cached() -> Optional[Any]:
     try:
-        return get_service_account_drive_service()
+        get_service_account = _lazy_import_google_drive()["get_service_account"]
+        return get_service_account()
     except Exception as e:
         logger.error(f"[ERRO] ERRO ao inicializar o serviço da conta de aplicativo: {e}", exc_info=True)
         return None
@@ -83,7 +103,8 @@ def get_app_drive_service_cached() -> Optional[Any]:
 @st.cache_resource
 def _trigger_model_warmup_once() -> bool:
     """Start background model pre-loading exactly once per app lifecycle."""
-    start_model_warmup()
+    start_warmup = _lazy_import_nr_rag()["start_warmup"]
+    start_warmup()
     return True
 
 
@@ -92,15 +113,20 @@ def _trigger_nr_autoindex_once() -> bool:
     """Start background NR PDF indexing exactly once per app lifecycle.
     Automatically indexes any pending NRs that have not yet been indexed from official MTE PDFs."""
     import os as _os
-    from safety_ai_app.nr_rag_qa import (
-        get_indexed_nr_numbers_from_mte,
-        start_nr_indexing_background,
-    )
+    nr_rag = _lazy_import_nr_rag()
+    get_indexed_nr_numbers_from_mte = nr_rag.get("get_indexed_nr_numbers_from_mte")
+    start_nr_indexing_background = nr_rag.get("start_nr_indexing_background")
+    DB_DIR = nr_rag["DB_DIR"]
+
+    # Fallback to local import if keys not in dict (depends on how lazy_import is structured)
+    if not start_nr_indexing_background:
+        from safety_ai_app.nr_rag_qa import get_indexed_nr_numbers_from_mte, start_nr_indexing_background
+
     try:
         qa = get_qa_instance_cached()
         if qa is None:
             return False
-        nrs_dir = _os.path.join(_os.path.dirname(CHROMADB_PERSIST_DIRECTORY), "nrs")
+        nrs_dir = _os.path.join(_os.path.dirname(DB_DIR), "nrs")
         indexed = get_indexed_nr_numbers_from_mte(qa.vector_db._collection)
         all_nrs = list(range(1, 33))
         pending = [
@@ -156,7 +182,8 @@ def _start_auto_sync_scheduler() -> bool:
 
 def get_user_drive_service_wrapper() -> Optional[str]:
     session_user_id = st.session_state.get("session_id")
-    creds, auth_url, auth_error_message = get_google_drive_user_creds_and_auth_info(
+    gdrive = _lazy_import_google_drive()
+    creds, auth_url, auth_error_message = gdrive["get_creds"](
         user_id=session_user_id
     )
     st.session_state.user_drive_auth_needed = False
@@ -173,7 +200,7 @@ def get_user_drive_service_wrapper() -> Optional[str]:
         st.session_state.user_drive_auth_error = auth_error_message
         return None
     elif creds:
-        service = get_google_drive_service_user(creds)
+        service = gdrive["get_service_user"](creds)
         if service:
             st.session_state.logged_in = True
             st.session_state.user_drive_service = service
@@ -238,11 +265,8 @@ def main_app_entrypoint() -> None:
     from safety_ai_app.web_interface.session_state import is_session_idle_expired, touch_last_activity
     from safety_ai_app.web_interface.pwa_support import get_pwa_injection_html
 
-    _trigger_model_warmup_once()
-    _trigger_nr_autoindex_once()
-    _start_auto_sync_scheduler()
-    _cleanup_temp_files()
-
+    # --- Phase 1: Critical UI Styles (Always needed) ---
+    t0 = time.time()
     st.markdown("""
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
@@ -251,14 +275,39 @@ def main_app_entrypoint() -> None:
     st.markdown(get_pwa_injection_html(project_root), unsafe_allow_html=True)
     st.markdown(_get_material_icon_html_for_button_css("start_chat_button", "chat"), unsafe_allow_html=True)
     st.markdown(_get_material_icon_html_for_button_css("explore_", "arrow_forward"), unsafe_allow_html=True)
+    logger.info(f"[PERF] Phase 1 (Styles) took {time.time() - t0:.3f}s")
 
+    # --- Phase 2: User Authentication Check ---
+    t1 = time.time()
+    is_logged_in = st.session_state.get("logged_in", False)
+    
+    # If not logged in, we skip heavy backend background tasks
+    if not is_logged_in:
+        logger.debug("[APP_FLOW] Not logged in; checking for OAuth callback or showing login page.")
+        
+        # Only check for drive service if we have a callback code or were already trying to auth
+        if "code" in st.query_params or st.session_state.get("user_drive_auth_needed"):
+            service = get_user_drive_service_wrapper()
+            if service == "REDIRECTING_SUCCESS":
+                st.info("Autenticado com sucesso! Redirecionando...")
+                st.rerun()
+        
+        render_login_page(project_root, THEME, get_image_base64)
+        return
+    
+    logger.info(f"[PERF] Phase 2 (Auth) took {time.time() - t1:.3f}s")
+
+    # --- Phase 3: Post-Login Light Initialisation ---
+    t2 = time.time()
+    # Model warmup and Sync are now moved to the Sync Page or explicit buttons.
+    _cleanup_temp_files()
     _ss.initialize_common(get_qa_instance_cached, get_app_drive_service_cached, set_correlation_id)
 
     requested_page_from_url = st.query_params.get("page")
     sync_done_in_url = st.query_params.get("sync_done") == "true"
 
     logger.info(f"[APP_FLOW] Session: {st.session_state.get('session_id', 'N/A')}, "
-                f"logged_in={st.session_state.logged_in}, sync_done={sync_done_in_url}, page={requested_page_from_url}")
+                f"logged_in={is_logged_in}, sync_done={sync_done_in_url}, page={requested_page_from_url}")
 
     if requested_page_from_url == "logout_action":
         do_logout()
@@ -273,8 +322,8 @@ def main_app_entrypoint() -> None:
         st.stop()
         return
 
-    if not st.session_state.logged_in:
-        logger.info("[APP_FLOW] Usuário não está logado. Renderizando tela de login.")
+    if not is_logged_in:
+        logger.info("[APP_FLOW] Usuario não está logado. Renderizando tela de login.")
         render_login_page(project_root, THEME, get_user_drive_service_wrapper)
         return
 
@@ -291,7 +340,7 @@ def main_app_entrypoint() -> None:
 
     touch_last_activity()
 
-    if st.session_state.logged_in and not sync_done_in_url:
+    if is_logged_in and not sync_done_in_url:
         logger.info("[APP_FLOW] Usuário logado mas sync não realizado. Redirecionando para sync_page.")
         st.query_params["page"] = "sync_page"
         if requested_page_from_url != "sync_page":
@@ -346,6 +395,11 @@ def main_app_entrypoint() -> None:
 
     with st.sidebar:
         render_sidebar_menu(THEME, get_image_base64)
+    
+    logger.info(f"[PERF] Phase 3 (Backend/Init) took {time.time() - t2:.3f}s")
+    
+    t_final = time.time()
+    logger.info(f"[PERF] App Total Boot Time: {t_final - st.session_state.start_time:.3f}s")
 
     current_page = st.session_state.current_page
     logger.info(f"Renderizando a página: {current_page}")

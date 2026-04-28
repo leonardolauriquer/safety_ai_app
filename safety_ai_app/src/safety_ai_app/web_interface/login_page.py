@@ -1,6 +1,15 @@
-import os
-import base64
-import streamlit as st
+@st.cache_data
+def _get_logo_base64_cached(logo_path: str) -> Optional[str]:
+    """Lê e codifica a logo em Base64 com cache para evitar IO repetitivo."""
+    if not os.path.exists(logo_path):
+        return None
+    try:
+        with open(logo_path, "rb") as f:
+            data = base64.b64encode(f.read()).decode()
+        ext = logo_path.split('.')[-1]
+        return f"data:image/{ext};base64,{data}"
+    except Exception:
+        return None
 
 
 def render_login_page(project_root: str, theme: dict, get_user_drive_service_wrapper) -> None:
@@ -14,7 +23,7 @@ def render_login_page(project_root: str, theme: dict, get_user_drive_service_wra
 
     login_styles = f"""
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap');
+        /* Fontes carregadas globalmente pelo web_app.py */
 
         [data-testid="stSidebar"], section[data-testid="stSidebarContent"],
         .css-1d391kg, .css-1lcbmhc, .css-vk3wp9 {{
@@ -457,15 +466,14 @@ def render_login_page(project_root: str, theme: dict, get_user_drive_service_wra
         st.markdown('<div class="version-badge">v2.0</div>', unsafe_allow_html=True)
 
         logo_path = os.path.join(project_root, theme['images']['app_logo'])
-        if os.path.exists(logo_path):
-            with open(logo_path, "rb") as f:
-                logo_data = base64.b64encode(f.read()).decode()
-            logo_ext = logo_path.split('.')[-1]
+        logo_data_uri = _get_logo_base64_cached(logo_path)
+        
+        if logo_data_uri:
             st.markdown(f'''
                 <div style="display: flex; justify-content: center; margin-bottom: 0.5rem;">
                     <div style="width: 140px; height: 140px; display: flex; align-items: center;
                                 justify-content: center; overflow: visible;">
-                        <img src="data:image/{logo_ext};base64,{logo_data}"
+                        <img src="{logo_data_uri}"
                              style="width: 140px; height: 140px; object-fit: contain;"
                         />
                     </div>

@@ -4,10 +4,12 @@ import mimetypes
 import re
 import markdown
 import logging
+import streamlit as st
 
 logger = logging.getLogger(__name__)
 
 
+@st.cache_data
 def get_image_base64(project_root: str, image_path: str) -> str:
     try:
         abs_image_path = os.path.join(project_root, image_path)

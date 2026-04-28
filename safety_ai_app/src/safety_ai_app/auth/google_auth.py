@@ -4,11 +4,14 @@ import json
 import logging
 from typing import Optional, Any, Tuple, Dict
 
-from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
-from google.auth.transport.requests import Request
-from googleapiclient.discovery import build
 import streamlit as st
+
+# Mover importações pesadas para dentro das funções (Lazy Loading)
+# from google.oauth2.credentials import Credentials  # Mantida no topo pois é rápida
+# from google_auth_oauthlib.flow import InstalledAppFlow # MOVIDA
+# from googleapiclient.discovery import build # MOVIDA
+from google.oauth2.credentials import Credentials
+from google.auth.transport.requests import Request
 
 logger = logging.getLogger(__name__)
 
@@ -36,18 +39,30 @@ SCOPES_SERVICE_ACCOUNT = [
 ]
 
 
-def _get_db_connection():
-    """Return a psycopg2 connection using DATABASE_URL, or None if unavailable."""
+@st.cache_resource(show_spinner="Conectando ao banco de dados...")
+def _get_db_connection_cached():
+    """Retorna uma conexão psycopg2 singleton cacheada."""
     database_url = os.environ.get('DATABASE_URL')
     if not database_url:
         return None
     try:
         import psycopg2
         conn = psycopg2.connect(database_url)
+        # Garantir que a tabela existe apenas uma vez por inicialização
+        _ensure_token_table_once(conn)
         return conn
     except Exception as e:
         logger.warning(f"Não foi possível conectar ao banco de dados: {e}")
         return None
+
+def _get_db_connection():
+    """Wrapper para a conexão cacheada."""
+    return _get_db_connection_cached()
+
+@st.cache_resource
+def _ensure_token_table_once(_conn) -> bool:
+    """Versão cacheada para garantir que a DDL rode apenas uma vez."""
+    return _ensure_token_table(_conn)
 
 
 def _ensure_token_table(conn) -> bool:
@@ -97,7 +112,6 @@ def _load_creds_from_db(user_id: Optional[str] = None) -> Optional[Credentials]:
     if conn is None:
         return None
     try:
-        _ensure_token_table(conn)
         token_key = _token_key_for_user(user_id)
         with conn.cursor() as cur:
             cur.execute(
@@ -117,7 +131,7 @@ def _load_creds_from_db(user_id: Optional[str] = None) -> Optional[Credentials]:
         logger.warning(f"Erro ao carregar token do banco de dados: {e}")
         return None
     finally:
-        conn.close()
+        pass
 
 
 def _save_creds_to_db(creds: Credentials, user_id: Optional[str] = None) -> None:
@@ -149,7 +163,7 @@ def _save_creds_to_db(creds: Credentials, user_id: Optional[str] = None) -> None
         conn.rollback()
         raise OSError(f"Falha ao guardar token no banco de dados: {e}") from e
     finally:
-        conn.close()
+        pass
 
 
 def _delete_creds_from_db(user_id: Optional[str] = None) -> None:
@@ -178,6 +192,7 @@ def _delete_creds_from_db(user_id: Optional[str] = None) -> None:
         conn.close()
 
 
+@st.cache_data
 def _get_service_account_credentials_from_env() -> Optional[Dict]:
     env_creds = os.environ.get('GOOGLE_SERVICE_ACCOUNT_KEY')
     if env_creds:
@@ -188,6 +203,7 @@ def _get_service_account_credentials_from_env() -> Optional[Dict]:
     return None
 
 
+@st.cache_data
 def _get_client_credentials_from_env() -> Optional[Dict]:
     env_creds = os.environ.get('GOOGLE_CLIENT_CREDENTIALS')
     if env_creds:
@@ -317,6 +333,7 @@ def get_google_drive_user_creds_and_auth_info(
     try:
         env_client_creds = _get_client_credentials_from_env()
         if env_client_creds:
+            from google_auth_oauthlib.flow import InstalledAppFlow
             flow = InstalledAppFlow.from_client_config(env_client_creds, SCOPES_USER)
             logger.info("Credenciais OAuth carregadas da variável de ambiente.")
         else:
@@ -329,14 +346,21 @@ def get_google_drive_user_creds_and_auth_info(
     if flow is None:
         return None, None, "Erro interno: Não foi possível inicializar o fluxo de autenticação."
 
+    # Detecção dinâmica de URI de Redirecionamento
     explicit_redirect = os.environ.get('OAUTH_REDIRECT_URI')
     replit_domain = os.environ.get('REPLIT_DEV_DOMAIN')
+    
     if explicit_redirect:
         flow.redirect_uri = explicit_redirect
+        logger.info(f"Usando URI de redirecionamento explícita: {explicit_redirect}")
     elif replit_domain:
         flow.redirect_uri = f'https://{replit_domain}'
+        logger.info(f"Usando domínio do Replit: {flow.redirect_uri}")
     else:
+        # Fallback padrão, mas tenta detectar se estamos em HTTPS se possível via streamlit headers
+        # (Nota: st.context.headers só disponível em versões mais recentes do Streamlit)
         flow.redirect_uri = 'http://localhost:8501'
+        logger.info(f"Usando URI de fallback: {flow.redirect_uri}. Configure OAUTH_REDIRECT_URI para produção.")
 
     query_params = st.query_params.to_dict()
     oauth_state = secrets.token_urlsafe(32)
@@ -406,6 +430,7 @@ def get_service_account_service() -> Optional[Any]:
         return None
     try:
         from google.oauth2.service_account import Credentials as SACredentials
+        from googleapiclient.discovery import build
         creds = SACredentials.from_service_account_info(creds_dict, scopes=SCOPES_SERVICE_ACCOUNT)
         service = build('drive', 'v3', credentials=creds)
         logger.info("Serviço do Google Drive (conta de serviço) inicializado.")
@@ -419,6 +444,7 @@ def get_user_oauth_service(creds: Any) -> Optional[Any]:
     """Build and return a Google Drive API service using user OAuth credentials."""
     if creds and creds.valid:
         try:
+            from googleapiclient.discovery import build
             return build('drive', 'v3', credentials=creds)
         except Exception as e:
             logger.error(f"Erro ao construir serviço do Google Drive (usuário): {e}", exc_info=True)

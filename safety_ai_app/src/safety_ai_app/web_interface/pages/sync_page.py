@@ -203,14 +203,37 @@ def _reset_sync_state_full():
 
 def _on_start_sync_click():
     """Callback para o botão 'Sincronizar Agora'."""
+    from safety_ai_app.web_app import _trigger_model_warmup_once, _trigger_nr_autoindex_once, _start_auto_sync_scheduler
     app_drive_service = st.session_state.get('app_drive_service')
     qa_system = st.session_state.get('nr_qa')
+    
+    # Executa sincronização com GCS primeiro se disponível (restaura estado anterior)
+    if qa_system:
+        try:
+            logger.info("[SYNC_PAGE] Sincronizando com GCS (restauração local)...")
+            qa_system.storage_manager.sync_from_gcs()
+        except Exception as e:
+            logger.warning(f"Erro ao sincronizar com GCS: {e}")
+
     if app_drive_service and qa_system:
+        # Inicia processos em background
+        _trigger_model_warmup_once()
+        _trigger_nr_autoindex_once()
+        _start_auto_sync_scheduler()
+        
+        # Inicia sincronização do Drive
         _start_sync_process(app_drive_service, qa_system, st.session_state.sync_result_queue)
 
 
 def _on_skip_sync_click():
     """Callback para o botão 'Continuar sem sincronizar'."""
+    from safety_ai_app.web_app import _trigger_model_warmup_once, _trigger_nr_autoindex_once, _start_auto_sync_scheduler
+    
+    # Mesmo pulando a sincronização do Drive, iniciamos as tarefas de background para o app ficar pronto
+    _trigger_model_warmup_once()
+    _trigger_nr_autoindex_once()
+    _start_auto_sync_scheduler()
+    
     _reset_sync_state_full()
     st.session_state._skip_sync_triggered = True
 
