@@ -292,7 +292,7 @@ def main_app_entrypoint() -> None:
                 st.info("Autenticado com sucesso! Redirecionando...")
                 st.rerun()
         
-        render_login_page(project_root, THEME, get_image_base64)
+        render_login_page(project_root, THEME, get_user_drive_service_wrapper)
         return
     
     logger.info(f"[PERF] Phase 2 (Auth) took {time.time() - t1:.3f}s")
