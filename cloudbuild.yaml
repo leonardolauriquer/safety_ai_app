@@ -2,8 +2,10 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - build
+      # Usa a imagem :latest como cache para acelerar o build (multi-stage aproveitado)
+      - '--cache-from=us-central1-docker.pkg.dev/safetyai-472110/safety-ai-app/safety-ai-app:latest'
       - '-t'
-      - 'us-central1-docker.pkg.dev/safetyai-472110/safety-ai-app/safety-ai-app:$COMMIT_SHA'
+      - 'us-central1-docker.pkg.dev/safetyai-472110/safety-ai-app/safety-ai-app:${_TAG}'
       - '-t'
       - 'us-central1-docker.pkg.dev/safetyai-472110/safety-ai-app/safety-ai-app:latest'
       - '.'
@@ -12,7 +14,7 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - push
-      - 'us-central1-docker.pkg.dev/safetyai-472110/safety-ai-app/safety-ai-app:$COMMIT_SHA'
+      - 'us-central1-docker.pkg.dev/safetyai-472110/safety-ai-app/safety-ai-app:${_TAG}'
     id: Push-SHA
     waitFor: ['Build']
 
@@ -29,7 +31,7 @@ steps:
       - run
       - deploy
       - safety-ai-app
-      - '--image=us-central1-docker.pkg.dev/safetyai-472110/safety-ai-app/safety-ai-app:$COMMIT_SHA'
+      - '--image=us-central1-docker.pkg.dev/safetyai-472110/safety-ai-app/safety-ai-app:${_TAG}'
       - '--platform=managed'
       - '--region=us-central1'
       - '--allow-unauthenticated'
@@ -37,13 +39,18 @@ steps:
       - '--memory=4Gi'
       - '--cpu=2'
       - '--timeout=300'
+      - '--min-instances=1'
+      # Variáveis simples (texto)
       - '--set-env-vars=DISABLE_AUTOINDEX=1'
+      # Segredos do Secret Manager (OAUTH_REDIRECT_URI como secret resolve o conflito de tipo)
+      - >-
+        --set-secrets=OAUTH_REDIRECT_URI=OAUTH_REDIRECT_URI:latest,GOOGLE_API_KEY=GOOGLE_API_KEY:latest,GOOGLE_SERVICE_ACCOUNT_KEY=GOOGLE_SERVICE_ACCOUNT_KEY:latest,GOOGLE_CLIENT_CREDENTIALS=GOOGLE_CLIENT_CREDENTIALS:latest,GOOGLE_DRIVE_CENTRAL_LIBRARY_FOLDER_ID=GOOGLE_DRIVE_CENTRAL_LIBRARY_FOLDER_ID:latest,GOOGLE_DRIVE_DONATION_FOLDER_ID=GOOGLE_DRIVE_DONATION_FOLDER_ID:latest,ADZUNA_API_KEY=ADZUNA_API_KEY:latest,ADZUNA_APP_ID=ADZUNA_APP_ID:latest,ICD_API_CLIENT_ID=ICD_API_CLIENT_ID:latest,ICD_API_CLIENT_SECRET=ICD_API_CLIENT_SECRET:latest,RECAPTCHA_SECRET_KEY=RECAPTCHA_SECRET_KEY:latest,RECAPTCHA_SITE_KEY=RECAPTCHA_SITE_KEY:latest,ADMIN_EMAILS=ADMIN_EMAILS:latest
       - '--project=safetyai-472110'
     id: Deploy-CloudRun
     waitFor: ['Push-SHA']
 
 images:
-  - 'us-central1-docker.pkg.dev/safetyai-472110/safety-ai-app/safety-ai-app:$COMMIT_SHA'
+  - 'us-central1-docker.pkg.dev/safetyai-472110/safety-ai-app/safety-ai-app:${_TAG}'
   - 'us-central1-docker.pkg.dev/safetyai-472110/safety-ai-app/safety-ai-app:latest'
 
 options:

@@ -1,63 +1,32 @@
 import os
 import json
 import logging
-import math
-import threading
-import uuid
+import time
 import importlib.metadata
-import re
-from pathlib import Path
-from typing import List, Dict, Any, Optional, Callable, Generator
+import threading
 from datetime import datetime
-from operator import itemgetter
-from urllib.parse import quote_plus
-
-from langchain_chroma import Chroma
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Generator, Callable, Union, Tuple
 from langchain_core.documents import Document
-from langchain_core.output_parsers import StrOutputParser
-from langchain_core.prompts import (
-    ChatPromptTemplate,
-    SystemMessagePromptTemplate,
-    HumanMessagePromptTemplate,
-    MessagesPlaceholder,
-)
-from langchain_core.runnables import RunnablePassthrough, RunnableParallel, RunnableLambda
-from langchain_openai import ChatOpenAI
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_core.messages import HumanMessage, AIMessage
-
-from langchain_community.retrievers import BM25Retriever
 from langchain_core.retrievers import BaseRetriever
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_chroma import Chroma
 from langchain_core.callbacks.manager import CallbackManagerForRetrieverRun
 
-# Cache models and heavy workers in module-level scope to avoid duplicate initialization
-_SENTENCE_TRANSFORMER_INSTANCE = None
-_COLLECTION_DOCS_CACHE = None
-
-
-class EnsembleRetriever(BaseRetriever):
-    """Retriever leve que combina BM25 e retriever semântico sem depender de langchain 0.3.x."""
-
-    retrievers: List[Any]
-    weights: List[float]
-
-    def _get_relevant_documents(
-        self, query: str, *, run_manager: CallbackManagerForRetrieverRun
-    ) -> List[Document]:
-        all_docs: Dict[str, Document] = {}
-        scores: Dict[str, float] = {}
-
-        for retriever, weight in zip(self.retrievers, self.weights):
-            docs = retriever.invoke(query)
-            for rank, doc in enumerate(docs):
-                doc_id = doc.page_content[:200]
-                if doc_id not in all_docs:
-                    all_docs[doc_id] = doc
-                    scores[doc_id] = 0.0
-                scores[doc_id] += weight * (1.0 / (rank + 1))
-
-        sorted_ids = sorted(scores, key=scores.__getitem__, reverse=True)
-        return [all_docs[doc_id] for doc_id in sorted_ids]
+# Imports from internal rag package
+from .rag import (
+    CustomHuggingFaceEmbeddings,
+    EnsembleRetriever,
+    rerank_documents,
+    split_nr_document_structurally,
+    get_indexed_nr_numbers_from_mte,
+    create_llm,
+    initialize_bm25_retriever,
+    create_ensemble_retriever,
+    is_jailbreak_response,
+    is_off_domain_response,
+    SAFE_REFUSAL,
+)
 
 try:
     from safety_ai_app.security.security_logger import log_security_event, SecurityEvent as _SecurityEvent
@@ -143,302 +112,13 @@ def _load_system_prompt() -> str:
     return prompt_path.read_text(encoding="utf-8")
 
 
-def make_streamlit_status_callback() -> Callable[[str, str], None]:
-    """
-    Returns a two-argument (level, message) callback that routes to the
-    appropriate Streamlit status widget.  Import streamlit lazily so that
-    this module remains importable without a Streamlit context.
-
-    Usage::
-
-        from safety_ai_app.nr_rag_qa import NRQuestionAnswering, make_streamlit_status_callback
-        qa = NRQuestionAnswering(on_status=make_streamlit_status_callback())
-    """
-    import streamlit as st
-
-    def _callback(level: str, message: str) -> None:
-        try:
-            from streamlit.runtime.scriptrunner import get_script_run_ctx
-            if get_script_run_ctx() is None:
-                logger.info(f"[{level.upper()}] {message}")
-                return
-        except Exception:
-            logger.info(f"[{level.upper()}] {message}")
-            return
-        if level == "error":
-            st.error(message)
-        elif level == "warning":
-            st.warning(message)
-        elif level == "success":
-            st.success(message)
-        else:
-            st.info(message)
-
-    return _callback
-
-
-def _get_clean_document_name(doc_name: str) -> str:
-    cleaned = re.sub(r' - Versão \d+\.\d+\.\d+$', '', doc_name, flags=re.IGNORECASE).strip()
-    cleaned = re.sub(r' v\d+\.\d+\.\d+$', '', cleaned, flags=re.IGNORECASE).strip()
-    return cleaned
-
-
-def _extract_nr_from_query(query: str) -> Optional[str]:
-    match = re.search(r'(?:NR|N\.R\.)\s*(\d+)', query, re.IGNORECASE)
-    if match:
-        return f"nr-{match.group(1)}"
-    return None
-
-
-def _clean_llm_output(output: str) -> str:
-    if not output:
-        return ""
-    html_tags = ['</div>', '</p>', '<div>', '<p>', '</span>', '<span>', '</br>', '<br>', '<br/>']
-    cleaned = output
-    for tag in html_tags:
-        cleaned = cleaned.replace(tag, '')
-    return cleaned.strip()
-
-
 def _log_module_availability():
     import streamlit as st
     logger.info(f"Streamlit Version: {st.__version__}")
     log_module_availability()
 
 
-# ---------------------------------------------------------------------------
-# Embeddings
-# ---------------------------------------------------------------------------
-
-class CustomHuggingFaceEmbeddings:
-    """Wrapper de embeddings com suporte a modelos E5 (prefixos query/passage)."""
-
-    def __init__(self, model_name: str):
-        self.model_name = model_name
-        self._model = None
-        self._is_e5 = "e5" in model_name.lower()
-
-    @property
-    def model(self):
-        global _SENTENCE_TRANSFORMER_INSTANCE
-        if _SENTENCE_TRANSFORMER_INSTANCE is None:
-            logger.info(f"[LAZY] Carregando modelo de embeddings '{self.model_name}' (pela primeira vez)...")
-            SentenceTransformer = _lazy_import_sentence_transformer()
-            _SENTENCE_TRANSFORMER_INSTANCE = SentenceTransformer(self.model_name)
-            logger.info(f"CustomHuggingFaceEmbeddings: Modelo '{self.model_name}' carregado.")
-        return _SENTENCE_TRANSFORMER_INSTANCE
-
-    def embed_documents(self, texts: List[str]) -> List[List[float]]:
-        if not texts:
-            return []
-        if self._is_e5:
-            texts = ["passage: " + t for t in texts]
-        return self.model.encode(texts, convert_to_numpy=True, normalize_embeddings=True).tolist()
-
-    def embed_query(self, text: str) -> List[float]:
-        if not text:
-            return []
-        if self._is_e5:
-            text = "query: " + text
-        return self.model.encode([text], convert_to_numpy=True, normalize_embeddings=True)[0].tolist()
-
-
-# ---------------------------------------------------------------------------
-# NR structural chunking helpers
-# ---------------------------------------------------------------------------
-
-_NR_ITEM_PATTERN = re.compile(
-    r'(?m)^(\d{1,2}(?:\.\d+){1,5})\s+',
-)
-_NR_CHAPTER_PATTERN = re.compile(
-    r'(?mi)^(CAP[IÍ]TULO\s+[IVXLCDM\d]+|ANEXO\s+[IVXLCDM\d]+|SEÇÃO\s+[IVXLCDM\d]+)',
-)
-_NR_NUMBER_FROM_NAME = re.compile(r'NR[\s\-_]?(\d{1,2})', re.IGNORECASE)
-_NR_ITEM_META = re.compile(r'^(\d{1,2})(?:\.(\d+))?(?:\.\d+)*\s+')
-
-
-def _extract_nr_metadata_from_content(text: str, doc_name: str = "") -> Dict[str, str]:
-    """Extract nr_number, article, and item from chunk text and document name."""
-    nr_number = ""
-    article = ""
-    item = ""
-
-    m = _NR_NUMBER_FROM_NAME.search(doc_name)
-    if m:
-        nr_number = m.group(1)
-
-    if not nr_number:
-        m = re.search(r'NR[\s\-]?(\d{1,2})', text[:500], re.IGNORECASE)
-        if m:
-            nr_number = m.group(1)
-
-    m = re.search(r'art(?:igo)?\.?\s*(\d+)', text[:300], re.IGNORECASE)
-    if m:
-        article = m.group(1)
-
-    m = _NR_ITEM_META.search(text.lstrip())
-    if m:
-        item = m.group(0).strip()
-
-    section = f"NR-{nr_number} {item}".strip() if nr_number else item
-    return {"nr_number": nr_number, "article": article, "item": item, "section": section}
-
-
-def _split_nr_document_structurally(
-    documents: List[Document],
-    chunk_size: int = 1000,
-    chunk_overlap: int = 200,
-) -> List[Document]:
-    """
-    Structural splitter for NR regulatory documents.
-
-    Strategy:
-    1. For each raw page document, detect item/chapter boundaries.
-    2. Split text at those boundaries to form logical sections.
-    3. Apply RecursiveCharacterTextSplitter within each section.
-    4. Enrich metadata with nr_number, article, item.
-    """
-    base_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=chunk_size,
-        chunk_overlap=chunk_overlap,
-        add_start_index=True,
-        length_function=len,
-        separators=["\n\n", "\n", " ", ""],
-    )
-
-    result_chunks: List[Document] = []
-
-    for doc in documents:
-        text = doc.page_content
-        doc_name = doc.metadata.get("document_name", "")
-
-        boundary_positions = set()
-        boundary_positions.add(0)
-        for m in _NR_ITEM_PATTERN.finditer(text):
-            boundary_positions.add(m.start())
-        for m in _NR_CHAPTER_PATTERN.finditer(text):
-            boundary_positions.add(m.start())
-
-        sorted_positions = sorted(boundary_positions)
-
-        sections = []
-        for i, start in enumerate(sorted_positions):
-            end = sorted_positions[i + 1] if i + 1 < len(sorted_positions) else len(text)
-            section_text = text[start:end].strip()
-            if section_text:
-                sections.append(section_text)
-
-        if not sections:
-            sections = [text]
-
-        for section in sections:
-            section_doc = Document(page_content=section, metadata=dict(doc.metadata))
-            sub_chunks = base_splitter.split_documents([section_doc])
-            for chunk in sub_chunks:
-                if not chunk.page_content.strip():
-                    continue
-                nr_meta = _extract_nr_metadata_from_content(chunk.page_content, doc_name)
-                chunk.metadata.update(nr_meta)
-                result_chunks.append(chunk)
-
-    return result_chunks
-
-
-# ---------------------------------------------------------------------------
-# Cross-encoder reranker (lazy loaded)
-# ---------------------------------------------------------------------------
-
-_reranker_instance = None
-_reranker_lock = threading.Lock()
-
-
-def _get_reranker():
-    global _reranker_instance
-    if _reranker_instance is not None:
-        return _reranker_instance if _reranker_instance is not False else None
-    with _reranker_lock:
-        if _reranker_instance is None:
-            try:
-                from sentence_transformers import CrossEncoder
-                _reranker_instance = CrossEncoder(RERANKER_MODEL_NAME)
-                logger.info(f"Cross-encoder reranker '{RERANKER_MODEL_NAME}' carregado.")
-            except Exception as e:
-                logger.warning(f"Falha ao carregar cross-encoder reranker: {e}. Reranking desativado.")
-                _reranker_instance = False
-    return _reranker_instance if _reranker_instance is not False else None
-
-
-def _rerank_documents(query: str, docs: List[Document], top_n: int = RERANKER_TOP_N) -> List[Document]:
-    """Apply cross-encoder reranking to a list of documents."""
-    if not docs:
-        return docs
-    reranker = _get_reranker()
-    if reranker is None:
-        return docs[:top_n]
-    try:
-        pairs = [(query, doc.page_content) for doc in docs]
-        scores = reranker.predict(pairs)
-        ranked = sorted(zip(scores, docs), key=lambda x: x[0], reverse=True)
-        logger.info(f"Reranker: {len(docs)} → top {top_n} documentos selecionados.")
-        return [doc for _, doc in ranked[:top_n]]
-    except Exception as e:
-        logger.warning(f"Erro no reranker: {e}. Retornando docs sem reranking.")
-        return docs[:top_n]
-
-
-# ---------------------------------------------------------------------------
-# Background model pre-warming
-# ---------------------------------------------------------------------------
-
-_warmup_done = threading.Event()
-_warmup_thread: Optional[threading.Thread] = None
-
-
-def _warmup_worker() -> None:
-    """Pre-load the cross-encoder reranker in the background.
-
-    The embedding model is already loaded eagerly by NRQuestionAnswering.__init__
-    (via get_qa_instance_cached). Loading it again here would cause a duplicate
-    1.1 GB model load. Only the reranker is truly lazy-loaded on the first query.
-    """
-    _reranker_ok = False
-    try:
-        logger.info("[WARMUP] Pre-loading cross-encoder reranker '%s'…", RERANKER_MODEL_NAME)
-        result = _get_reranker()
-        if result is not None:
-            _reranker_ok = True
-            logger.info("[WARMUP] Reranker loaded successfully.")
-        else:
-            logger.warning("[WARMUP] Reranker unavailable after pre-load attempt.")
-    except Exception as exc:
-        logger.warning("[WARMUP] Could not pre-load reranker: %s", exc)
-
-    _warmup_done.set()
-    status = "complete" if _reranker_ok else "finished (reranker unavailable)"
-    logger.info("[WARMUP] Model warmup %s.", status)
-
-
-def start_model_warmup() -> None:
-    """Start background model pre-loading. Safe to call multiple times."""
-    global _warmup_thread
-    if _warmup_done.is_set():
-        return
-    if _warmup_thread is not None and _warmup_thread.is_alive():
-        return
-    _warmup_thread = threading.Thread(
-        target=_warmup_worker, daemon=True, name="model-warmup"
-    )
-    _warmup_thread.start()
-    logger.info("[WARMUP] Background model warmup thread started.")
-
-
-def is_warmup_complete() -> bool:
-    """Return True if the reranker background warmup has finished.
-
-    The embedding model is loaded eagerly by NRQuestionAnswering.__init__
-    (via get_qa_instance_cached), so it is not tracked here.
-    """
-    return _warmup_done.is_set()
+# Warmup and model management moved to .rag.warmup
 
 
 # ---------------------------------------------------------------------------
@@ -770,89 +450,29 @@ class NRQuestionAnswering:
             raise
 
     def _initialize_llm(self):
-        t0 = time.time()
-        ai_key = os.getenv("AI_INTEGRATIONS_OPENROUTER_API_KEY")
-        ai_base = os.getenv("AI_INTEGRATIONS_OPENROUTER_BASE_URL")
-        openrouter_key = os.getenv("OPENROUTER_API_KEY")
-        model_name = getattr(self, "_llm_model_name", _AI_CONFIG_DEFAULTS["model"])
-        init_temperature = getattr(self, "_temperature_factual", 0.1)
-
-        if ai_key and ai_base:
-            try:
-                llm = ChatOpenAI(
-                    openai_api_base=ai_base,
-                    openai_api_key=ai_key,
-                    model_name=model_name,
-                    temperature=init_temperature,
-                    max_tokens=8192,
-                )
-                logger.info(f"LLM via Replit AI Integrations ({model_name}) inicializado.")
-                return llm
-            except Exception as e:
-                logger.warning(f"Falha na integração Replit OpenRouter: {e}. Tentando fallback...")
-
-        if openrouter_key:
-            try:
-                llm = ChatOpenAI(
-                    openai_api_base="https://openrouter.ai/api/v1",
-                    openai_api_key=openrouter_key,
-                    model_name=model_name,
-                    temperature=init_temperature,
-                    max_tokens=8192,
-                    model_kwargs={
+        return create_llm(
+            model_name=getattr(self, "_llm_model_name", _AI_CONFIG_DEFAULTS["model"]),
+            temperature=getattr(self, "_temperature_factual", 0.1)
         )
-        logger.info(f"LLM inicializado em {time.time() - t0:.3f}s")
-        return llm
-                        "extra_headers": {
-                            "HTTP-Referer": "https://safetyai.streamlit.app/",
-                            "X-Title": "SafetyAI - SST",
-                        }
-                    },
-                )
-                logger.info(f"LLM via OpenRouter direto ({model_name}) inicializado.")
-                return llm
-            except Exception as e:
-                err_msg = str(e)
-                logger.error(f"Erro ao inicializar LLM OpenRouter: {err_msg}", exc_info=True)
-                self._notify("error", f"Erro ao inicializar modelo: {err_msg}")
-                return None
-
-        self._notify(
-            "error",
-            "Configuração de IA não encontrada! Configure OpenRouter via Replit AI Integrations ou OPENROUTER_API_KEY.",
-        )
-        return None
 
     def _initialize_bm25_retriever(self):
-        if self.chroma_doc_count > 0:
-            results = self.vector_db._collection.get(
-                ids=self.vector_db._collection.get()['ids'],
-                include=['documents', 'metadatas'],
-            )
-            all_docs = [
-                Document(page_content=content, metadata=meta)
-                for content, meta in zip(results['documents'], results['metadatas'])
-            ]
-            top_k = getattr(self, "_retriever_top_k", _AI_CONFIG_DEFAULTS["retriever_top_k"])
-            logger.info(f"BM25Retriever: {len(all_docs)} documentos indexados (k={top_k}).")
-            return BM25Retriever.from_documents(all_docs, k=top_k)
-        return None
+        return initialize_bm25_retriever(
+            self.vector_db,
+            self.chroma_doc_count,
+            getattr(self, "_retriever_top_k", _AI_CONFIG_DEFAULTS["retriever_top_k"])
+        )
 
     def _create_ensemble_retriever(self, vector_retriever=None, bm25_retriever=None):
-        top_k = getattr(self, "_retriever_top_k", _AI_CONFIG_DEFAULTS["retriever_top_k"])
-        vr = vector_retriever or self.vector_db.as_retriever(search_type="similarity", search_kwargs={"k": top_k})
-        br = bm25_retriever if bm25_retriever is not None else self.bm25_retriever
-
-        # Update retriever type for logging purposes
-        self._retriever_type = "Ensemble Retriever" if br else "Vector Retriever (fallback)"
-
-        if br:
-            sem_w = getattr(self, "_semantic_weight", _AI_CONFIG_DEFAULTS["semantic_weight"])
-            bm25_w = getattr(self, "_bm25_weight", _AI_CONFIG_DEFAULTS["bm25_weight"])
-            logger.info(f"EnsembleRetriever configurado (Vector + BM25, pesos sem={sem_w:.2f}/bm25={bm25_w:.2f}).")
-            return EnsembleRetriever(retrievers=[vr, br], weights=[sem_w, bm25_w])
-        logger.warning("Usando apenas Vector Retriever (ChromaDB vazio ou sem documentos).")
-        return vr
+        retriever = create_ensemble_retriever(
+            self.vector_db,
+            bm25_retriever if bm25_retriever is not None else self.bm25_retriever,
+            getattr(self, "_retriever_top_k", _AI_CONFIG_DEFAULTS["retriever_top_k"]),
+            getattr(self, "_semantic_weight", _AI_CONFIG_DEFAULTS["semantic_weight"]),
+            getattr(self, "_bm25_weight", _AI_CONFIG_DEFAULTS["bm25_weight"])
+        )
+        # For legacy compatibility or logging inside this class
+        self._retriever_type = "Ensemble Retriever" if (bm25_retriever or self.bm25_retriever) else "Vector Retriever (fallback)"
+        return retriever
 
     # ------------------------------------------------------------------
     # RAG chain
@@ -873,20 +493,20 @@ class NRQuestionAnswering:
             human_message_prompt,
         ])
 
-        def process_retrieved_docs(retrieved_info: Dict[str, Any]) -> Dict[str, Any]:
-            return self._process_retrieved_docs(retrieved_info["docs"], retrieved_info["query"])
+        def _internal_process_docs(retrieved_info: Dict[str, Any]) -> Dict[str, Any]:
+            return process_retrieved_docs(retrieved_info["docs"], retrieved_info["query"])
 
         rag_chain = (
             RunnableParallel(
                 retrieved_data=RunnablePassthrough.assign(
-                    docs=RunnableLambda(lambda x: _rerank_documents(
+                    docs=RunnableLambda(lambda x: rerank_documents(
                         x["question"],
                         self._get_retriever_for_query(
                             x.get("expanded_query") or x["question"]
                         ).invoke(x.get("expanded_query") or x["question"]),
                     )),
                     query=itemgetter("question"),
-                ) | RunnableLambda(process_retrieved_docs),
+                ) | RunnableLambda(_internal_process_docs),
                 question=itemgetter("question"),
                 chat_history_messages=itemgetter("chat_history_messages"),
                 dynamic_context_str=itemgetter("dynamic_context_texts") | RunnableLambda(
@@ -901,7 +521,7 @@ class NRQuestionAnswering:
             )
             | {
                 "answer": (
-                    prompt | self.llm | StrOutputParser() | RunnableLambda(_clean_llm_output)
+                    prompt | self.llm | StrOutputParser() | RunnableLambda(clean_llm_output)
                 ),
                 "suggested_downloads": itemgetter("retrieved_data") | RunnableLambda(
                     lambda x: x["suggested_downloads"]
@@ -912,7 +532,7 @@ class NRQuestionAnswering:
         return rag_chain
 
     def _get_retriever_for_query(self, query: str):
-        nr_detected = _extract_nr_from_query(query)
+        nr_detected = extract_nr_from_query(query)
         if nr_detected:
             logger.info(f"NR '{nr_detected}' detectada — filtro via post-filtering.")
         return self.retriever
@@ -944,89 +564,6 @@ class NRQuestionAnswering:
             logger.warning(f"Query expansion falhou: {e}. Usando query original.")
         return query
 
-    # ------------------------------------------------------------------
-    # Retrieval helpers
-    # ------------------------------------------------------------------
-
-    def _process_retrieved_docs(self, docs: List[Document], query: str) -> Dict[str, Any]:
-        """Process retrieved docs into formatted context string and download list."""
-        nr_filter = _extract_nr_from_query(query)
-        filtered_docs = []
-
-        if nr_filter:
-            nr_number = nr_filter.replace('nr-', '')
-            search_patterns = [
-                rf"nr-{nr_number}[\-\.]", rf"nr{nr_number}[\-\.]",
-                rf"NR{nr_number}[\-\.]", rf"NR-{nr_number}[\-\.]",
-                rf"nr[\-\s]*{nr_number}[\-\s]", rf"NR[\-\s]*{nr_number}[\-\s]",
-            ]
-            content_patterns = [
-                rf"NR[\-\s]*{nr_number}[\.\-\s]",
-                rf"Norma[\s]+Regulamentadora[\s]+n?º?[\s]*{nr_number}",
-                rf"NR[\s]*{nr_number}[\s]*[\-\:]",
-            ]
-            for doc in docs:
-                name_raw = doc.metadata.get('document_name', '')
-                content = doc.page_content or ''
-                in_name = any(re.search(p, name_raw, re.IGNORECASE) for p in search_patterns)
-                in_content = any(re.search(p, content[:500], re.IGNORECASE) for p in content_patterns)
-                if in_name or in_content:
-                    filtered_docs.append(doc)
-
-            if not filtered_docs:
-                logger.warning(f"Post-filtering para '{nr_filter}' resultou em 0 docs.")
-                fallback_terms = (
-                    ["instalações elétricas", "segurança elétrica", "eletricidade"]
-                    if nr_number == '10'
-                    else [f"nr {nr_number}", f"norma {nr_number}"]
-                )
-                for doc in docs[:10]:
-                    if any(t.lower() in doc.page_content.lower() for t in fallback_terms):
-                        filtered_docs.append(doc)
-                if not filtered_docs:
-                    filtered_docs = docs[:5]
-        else:
-            filtered_docs = docs
-
-        formatted_context = []
-        unique_docs_for_download: Dict[str, Dict] = {}
-
-        for doc in filtered_docs:
-            doc_name_raw = doc.metadata.get('document_name', 'Documento Desconhecido')
-            clean_doc_name = _get_clean_document_name(doc_name_raw)
-            page_number = doc.metadata.get('page_number', doc.metadata.get('page', 'N/A'))
-            drive_file_id = doc.metadata.get('drive_file_id', None)
-            file_type = doc.metadata.get('file_type', 'application/octet-stream')
-
-            url_viewer = "N/A"
-            if drive_file_id:
-                url_viewer = f"https://drive.google.com/file/d/{quote_plus(drive_file_id)}/view?usp=drivesdk"
-
-            source_metadata_str = (
-                f"document_name_clean: '{clean_doc_name}', "
-                f"page_number: '{page_number}', "
-                f"url_viewer: '{url_viewer}'"
-            )
-            formatted_context.append(
-                f"--- Início do Conteúdo do Documento ---\n{doc.page_content}\n"
-                f"--- Fim do Conteúdo do Documento ---\nMETADATA_FONTE_INTERNA: {source_metadata_str}"
-            )
-
-            if drive_file_id and drive_file_id not in unique_docs_for_download:
-                unique_docs_for_download[drive_file_id] = {
-                    "document_name": clean_doc_name,
-                    "drive_file_id": drive_file_id,
-                    "file_type": file_type,
-                }
-
-        if not filtered_docs:
-            logger.warning("Nenhum documento recuperado. LLM responderá sem contexto específico.")
-
-        return {
-            "formatted_context": "\n\n".join(formatted_context),
-            "suggested_downloads": list(unique_docs_for_download.values()),
-        }
-
     def _retrieve_and_format(
         self,
         query: str,
@@ -1034,7 +571,7 @@ class NRQuestionAnswering:
     ) -> Dict[str, Any]:
         """Retrieve docs and return formatted context + downloads + dynamic context str."""
         docs = self._get_retriever_for_query(query).invoke(query)
-        result = self._process_retrieved_docs(docs, query)
+        result = process_retrieved_docs(docs, query)
 
         dynamic_context_str = ""
         if dynamic_context_texts:
@@ -1096,23 +633,11 @@ class NRQuestionAnswering:
             logger.warning(f"Falha na compressão de histórico: {e}. Usando histórico completo.")
             return messages
 
-    # ------------------------------------------------------------------
-    # Dynamic temperature
-    # ------------------------------------------------------------------
-
-    _DOC_GENERATION_PATTERNS = re.compile(
-        r'(cri[ae]\s|elabor[ae]\s|redij[ae]\s|escreva\s|gere?\s|mont[ae]\s|formul[ae]\s|'
-        r'\bapr\b|\bata\b|relat[oó]rio\s+de\s|laudo\s+t[eé]cnico|'
-        r'\bpcmso\b|\bpgr\b|\bltcat\b|\bppp\b|\bppra\b|\bpcmat\b|'
-        r'modelo\s+de|template\s+de|exemplo\s+de\s+documento)',
-        re.IGNORECASE,
-    )
-
     def _detect_temperature(self, query: str) -> float:
         """Return document or factual temperature based on query type (values from ai_config.json)."""
         temp_doc = getattr(self, "_temperature_document", _AI_CONFIG_DEFAULTS["temperature_document"])
         temp_factual = getattr(self, "_temperature_factual", _AI_CONFIG_DEFAULTS["temperature_factual"])
-        return temp_doc if self._DOC_GENERATION_PATTERNS.search(query) else temp_factual
+        return detect_temperature(query, temp_doc, temp_factual)
 
     def _create_llm_for_streaming(self, temperature: float):
         """Create a ChatOpenAI instance configured for streaming with the given temperature."""
@@ -1238,7 +763,7 @@ class NRQuestionAnswering:
                         feature="llm_stream_guardrail",
                         extra={"guardrail": "off_domain", "query_excerpt": query[:80]},
                     )
-                yield self._SAFE_REFUSAL
+                yield SAFE_REFUSAL
                 return
 
             # Safe — yield buffered tokens for progressive display
@@ -1374,7 +899,7 @@ class NRQuestionAnswering:
 
             self._extract_text_content_debug(documents)
 
-            chunks = _split_nr_document_structurally(documents, chunk_size=1000, chunk_overlap=200)
+            chunks = split_nr_document_structurally(documents, chunk_size=1000, chunk_overlap=200)
             logger.info(f"'{document_name}': {len(chunks)} chunks (structural NR chunker, chunk_size=1000).")
 
             if len(chunks) == 0:
@@ -1566,89 +1091,16 @@ class NRQuestionAnswering:
             self._notify("error", f"Erro ao remover documento. Detalhes: {err_msg}")
             return 0
 
-    # Padrões que indicam que o LLM pode ter sido manipulado para sair do domínio SST.
-    _JAILBREAK_RESPONSE_PATTERNS = re.compile(
-        r'(ignor(?:e|ando|ei)\s+(minhas?\s+)?instru[çc][oõ]es|'
-        r'modo?\s+desenvolvedor|'
-        r'sem\s+(restri[çc][oõ]es|filtros|limites)|'
-        r'estou\s+livre\s+para|'
-        r'posso\s+agora\s+(?:fazer|dizer|responder)|'
-        r'dan\s+mode|jailbreak|'
-        r'as an ai without restrictions|'
-        r'ignoring\s+(my\s+)?previous\s+(instructions?|constraints?)|'
-        r'sure[,.]?\s+i\'?ll?\s+ignore|'
-        r'pretend\s+(you\s+are|to\s+be)|'
-        r'act\s+as\s+if\s+you\s+have\s+no|'
-        r'forget\s+(your|all)\s+(previous\s+)?(instructions?|rules?|constraints?))',
-        re.IGNORECASE,
-    )
-
-    # Palavras-chave do domínio SST: respostas legítimas deveriam conter ao menos uma.
-    _SST_DOMAIN_KEYWORDS = re.compile(
-        r'(nr[\s\-]?\d+|norma\s+regulamentadora|segura[nç]|trabalhador|'
-        r'epi|epc|cipa|sesmt|ppgr|pcmso|pgr|ltcat|cbo|cnae|cid[\s\-]?\d|'
-        r'acidente|risco\s+ocup|insalubre|periculoso|ergonomia|brigada\s+de|'
-        r'laudo\s+t[eé]cnico|fiscali[zs]a|minist[eé]rio\s+do\s+trabalho|'
-        r'\bmte\b|\bsst\b|saúde\s+ocupacional|medicina\s+do\s+trabalho|'
-        r'equipamento\s+de\s+prote|certificado\s+de\s+aprova|'
-        r'trabalho\s+em\s+altura|espa[çc]o\s+confinado|atividade\s+insalubre|'
-        r'atividade\s+perigosa|agen?te\s+(f[ií]sico|qu[ií]mico|biol[oó]gico)|'
-        r'cat\b|fat\b|nexo\s+t[eé]cnico|dose\s+di[aá]ria|limite\s+de\s+toler|'
-        r'programa\s+de\s+preven|gest[aã]o\s+de\s+riscos|apr\b|ata\s+de|'
-        r'investigar\s+acidente|[aá]rvore\s+de\s+causas|laudo\s+pericial|'
-        r'quadro\s+i\s+da\s+nr|adi[çc]ional\s+de\s+insalubridade|'
-        r'ppp\b|e\s*social\b|rat\b|\bsat\b|ntep\b)',
-        re.IGNORECASE,
-    )
-
-    # Indicadores de recusa legítima pelo próprio modelo (não deve ser bloqueada).
-    _REFUSAL_PATTERNS = re.compile(
-        r'(fora\s+da\s+minha\s+[aá]rea|especializa[çc][aã]o|'
-        r'n[aã]o\s+posso\s+(?:ajudar|responder)|'
-        r'n[aã]o\s+est[oá]\s+(?:dentro|relacionado)|'
-        r'limite\s+de\s+(?:minha|meu)|'
-        r'safetyai|sst\s+no\s+brasil|'
-        r'al[eé]m\s+da\s+minha\s+especializa|'
-        r'reformul[ae]\s+(sua\s+)?pergunta|'
-        r'restrij[ao]\s+a\s+temas)',
-        re.IGNORECASE,
-    )
-
-    _SAFE_REFUSAL = (
-        "Essa solicitação está além da minha área de especialização em Saúde e Segurança do Trabalho (SST). "
-        "Não consigo ajudar com esse tema, mas posso ajudá-lo se a pergunta for reformulada para um contexto de SST — por exemplo:\n"
-        "- 'Quais riscos de segurança estão associados a [atividade]?'\n"
-        "- 'Qual NR regula [processo/equipamento]?'\n"
-        "- 'Como elaborar o PGR para [setor]?'\n\n"
-        "Como posso ajudá-lo dentro do universo SST?"
-    )
-
     def _is_jailbreak_response(self, answer: str) -> bool:
         """Verifica se a resposta do LLM apresenta marcadores de jailbreak/evasão de domínio."""
-        return bool(self._JAILBREAK_RESPONSE_PATTERNS.search(answer))
+        return is_jailbreak_response(answer)
 
     def _is_off_domain_response(self, answer: str) -> bool:
         """
         Detecta respostas substantivas sem termos suficientes do domínio SST.
-
-        The sensitivity is controlled by ``guardrail_threshold`` (0.0–1.0):
-        - 0.0  → guardrail disabled; never block.
-        - 0.3  → (default) require ≥1 SST keyword match — same behaviour as before.
-        - 1.0  → require ≥3 SST keyword matches (stricter).
-
-        Formula: required_matches = ceil(threshold * 3), minimum 1.
-        Short responses and recognised refusal patterns are always exempt.
         """
         threshold = getattr(self, "_guardrail_threshold", _AI_CONFIG_DEFAULTS["guardrail_threshold"])
-        if threshold <= 0.0:
-            return False
-        if len(answer) < 250:
-            return False
-        if self._REFUSAL_PATTERNS.search(answer):
-            return False
-        required = max(1, math.ceil(threshold * 3))
-        matches = self._SST_DOMAIN_KEYWORDS.findall(answer)
-        return len(matches) < required
+        return is_off_domain_response(answer, threshold)
 
     def answer_question(
         self,
@@ -1752,7 +1204,7 @@ class NRQuestionAnswering:
                     )
                 if rag_logger and call_id:
                     rag_logger.finish_call(call_id, error="guardrail:jailbreak")
-                return {"answer": self._SAFE_REFUSAL, "suggested_downloads": []}
+                return {"answer": SAFE_REFUSAL, "suggested_downloads": []}
 
             if self._is_off_domain_response(answer_text):
                 logger.warning(f"Resposta do LLM bloqueada por guardrail (fora do domínio SST). Query: '{query[:80]}'")
@@ -1764,7 +1216,7 @@ class NRQuestionAnswering:
                     )
                 if rag_logger and call_id:
                     rag_logger.finish_call(call_id, error="guardrail:off_domain")
-                return {"answer": self._SAFE_REFUSAL, "suggested_downloads": []}
+                return {"answer": SAFE_REFUSAL, "suggested_downloads": []}
 
             if rag_logger and call_id:
                 rag_logger.finish_call(call_id)

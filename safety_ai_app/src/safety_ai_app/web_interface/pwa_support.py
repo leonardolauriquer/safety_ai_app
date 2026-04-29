@@ -58,6 +58,15 @@ def _build_manifest(project_root: str) -> str:
         "categories": ["business", "productivity", "utilities"],
         "prefer_related_applications": False,
         "icons": icons,
+        "screenshots": [
+            {
+                "src": f"data:image/png;base64,{icon_512}",
+                "sizes": "512x512",
+                "type": "image/png",
+                "form_factor": "narrow",
+                "label": "Assistente SST",
+            }
+        ] if icon_512 else [],
         "shortcuts": [
             {
                 "name": "Chat IA",
@@ -166,6 +175,29 @@ def get_pwa_injection_html(project_root: str) -> str:
     addMeta('apple-mobile-web-app-status-bar-style', 'black-translucent');
     addMeta('apple-mobile-web-app-title', '{_APP_SHORT_NAME}');
     addMeta('format-detection', 'telephone=no');
+    /* --- Open Graph + Twitter Card meta tags --- */
+    var ogTags = [
+        ['property', 'og:type',        'website'],
+        ['property', 'og:title',       'SafetyAI — Assistente de SST'],
+        ['property', 'og:description', 'Consulte NRs, gere APRs, dimensione CIPA/SESMT e muito mais com Inteligência Artificial especializada em SST.'],
+        ['property', 'og:url',         'https://safetyai-472110.web.app'],
+        ['property', 'og:site_name',   'SafetyAI'],
+        ['property', 'og:locale',      'pt_BR'],
+        ['name',     'twitter:card',   'summary_large_image'],
+        ['name',     'twitter:title',  'SafetyAI — Assistente de SST'],
+        ['name',     'twitter:description', 'Consulte NRs, gere APRs e dimensione equipes de SST com IA'],
+        ['name',     'description',    'Assistente de IA para Segurança e Saúde do Trabalho. Consulte NRs, gere APRs, dimensione CIPA/SESMT.'],
+        ['name',     'keywords',       'SST, NR, segurança do trabalho, CIPA, SESMT, APR, EPI, EPC, saúde ocupacional'],
+    ];
+    ogTags.forEach(function(tag) {
+        if (!doc.querySelector('meta[' + tag[0] + '="' + tag[1] + '"]')) {
+            var m = doc.createElement('meta');
+            m.setAttribute(tag[0], tag[1]);
+            m.content = tag[2];
+            head.appendChild(m);
+        }
+    });
+
     {apple_touch_js}
 
     /* --- Web App Manifest (Blob URL) --- */

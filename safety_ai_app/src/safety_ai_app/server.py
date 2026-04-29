@@ -18,6 +18,7 @@ import subprocess
 import sys
 import threading
 import time
+from typing import List
 
 import aiohttp
 from aiohttp import web
@@ -28,7 +29,21 @@ logging.basicConfig(
 )
 logger = logging.getLogger("safetyai.proxy")
 
+def _get_python_executable() -> List[str]:
+    """
+    Retorna o comando Python correto para rodar o backend.
+    Prioriza 'py -3.12' se estiver no Windows, ou o sys.executable atual.
+    """
+    if sys.platform == "win32":
+        try:
+            subprocess.run(["py", "-3.12", "--version"], capture_output=True, check=True)
+            return ["py", "-3.12"]
+        except:
+            pass
+    return [sys.executable]
+
 STREAMLIT_PORT = 5001
+FASTAPI_PORT = 8000
 PROXY_PORT = int(os.environ.get("PORT", 5000))
 
 _SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -84,6 +99,37 @@ async def handle_sw(request: web.Request) -> web.Response:
         return web.Response(status=404, text="Service worker not found")
 
 
+async def handle_healthz(request: web.Request) -> web.Response:
+    """Healthcheck endpoint usado pelo Cloud Run e pelo Docker HEALTHCHECK.
+
+    Tenta fazer uma requisição HEAD para o Streamlit interno.
+    Retorna 200 OK se o Streamlit estiver vivo, 503 caso contrário.
+    """
+    session: aiohttp.ClientSession = request.app["session"]
+    try:
+        async with session.head(
+            f"http://127.0.0.1:{STREAMLIT_PORT}/",
+            timeout=aiohttp.ClientTimeout(total=5),
+        ) as resp:
+            if resp.status < 500:
+                return web.Response(
+                    text='{"status":"ok"}',
+                    content_type="application/json",
+                    status=200,
+                )
+            return web.Response(
+                text='{"status":"degraded"}',
+                content_type="application/json",
+                status=503,
+            )
+    except Exception:
+        return web.Response(
+            text='{"status":"starting"}',
+            content_type="application/json",
+            status=503,
+        )
+
+
 async def handle_offline(request: web.Request) -> web.Response:
     return web.Response(text=_OFFLINE_HTML, content_type="text/html")
 
@@ -104,10 +150,43 @@ async def proxy_http(request: web.Request) -> web.StreamResponse:
             data=data,
             allow_redirects=False,
         ) as upstream:
+            # Monta headers de resposta sem os hop-by-hop
+            resp_headers = {k: v for k, v in upstream.headers.items()
+                           if k.lower() not in ("transfer-encoding", "connection")}
+
+            # === HEADERS DE SEGURANÇA HTTP ===
+            resp_headers["X-Content-Type-Options"] = "nosniff"
+            resp_headers["X-Frame-Options"] = "SAMEORIGIN"
+            resp_headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+            resp_headers["Permissions-Policy"] = (
+                "camera=(), microphone=(), geolocation=(), payment=()"
+            )
+            # HSTS: apenas em HTTPS (Cloud Run sempre usa HTTPS)
+            resp_headers["Strict-Transport-Security"] = (
+                "max-age=63072000; includeSubDomains; preload"
+            )
+            # CSP: permite Streamlit + Google Fonts + Firebase
+            resp_headers["Content-Security-Policy"] = (
+                "default-src 'self'; "
+                "script-src 'self' 'unsafe-inline' 'unsafe-eval' "
+                    "https://www.gstatic.com https://www.google.com "
+                    "https://apis.google.com; "
+                "style-src 'self' 'unsafe-inline' "
+                    "https://fonts.googleapis.com https://fonts.gstatic.com; "
+                "font-src 'self' https://fonts.gstatic.com data:; "
+                "img-src 'self' data: blob: https:; "
+                "connect-src 'self' wss: https://firestore.googleapis.com "
+                    "https://identitytoolkit.googleapis.com "
+                    "https://securetoken.googleapis.com "
+                    "https://storage.googleapis.com; "
+                "frame-src 'self' https://accounts.google.com; "
+                "object-src 'none'; "
+                "base-uri 'self'"
+            )
+
             response = web.StreamResponse(
                 status=upstream.status,
-                headers={k: v for k, v in upstream.headers.items()
-                         if k.lower() not in ("transfer-encoding",)},
+                headers=resp_headers,
             )
             await response.prepare(request)
             async for chunk in upstream.content.iter_chunked(65536):
@@ -156,10 +235,41 @@ async def proxy_ws(request: web.Request) -> web.WebSocketResponse:
 
 
 async def route_handler(request: web.Request) -> web.StreamResponse:
+    if request.path.startswith("/api/"):
+        return await proxy_api(request)
     upgrade = request.headers.get("Upgrade", "").lower()
     if upgrade == "websocket":
         return await proxy_ws(request)
     return await proxy_http(request)
+
+async def proxy_api(request: web.Request) -> web.StreamResponse:
+    target = f"http://127.0.0.1:{FASTAPI_PORT}{request.path_qs}"
+    session: aiohttp.ClientSession = request.app["session"]
+    
+    try:
+        headers = {k: v for k, v in request.headers.items() 
+                   if k.lower() not in ("host", "content-length")}
+        data = await request.read()
+        
+        async with session.request(
+            request.method,
+            target,
+            headers=headers,
+            data=data,
+            allow_redirects=False,
+        ) as upstream:
+            response = web.StreamResponse(
+                status=upstream.status,
+                headers={k: v for k, v in upstream.headers.items()
+                         if k.lower() not in ("transfer-encoding",)},
+            )
+            await response.prepare(request)
+            async for chunk in upstream.content.iter_chunked(65536):
+                await response.write(chunk)
+            await response.write_eof()
+            return response
+    except aiohttp.ClientConnectionError:
+        return web.Response(status=502, text="FastAPI Backend not ready yet")
 
 
 async def on_startup(app: web.Application) -> None:
@@ -207,8 +317,11 @@ def _run_nr_indexer_when_ready(delay_seconds: int = 120) -> None:
         })
         import shutil
         nice_cmd = ["nice", "-n", "19"] if shutil.which("nice") else []
+        python_cmd = _get_python_executable()
+        python_exec = python_cmd if isinstance(python_cmd, list) else [python_cmd]
+        
         proc = subprocess.Popen(
-            nice_cmd + [sys.executable, _INDEXER_SCRIPT],
+            nice_cmd + python_exec + [_INDEXER_SCRIPT],
             env=env,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
@@ -234,8 +347,11 @@ def _run_nr_indexer_when_ready(delay_seconds: int = 120) -> None:
 
 def start_streamlit() -> subprocess.Popen:
     web_app = os.path.join(_SCRIPT_DIR, "web_app.py")
-    cmd = [
-        sys.executable, "-m", "streamlit", "run", web_app,
+    python_cmd = _get_python_executable()
+    python_exec = python_cmd if isinstance(python_cmd, list) else [python_cmd]
+    
+    cmd = python_exec + [
+        "-m", "streamlit", "run", web_app,
         "--server.port", str(STREAMLIT_PORT),
         "--server.address", "127.0.0.1",
         "--server.headless", "true",
@@ -244,8 +360,22 @@ def start_streamlit() -> subprocess.Popen:
     return subprocess.Popen(cmd)
 
 
+def start_fastapi() -> subprocess.Popen:
+    api_main = os.path.join(_SCRIPT_DIR, "api", "main.py")
+    python_cmd = _get_python_executable()
+    python_exec = python_cmd if isinstance(python_cmd, list) else [python_cmd]
+    
+    cmd = python_exec + [api_main]
+    # FastAPI usually runs on 8000 by default in my implementation
+    logger.info("Starting FastAPI Backend: %s", " ".join(cmd))
+    env = os.environ.copy()
+    env["PORT"] = "8000"
+    return subprocess.Popen(cmd, env=env)
+
+
 def main() -> None:
     streamlit_proc = start_streamlit()
+    fastapi_proc = start_fastapi()
 
     indexer_thread = threading.Thread(
         target=_run_nr_indexer_when_ready,
@@ -256,6 +386,7 @@ def main() -> None:
     indexer_thread.start()
 
     app = web.Application()
+    app.router.add_get("/healthz", handle_healthz)
     app.router.add_get("/sw.js", handle_sw)
     app.router.add_get("/_safetyai_offline", handle_offline)
     app.router.add_route("*", "/{path_info:.*}", route_handler)
@@ -266,6 +397,7 @@ def main() -> None:
     def shutdown(sig, frame):
         logger.info("Shutting down (signal %s)", sig)
         streamlit_proc.terminate()
+        fastapi_proc.terminate()
         sys.exit(0)
 
     signal.signal(signal.SIGTERM, shutdown)

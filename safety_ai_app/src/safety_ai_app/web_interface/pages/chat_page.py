@@ -44,7 +44,7 @@ from safety_ai_app.google_drive_integrator import (
     get_file_bytes_by_id,
     list_drive_files_by_keyword,
 )
-from safety_ai_app.nr_rag_qa import NRQuestionAnswering, make_streamlit_status_callback, is_warmup_complete
+from safety_ai_app.api_client import SafetyAIAPIClient
 from safety_ai_app.text_extractors import get_text_from_file_path
 
 logger = logging.getLogger(__name__)
@@ -886,74 +886,32 @@ def render_page(process_markdown_for_external_links_func: Callable[[str], str] |
             unsafe_allow_html=True,
         )
 
-    with st.expander("🛠️ Ferramentas Avançadas", expanded=st.session_state.show_tools):
-        tab_local, tab_drive = st.tabs(["📁 Upload Local", "☁️ Google Drive"])
+    with st.expander("📚 Base de Conhecimento Curada", expanded=False):
+        st.markdown(f'<div style="font-size:0.85rem; color:#94a3b8; margin-bottom:12px;">Selecione documentos específicos da base oficial para focar a análise da IA. Se nenhum for selecionado, toda a base ativa será utilizada.</div>', unsafe_allow_html=True)
         
-        with tab_local:
-            uploaded_files = st.file_uploader(
-                "Envie documentos para contexto",
-                type=["pdf", "docx", "txt"],
-                accept_multiple_files=True,
-                key="local_uploader",
-                label_visibility="collapsed"
-            )
-            if uploaded_files:
-                MAX_FILE_SIZE_MB = 15
-                new_files = []
-                rejected = []
-                for f in uploaded_files:
-                    size_mb = len(f.getvalue()) / (1024 * 1024)
-                    if size_mb > MAX_FILE_SIZE_MB:
-                        rejected.append(f.name)
-                        log_security_event(
-                            SecurityEvent.FILE_REJECTED,
-                            file_name=f.name,
-                            file_size_mb=size_mb,
-                            detail=f"Arquivo excede {MAX_FILE_SIZE_MB} MB",
-                            feature="chat_upload",
-                        )
-                        continue
-                    new_files.append({
-                        'id': f"local_{uuid.uuid4()}",
-                        'name': f.name,
-                        'source': 'local',
-                        'mime_type': f.type,
-                        'bytes': f.getvalue()
-                    })
-                if rejected:
-                    _alert(f"Arquivo(s) rejeitado(s) — tamanho máximo {MAX_FILE_SIZE_MB} MB: {', '.join(rejected)}", "error")
-                if new_files:
+        client = st.session_state.get("api_client")
+        if client:
+            curated_docs = client.list_knowledge()
+            if curated_docs:
+                options = {f"{doc['title']} ({doc['category']})": doc for doc in curated_docs}
+                selected_titles = st.multiselect(
+                    "Documentos para análise:",
+                    options=list(options.keys()),
+                    key="curated_selector_chat",
+                    label_visibility="collapsed"
+                )
+                
+                if selected_titles:
                     st.session_state.active_context_files = [
-                        x for x in st.session_state.active_context_files if x['source'] != 'local'
-                    ] + new_files
-                    _alert(f"{len(new_files)} arquivo(s) carregado(s) com sucesso.", "success")
-        
-        with tab_drive:
-            if st.session_state.get("user_drive_service"):
-                try:
-                    folders = [{'id': 'root', 'name': 'Meu Drive'}]
-                    folders.extend(list_drive_folders(st.session_state["user_drive_service"]))
-                    folder_map = {f['name']: f['id'] for f in folders}
-                    selected = st.selectbox("Pasta:", list(folder_map.keys()), key="drive_folder")
-                    
-                    files = get_processable_drive_files_in_folder(st.session_state["user_drive_service"], folder_map[selected])
-                    if files:
-                        selected_files = st.multiselect(
-                            "Arquivos:",
-                            files,
-                            format_func=lambda x: f"{x['name']} ({MIME_TYPE_DISPLAY.get(x['mimeType'], 'Arquivo')})",
-                            key="drive_files"
-                        )
-                        if selected_files:
-                            st.session_state.active_context_files = [
-                                x for x in st.session_state.active_context_files if x['source'] != 'drive'
-                            ] + [{'id': f['id'], 'name': f['name'], 'source': 'drive', 'mime_type': f['mimeType']} for f in selected_files]
-                    else:
-                        _alert("Nenhum arquivo encontrado nesta pasta.", "info")
-                except Exception as e:
-                    _alert(f"Erro ao carregar arquivos do Drive: {e}", "error")
+                        {'id': options[t]['id'], 'name': options[t]['title'], 'source': 'curated'} 
+                        for t in selected_titles
+                    ]
+                else:
+                    st.session_state.active_context_files = []
             else:
-                _alert("Google Drive não conectado.", "warning")
+                _alert("Nenhum documento disponível na base curada.", "info")
+        else:
+            _alert("Erro ao conectar com a base de conhecimento.", "error")
     
     if st.session_state.active_context_files:
         st.markdown('<div class="active-files">', unsafe_allow_html=True)
@@ -1036,28 +994,8 @@ def render_page(process_markdown_for_external_links_func: Callable[[str], str] |
         }
         context_texts = [_mode_instructions.get(st.session_state.chat_mode, "")]
         for ctx_file in st.session_state.active_context_files:
-            try:
-                if ctx_file['source'] == 'local' and 'bytes' in ctx_file:
-                    with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(ctx_file['name'])[1]) as tmp:
-                        tmp.write(ctx_file['bytes'])
-                        tmp_path = tmp.name
-                    text = get_text_from_file_path(tmp_path, ctx_file['name'], ctx_file['mime_type'])
-                    os.unlink(tmp_path)
-                    if text:
-                        context_texts.append(f"[{ctx_file['name']}]: {text[:5000]}")
-                elif ctx_file['source'] == 'drive':
-                    file_bytes = get_file_bytes_by_id(st.session_state["user_drive_service"], ctx_file['id'], ctx_file['mime_type'])
-                    if file_bytes:
-                        ext = '.docx' if 'document' in ctx_file['mime_type'] else '.pdf'
-                        with tempfile.NamedTemporaryFile(delete=False, suffix=ext) as tmp:
-                            tmp.write(file_bytes)
-                            tmp_path = tmp.name
-                        text = get_text_from_file_path(tmp_path, ctx_file['name'], ctx_file['mime_type'])
-                        os.unlink(tmp_path)
-                        if text:
-                            context_texts.append(f"[{ctx_file['name']}]: {text[:5000]}")
-            except Exception as e:
-                logger.error(f"Erro contexto {ctx_file['name']}: {e}")
+            if ctx_file['source'] == 'curated':
+                context_texts.append(f"FOCO DE ANÁLISE: Documento Curado '{ctx_file['name']}'")
 
         full_text = ""
         downloads = []
@@ -1094,13 +1032,16 @@ def render_page(process_markdown_for_external_links_func: Callable[[str], str] |
             )
 
             try:
-                qa_instance = NRQuestionAnswering(on_status=make_streamlit_status_callback())
+                # Usar o cliente da API que já está no session_state
+                api_client = st.session_state.get("api_client") or SafetyAIAPIClient()
                 chat_history = [{"role": m["role"], "content": m["content"]} for m in st.session_state.messages[:-1]]
-                stream_gen = qa_instance.stream_answer_question(query_to_process, chat_history, context_texts)
-
+                
+                # Chamar o streaming via API
+                stream_gen = api_client.stream_ask(query_to_process, chat_history, context_texts)
+                
                 chunk_buffer = ""
                 render_counter = 0
-
+                
                 for chunk in stream_gen:
                     full_text += chunk
                     chunk_buffer += chunk
@@ -1113,7 +1054,7 @@ def render_page(process_markdown_for_external_links_func: Callable[[str], str] |
                             unsafe_allow_html=True,
                         )
                         chunk_buffer = ""
-
+                        
                 if full_text:
                     content_html = markdown_func(full_text)
                     stream_slot.markdown(
@@ -1121,13 +1062,16 @@ def render_page(process_markdown_for_external_links_func: Callable[[str], str] |
                         f'<div class="msg-ai-content">{content_html}</div></div>',
                         unsafe_allow_html=True,
                     )
-
-                downloads = qa_instance.get_last_suggested_downloads()
+                    
+                # Recuperar downloads sugeridos via cliente da API
+                downloads = api_client.get_last_suggested_downloads()
+                
                 seen_ids = {d.get("drive_file_id") for d in downloads}
                 for dr in drive_search_results:
                     if dr["drive_file_id"] not in seen_ids:
                         downloads.append(dr)
                         seen_ids.add(dr["drive_file_id"])
+                        
                 if full_text:
                     follow_ups = _generate_follow_ups(query_to_process, full_text)
                     st.session_state.last_follow_ups = follow_ups

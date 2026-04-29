@@ -40,6 +40,7 @@ st.set_page_config(
 from safety_ai_app.web_interface.utils import get_image_base64 as _get_image_base64, process_markdown_for_external_links
 from safety_ai_app.web_interface import session_state as _ss
 from safety_ai_app.security.security_logger import log_security_event, SecurityEvent
+from safety_ai_app.api_client import SafetyAIAPIClient
 
 # --- Lazy Imports for Heavy Modules ---
 
@@ -79,14 +80,13 @@ def get_image_base64(image_path: str) -> str:
 
 
 @st.cache_resource
-def get_qa_instance_cached() -> Optional[Any]:
+def get_api_client() -> SafetyAIAPIClient:
+    """Retorna o cliente da API para comunicação com o backend FastAPI."""
     try:
-        NRQA = _lazy_import_nr_rag()["NRQA"]
-        # Inicialização rápida: Deferir sincronização com GCS para o botão manual
-        return NRQA(sync_on_init=False)
+        # A URL padrão do proxy redireciona /api/v1 para o FastAPI
+        return SafetyAIAPIClient()
     except Exception as e:
-        logger.critical(f"[ERRO CRÍTICO] ERRO ao inicializar NRQuestionAnswering: {e}", exc_info=True)
-        st.error(f"Erro crítico ao inicializar o serviço de IA. Detalhes: {e}")
+        logger.error(f"Erro ao inicializar API Client: {e}")
         return None
 
 
@@ -268,8 +268,12 @@ def main_app_entrypoint() -> None:
     # --- Phase 1: Critical UI Styles (Always needed) ---
     t0 = time.time()
     st.markdown("""
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+        <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"></noscript>
+        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" media="print" onload="this.media='all'">
+        <noscript><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"></noscript>
     """, unsafe_allow_html=True)
     st.markdown(GLOBAL_STYLES, unsafe_allow_html=True)
     st.markdown(get_pwa_injection_html(project_root), unsafe_allow_html=True)
@@ -301,7 +305,7 @@ def main_app_entrypoint() -> None:
     t2 = time.time()
     # Model warmup and Sync are now moved to the Sync Page or explicit buttons.
     _cleanup_temp_files()
-    _ss.initialize_common(get_qa_instance_cached, get_app_drive_service_cached, set_correlation_id)
+    _ss.initialize_common(get_api_client, get_app_drive_service_cached, set_correlation_id)
 
     requested_page_from_url = st.query_params.get("page")
     sync_done_in_url = st.query_params.get("sync_done") == "true"

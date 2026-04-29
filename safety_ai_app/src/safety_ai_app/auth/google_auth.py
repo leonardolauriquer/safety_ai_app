@@ -10,10 +10,29 @@ import streamlit as st
 # from google.oauth2.credentials import Credentials  # Mantida no topo pois é rápida
 # from google_auth_oauthlib.flow import InstalledAppFlow # MOVIDA
 # from googleapiclient.discovery import build # MOVIDA
-from google.oauth2.credentials import Credentials
-from google.auth.transport.requests import Request
+import firebase_admin
+from firebase_admin import credentials, firestore
 
 logger = logging.getLogger(__name__)
+
+# Inicializar Firebase se ainda não foi inicializado
+if not firebase_admin._apps:
+    try:
+        # Tenta usar credenciais padrão do ambiente (Cloud Run / Google Cloud)
+        firebase_admin.initialize_app()
+        logger.info("Firebase Admin SDK inicializado com sucesso.")
+    except Exception as e:
+        logger.error(f"Erro ao inicializar Firebase: {e}")
+
+def get_firestore_client():
+    """Retorna o cliente do Firestore."""
+    return firestore.client()
+
+def _token_key_for_user(user_id: Optional[str]) -> str:
+    """Return the database token_key for the given user_id (or the shared legacy key when None)."""
+    if user_id is not None:
+        return f"{_DB_TOKEN_KEY}:{user_id}"
+    return _DB_TOKEN_KEY
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.abspath(os.path.join(script_dir, '..', '..', '..'))
@@ -39,157 +58,52 @@ SCOPES_SERVICE_ACCOUNT = [
 ]
 
 
-@st.cache_resource(show_spinner="Conectando ao banco de dados...")
-def _get_db_connection_cached():
-    """Retorna uma conexão psycopg2 singleton cacheada."""
-    database_url = os.environ.get('DATABASE_URL')
-    if not database_url:
-        return None
-    try:
-        import psycopg2
-        conn = psycopg2.connect(database_url)
-        # Garantir que a tabela existe apenas uma vez por inicialização
-        _ensure_token_table_once(conn)
-        return conn
-    except Exception as e:
-        logger.warning(f"Não foi possível conectar ao banco de dados: {e}")
-        return None
-
-def _get_db_connection():
-    """Wrapper para a conexão cacheada."""
-    return _get_db_connection_cached()
-
-@st.cache_resource
-def _ensure_token_table_once(_conn) -> bool:
-    """Versão cacheada para garantir que a DDL rode apenas uma vez."""
-    return _ensure_token_table(_conn)
-
-
-def _ensure_token_table(conn) -> bool:
-    """Create the google_oauth_tokens table if it doesn't exist, and migrate existing tables. Returns True on success."""
-    try:
-        with conn.cursor() as cur:
-            cur.execute("""
-                CREATE TABLE IF NOT EXISTS google_oauth_tokens (
-                    id SERIAL PRIMARY KEY,
-                    token_key VARCHAR(255) NOT NULL UNIQUE,
-                    token_data TEXT NOT NULL,
-                    updated_at TIMESTAMP DEFAULT NOW(),
-                    user_id VARCHAR(255)
-                )
-            """)
-            cur.execute("""
-                ALTER TABLE google_oauth_tokens
-                    ADD COLUMN IF NOT EXISTS user_id VARCHAR(255)
-            """)
-            cur.execute("""
-                CREATE INDEX IF NOT EXISTS idx_google_oauth_tokens_user_id
-                    ON google_oauth_tokens (user_id)
-            """)
-        conn.commit()
-        return True
-    except Exception as e:
-        logger.warning(f"Não foi possível criar tabela google_oauth_tokens: {e}")
-        conn.rollback()
-        return False
-
-
-def _token_key_for_user(user_id: Optional[str]) -> str:
-    """Return the database token_key for the given user_id (or the shared legacy key when None)."""
-    if user_id is not None:
-        return f"{_DB_TOKEN_KEY}:{user_id}"
-    return _DB_TOKEN_KEY
-
-
 def _load_creds_from_db(user_id: Optional[str] = None) -> Optional[Credentials]:
-    """Load OAuth credentials from PostgreSQL database.
-
-    Args:
-        user_id: Optional identifier for the user whose credentials to load.
-                 When None, the legacy shared token is loaded for backward compatibility.
-    """
-    conn = _get_db_connection()
-    if conn is None:
-        return None
+    """Load OAuth credentials from Firebase Firestore."""
     try:
+        db = get_firestore_client()
         token_key = _token_key_for_user(user_id)
-        with conn.cursor() as cur:
-            cur.execute(
-                "SELECT token_data FROM google_oauth_tokens WHERE token_key = %s",
-                (token_key,)
-            )
-            row = cur.fetchone()
-        if row is None:
+        doc_ref = db.collection('google_oauth_tokens').document(token_key)
+        doc = doc_ref.get()
+        
+        if not doc.exists:
             return None
-        data = json.loads(row[0])
+            
+        data_str = doc.to_dict().get('token_data')
+        if not data_str:
+            return None
+            
+        data = json.loads(data_str)
         return Credentials.from_authorized_user_info(data, SCOPES_USER)
-    except (json.JSONDecodeError, KeyError, ValueError) as e:
-        logger.warning(f"Erro ao deserializar token do banco de dados: {e}. Removendo para re-autenticar.")
-        _delete_creds_from_db(user_id=user_id)
-        return None
     except Exception as e:
-        logger.warning(f"Erro ao carregar token do banco de dados: {e}")
+        logger.warning(f"Erro ao carregar token do Firestore: {e}")
         return None
-    finally:
-        pass
-
 
 def _save_creds_to_db(creds: Credentials, user_id: Optional[str] = None) -> None:
-    """Persist OAuth credentials to PostgreSQL database.
-
-    Args:
-        creds: The OAuth credentials to save.
-        user_id: Optional identifier for the user. When None, the legacy shared token
-                 slot is used for backward compatibility.
-    """
-    conn = _get_db_connection()
-    if conn is None:
-        raise OSError("Banco de dados indisponível — não foi possível salvar o token.")
+    """Persist OAuth credentials to Firebase Firestore."""
     try:
-        _ensure_token_table(conn)
+        db = get_firestore_client()
         token_key = _token_key_for_user(user_id)
-        with conn.cursor() as cur:
-            cur.execute("""
-                INSERT INTO google_oauth_tokens (token_key, token_data, updated_at, user_id)
-                VALUES (%s, %s, NOW(), %s)
-                ON CONFLICT (token_key) DO UPDATE
-                    SET token_data = EXCLUDED.token_data,
-                        updated_at = NOW(),
-                        user_id = EXCLUDED.user_id
-            """, (token_key, creds.to_json(), user_id))
-        conn.commit()
-        logger.info("Token OAuth guardado no banco de dados com sucesso.")
+        doc_ref = db.collection('google_oauth_tokens').document(token_key)
+        
+        doc_ref.set({
+            'token_key': token_key,
+            'token_data': creds.to_json(),
+            'updated_at': firestore.SERVER_TIMESTAMP,
+            'user_id': user_id
+        })
+        logger.info("Token OAuth guardado no Firestore com sucesso.")
     except Exception as e:
-        conn.rollback()
-        raise OSError(f"Falha ao guardar token no banco de dados: {e}") from e
-    finally:
-        pass
-
+        raise OSError(f"Falha ao guardar token no Firestore: {e}") from e
 
 def _delete_creds_from_db(user_id: Optional[str] = None) -> None:
-    """Remove OAuth credentials from the database.
-
-    Args:
-        user_id: Optional identifier for the user whose credentials to remove.
-                 When None, the legacy shared token is removed for backward compatibility.
-    """
-    conn = _get_db_connection()
-    if conn is None:
-        return
+    """Remove OAuth credentials from Firebase Firestore."""
     try:
-        _ensure_token_table(conn)
+        db = get_firestore_client()
         token_key = _token_key_for_user(user_id)
-        with conn.cursor() as cur:
-            cur.execute(
-                "DELETE FROM google_oauth_tokens WHERE token_key = %s",
-                (token_key,)
-            )
-        conn.commit()
+        db.collection('google_oauth_tokens').document(token_key).delete()
     except Exception as e:
-        logger.warning(f"Erro ao remover token do banco de dados: {e}")
-        conn.rollback()
-    finally:
-        conn.close()
+        logger.warning(f"Erro ao remover token do Firestore: {e}")
 
 
 @st.cache_data

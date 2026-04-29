@@ -1,0 +1,20 @@
+.git
+.gitignore
+venv
+env
+__pycache__
+.pytest_cache
+*.pyc
+.ipynb_checkpoints
+safety_ai_app/data/rag_logs/
+# data/ (Pasta removida do ignore para permitir deploy da RAG)
+# chromadb/ (Pasta removida do ignore para permitir deploy do banco vetorial)
+node_modules
+dist/
+build/
+.streamlit/
+scripts/
+docs/
+.gemini/
+.antigravity/
+.vscode/

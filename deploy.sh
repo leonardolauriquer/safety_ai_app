@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-PROJECT_ID="safety-ai-2026"
+PROJECT_ID="safetyai-472110"
 REGION="us-central1"
 SERVICE="safety-ai-app"
 IMAGE="us-central1-docker.pkg.dev/$PROJECT_ID/safety-ai-app/$SERVICE"
@@ -46,8 +46,9 @@ create_secret() {
 create_secret GOOGLE_API_KEY
 create_secret GOOGLE_SERVICE_ACCOUNT_KEY
 create_secret GOOGLE_CLIENT_CREDENTIALS
-create_secret GOOGLE_DRIVE_CENTRAL_LIBRARY_FOLDER_ID
-create_secret GOOGLE_DRIVE_DONATION_FOLDER_ID
+# REMOVIDO: Drive de usuário não é mais usado (base curada centralizada)
+# create_secret GOOGLE_DRIVE_CENTRAL_LIBRARY_FOLDER_ID
+# create_secret GOOGLE_DRIVE_DONATION_FOLDER_ID
 create_secret ADZUNA_API_KEY
 create_secret ADZUNA_APP_ID
 create_secret ICD_API_CLIENT_ID
@@ -83,8 +84,6 @@ gcloud run deploy $SERVICE \
 GOOGLE_API_KEY=GOOGLE_API_KEY:latest,\
 GOOGLE_SERVICE_ACCOUNT_KEY=GOOGLE_SERVICE_ACCOUNT_KEY:latest,\
 GOOGLE_CLIENT_CREDENTIALS=GOOGLE_CLIENT_CREDENTIALS:latest,\
-GOOGLE_DRIVE_CENTRAL_LIBRARY_FOLDER_ID=GOOGLE_DRIVE_CENTRAL_LIBRARY_FOLDER_ID:latest,\
-GOOGLE_DRIVE_DONATION_FOLDER_ID=GOOGLE_DRIVE_DONATION_FOLDER_ID:latest,\
 ADZUNA_API_KEY=ADZUNA_API_KEY:latest,\
 ADZUNA_APP_ID=ADZUNA_APP_ID:latest,\
 ICD_API_CLIENT_ID=ICD_API_CLIENT_ID:latest,\
@@ -92,6 +91,7 @@ ICD_API_CLIENT_SECRET=ICD_API_CLIENT_SECRET:latest,\
 RECAPTCHA_SECRET_KEY=RECAPTCHA_SECRET_KEY:latest,\
 RECAPTCHA_SITE_KEY=RECAPTCHA_SITE_KEY:latest,\
 ADMIN_EMAILS=ADMIN_EMAILS:latest" \
+  --set-env-vars "DISABLE_AUTOINDEX=1,OAUTH_REDIRECT_URI=https://safety-ai-app-o5e7fadxoq-uc.a.run.app" \
   --project $PROJECT_ID
 
 CLOUD_RUN_URL=$(gcloud run services describe $SERVICE --region $REGION --project $PROJECT_ID --format="value(status.url)")

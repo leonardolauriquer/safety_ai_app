@@ -4,11 +4,11 @@
 
 | Componente | Valor |
 |---|---|
-| **Projeto GCP** | `safetyai-472110` |
+| **Projeto GCP** | `safety-ai-2026` |
 | **Projeto Firebase** | `safety-ai-2026` |
 | **URL Cloud Run** | https://safety-ai-app-710675170484.us-central1.run.app |
 | **Firebase Hosting** | https://safety-ai-2026.web.app |
-| **Artifact Registry** | `us-central1-docker.pkg.dev/safetyai-472110/safety-ai-app/safety-ai-app` |
+| **Artifact Registry** | `us-central1-docker.pkg.dev/safety-ai-2026/safety-ai-app/safety-ai-app` |
 | **Cloud Run Service** | `safety-ai-app` |
 | **Região** | `us-central1` |
 
@@ -28,7 +28,7 @@ Replit (edição de código)
 ### Passo 1 — Permissões da conta de serviço
 
 Acesse **GCP Console → IAM** e adicione os papéis à conta de serviço
-`safetyai-app-drive-677@safetyai-472110.iam.gserviceaccount.com`:
+`safetyai-app-drive-677@safety-ai-2026.iam.gserviceaccount.com`:
 
 | Role | Para quê |
 |---|---|
@@ -64,7 +64,7 @@ echo $GCP_SA_KEY | docker login \
   us-central1-docker.pkg.dev
 
 # 2. Build e push
-IMAGE=us-central1-docker.pkg.dev/safetyai-472110/safety-ai-app/safety-ai-app
+IMAGE=us-central1-docker.pkg.dev/safety-ai-2026/safety-ai-app/safety-ai-app
 docker build -t $IMAGE:latest .
 docker push $IMAGE:latest
 
@@ -76,7 +76,7 @@ gcloud run deploy safety-ai-app \
   --allow-unauthenticated \
   --port=8080 --memory=4Gi --cpu=2 --timeout=300 \
   --set-env-vars="DISABLE_AUTOINDEX=1" \
-  --project=safetyai-472110
+  --project=safety-ai-2026
 
 # 4. Deploy Firebase Hosting
 firebase deploy --only hosting --project safety-ai-2026

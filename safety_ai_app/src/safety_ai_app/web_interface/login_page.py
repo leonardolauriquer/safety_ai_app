@@ -1,3 +1,8 @@
+import streamlit as st
+import os
+import base64
+from typing import Optional
+
 @st.cache_data
 def _get_logo_base64_cached(logo_path: str) -> Optional[str]:
     """Lê e codifica a logo em Base64 com cache para evitar IO repetitivo."""

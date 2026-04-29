@@ -10,6 +10,9 @@ Admins always bypass plan restrictions.
 Failure policy: if config files cannot be loaded, the system defaults to
 *deny* for restricted capabilities (fail-closed) to avoid silent privilege
 escalation.
+
+Quota de chat: persistida no Firestore via quota_manager para evitar
+burla por reload ou múltiplas abas.
 """
 
 import json
@@ -185,7 +188,20 @@ def get_daily_chat_limit() -> int:
 
 
 def get_chat_messages_sent_today() -> int:
-    """Return the number of chat messages sent by this user today (session-scoped)."""
+    """Return the number of chat messages sent by this user today.
+
+    Tenta o Firestore (via quota_manager) primeiro para garantir consistência
+    entre sessões e abas. Cai para session_state se o Firestore falhar.
+    """
+    user_id = st.session_state.get("session_id")
+    if user_id:
+        try:
+            from safety_ai_app.auth.quota_manager import get_messages_sent_today
+            return get_messages_sent_today(user_id)
+        except Exception as e:
+            logger.warning(f"[feature_access] Falha ao ler quota do Firestore: {e}. Usando session_state.")
+
+    # Fallback para session_state
     today = date.today().isoformat()
     if st.session_state.get("_chat_quota_date") != today:
         st.session_state["_chat_quota_date"] = today
@@ -194,7 +210,20 @@ def get_chat_messages_sent_today() -> int:
 
 
 def increment_chat_messages_today() -> None:
-    """Increment the daily chat message counter for the current user."""
+    """Increment the daily chat message counter for the current user.
+
+    Persiste no Firestore via quota_manager para evitar burla por reload.
+    """
+    user_id = st.session_state.get("session_id")
+    if user_id:
+        try:
+            from safety_ai_app.auth.quota_manager import increment_messages_today
+            increment_messages_today(user_id)
+            return
+        except Exception as e:
+            logger.warning(f"[feature_access] Falha ao incrementar quota no Firestore: {e}. Usando session_state.")
+
+    # Fallback para session_state
     today = date.today().isoformat()
     if st.session_state.get("_chat_quota_date") != today:
         st.session_state["_chat_quota_date"] = today
@@ -210,6 +239,13 @@ def check_chat_quota() -> bool:
     limit = get_daily_chat_limit()
     if limit < 0:
         return True
+    user_id = st.session_state.get("session_id")
+    if user_id:
+        try:
+            from safety_ai_app.auth.quota_manager import check_quota
+            return check_quota(user_id, limit)
+        except Exception as e:
+            logger.warning(f"[feature_access] Falha ao verificar quota no Firestore: {e}. Usando session_state.")
     sent = get_chat_messages_sent_today()
     return sent < limit
 

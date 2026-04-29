@@ -23,7 +23,7 @@ except ImportError:
     print("ERROR: google-auth not available. Run: pip install google-auth requests")
     sys.exit(1)
 
-GCP_PROJECT = "safetyai-472110"
+GCP_PROJECT = "safety-ai-2026"
 SECRET_MANAGER_SCOPE = "https://www.googleapis.com/auth/cloud-platform"
 
 SECRETS_TO_PUSH = [

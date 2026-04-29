@@ -21,7 +21,7 @@ O SafetyAI integra-se com diversos servicos externos para fornecer dados atualiz
 
 ```python
 # Email da conta de servico
-safetyai-app-drive-677@safetyai-472110.iam.gserviceaccount.com
+safetyai-app-drive-677@safety-ai-2026.iam.gserviceaccount.com
 
 # Escopos
 SCOPES = ['https://www.googleapis.com/auth/drive.readonly']

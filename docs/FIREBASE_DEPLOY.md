@@ -5,7 +5,7 @@
 - Conta Google Cloud com billing activado
 - [Firebase CLI](https://firebase.google.com/docs/cli) instalado (`npm install -g firebase-tools`)
 - [gcloud CLI](https://cloud.google.com/sdk/docs/install) instalado e autenticado
-- Projecto Firebase: `safetyai-472110`
+- Projecto Firebase: `safety-ai-2026`
 
 ---
 
@@ -26,7 +26,7 @@ firebase use safety-ai-2026
 ## 2. Criar secrets no Google Cloud Secret Manager
 
 ```bash
-PROJECT_ID="safetyai-472110"
+PROJECT_ID="safety-ai-2026"
 
 gcloud services enable secretmanager.googleapis.com --project=$PROJECT_ID
 
@@ -49,7 +49,7 @@ done
 
 > **Passo obrigatório** — sem isso, o login com Google redireciona para `localhost` em produção.
 
-1. Acede a [Google Cloud Console → APIs & Services → Credentials](https://console.cloud.google.com/apis/credentials?project=safetyai-472110)
+1. Acede a [Google Cloud Console → APIs & Services → Credentials](https://console.cloud.google.com/apis/credentials?project=safety-ai-2026)
 2. Clica no teu **OAuth 2.0 Client ID** (o mesmo referenciado em `GOOGLE_CLIENT_CREDENTIALS`)
 3. Em **Authorized redirect URIs**, adiciona:
    - `https://safety-ai-2026.web.app`
@@ -61,7 +61,7 @@ done
 ## 4. Construir e publicar a imagem Docker
 
 ```bash
-PROJECT_ID="safetyai-472110"
+PROJECT_ID="safety-ai-2026"
 REGION="us-central1"
 IMAGE="$REGION-docker.pkg.dev/$PROJECT_ID/safety-ai-app/safety-ai-app"
 
@@ -82,7 +82,7 @@ gcloud builds submit --tag $IMAGE --project=$PROJECT_ID .
 ## 5. Conceder acesso ao Secret Manager para o Cloud Run SA
 
 ```bash
-PROJECT_ID="safetyai-472110"
+PROJECT_ID="safety-ai-2026"
 PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID --format='value(projectNumber)')
 SA="${PROJECT_NUMBER}-compute@developer.gserviceaccount.com"
 
@@ -97,7 +97,7 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
 ## 6. Fazer deploy no Cloud Run
 
 ```bash
-PROJECT_ID="safetyai-472110"
+PROJECT_ID="safety-ai-2026"
 REGION="us-central1"
 IMAGE="$REGION-docker.pkg.dev/$PROJECT_ID/safety-ai-app/safety-ai-app:latest"
 
@@ -120,10 +120,10 @@ gcloud run deploy safety-ai-app \
 ## 7. Activar Firebase Hosting (opcional)
 
 ```bash
-firebase deploy --only hosting --project safetyai-472110
+firebase deploy --only hosting --project safety-ai-2026
 ```
 
-A URL final será: `https://safetyai-472110.web.app`
+A URL final será: `https://safety-ai-2026.web.app`
 
 ---
 
@@ -140,7 +140,7 @@ Para persistência total, considera migrar o ChromaDB para Cloud Filestore NFS o
 Se o serviço já está no ar mas o login do Google redireccionava para `localhost`, faz isto no **Cloud Shell**:
 
 ```bash
-PROJECT_ID="safetyai-472110"
+PROJECT_ID="safety-ai-2026"
 REGION="us-central1"
 
 # 1. Criar o secret OAUTH_REDIRECT_URI
@@ -168,7 +168,7 @@ gcloud run deploy safety-ai-app \
 ## Actualizações futuras (nova versão de código)
 
 ```bash
-PROJECT_ID="safetyai-472110"
+PROJECT_ID="safety-ai-2026"
 IMAGE="us-central1-docker.pkg.dev/$PROJECT_ID/safety-ai-app/safety-ai-app"
 
 gcloud builds submit --tag $IMAGE --project=$PROJECT_ID .

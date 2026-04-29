@@ -396,12 +396,46 @@ def apr_generator_page() -> None:
     )
     st.session_state.apr_data["other_equipments_tools"] = st.text_area("Outros Equipamentos/Ferramentas (se houver)", value=st.session_state.apr_data["other_equipments_tools"], placeholder="Liste outros equipamentos/ferramentas, um por linha.", key="apr_other_equip_tools")
     
+    with st.expander("📚 Referências Técnicas (Base Curada)", expanded=False):
+        st.markdown(f'<div style="font-size:0.85rem; color:#94a3b8; margin-bottom:12px;">Consulte ou selecione normas da base oficial para guiar a geração desta APR.</div>', unsafe_allow_html=True)
+        client = st.session_state.get("api_client")
+        if client:
+            curated_docs = client.list_knowledge()
+            if curated_docs:
+                options = {f"{doc['title']} ({doc['category']})": doc for doc in curated_docs}
+                selected_ref = st.multiselect("Usar como referência:", options=list(options.keys()), key="apr_ref_selector")
+            else:
+                _alert("Nenhum documento disponível na base curada.", "info")
+        else:
+            _alert("Erro ao conectar com a base de conhecimento.", "error")
+
     st.markdown(f'<div class="section-title">{_get_material_icon_html("alert")} 4. Detalhamento da Atividade e Análise de Risco</div>', unsafe_allow_html=True)
     st.markdown('<div class="info-hint">Adicione os riscos da atividade em sequência e analise-os, definindo a probabilidade e severidade.</div>', unsafe_allow_html=True)
 
-    # Botão alterado para "Adicionar Risco"
-    if st.button("Adicionar Risco", on_click=_add_activity_step_callback, key="add_step_btn_outside"):
-        st.rerun()
+    col_btns = st.columns([0.5, 0.5])
+    with col_btns[0]:
+        if st.button("➕ Adicionar Risco Manual", on_click=_add_activity_step_callback, key="add_step_btn_outside", use_container_width=True):
+            st.rerun()
+    with col_btns[1]:
+        if st.button("🤖 Sugerir via IA (Base Curada)", key="ai_suggest_apr", use_container_width=True):
+            task = st.session_state.apr_data.get("task_name")
+            if not task:
+                _alert("Por favor, preencha o Nome da Atividade (Seção 2) primeiro.", "warning")
+            else:
+                client = st.session_state.get("api_client")
+                if client:
+                    with st.spinner("Analisando base curada e gerando sugestões..."):
+                        prompt = f"Sugira 3 riscos técnicos, suas consequências e medidas de controle para a atividade: {task}. Formate como JSON ou lista clara."
+                        # Se houver documentos selecionados, passamos como contexto
+                        refs = st.session_state.get("apr_ref_selector", [])
+                        ans = client.ask(prompt, attached_docs=[f"Referência: {r}" for r in refs])
+                        
+                        # Simulação de parsing (idealmente a API retornaria estruturado)
+                        # Por agora, vamos adicionar como uma observação ou tentar parsear
+                        st.session_state.apr_data["general_observations"] += f"\n\n[Sugestões IA para {task}]:\n{ans.get('answer', '')}"
+                        _alert("Sugestões adicionadas às Observações Gerais. Você pode copiá-las para as etapas acima.", "success")
+                else:
+                    _alert("API Client não disponível.", "error")
 
     if not st.session_state.apr_data["activity_steps"]:
         _alert("Clique em 'Adicionar Risco' para começar a detalhar a análise de risco por etapa da atividade.", "info")
@@ -544,64 +578,35 @@ def apr_generator_page() -> None:
                     apr_data_for_doc["additional_measures"] = final_additional_measures
                     apr_data_for_doc["trainings"] = final_trainings
 
-                    # 1. Gerar DOCX
-                    # Passa o logo do usuário para a função de geração do documento
-                    docx_buffer = create_apr_document(apr_data_for_doc, user_logo_base64=st.session_state.apr_data["user_logo_base64"])
+                    # 1. Gerar documento via API
+                    api_client = st.session_state.get("api_client") or SafetyAIAPIClient()
                     
+                    # Preparar dados para a API (os mesmos que seriam passados localmente)
+                    apr_data_for_api = st.session_state.apr_data.copy()
+                    apr_data_for_api["additional_measures"] = final_additional_measures
+                    apr_data_for_api["trainings"] = final_trainings
+                    
+                    # A API já lida com o logo do usuário dentro do payload se necessário,
+                    # mas aqui passamos explicitamente conforme a assinatura do cliente.
+                    user_logo = apr_data_for_api.get("user_logo_base64")
+                    
+                    doc_bytes = api_client.generate_document("apr", apr_data_for_api, user_logo_base64=user_logo)
+                    
+                    if not doc_bytes:
+                        raise Exception("Falha ao receber documento da API")
+
                     apr_num = st.session_state.apr_data.get('apr_number', 'SemNumero')
                     apr_rev = st.session_state.apr_data.get('revision_number', '0')
                     base_filename = f"APR_{apr_num}_Rev{apr_rev}_{date.today().strftime('%Y%m%d')}"
                     docx_filename = f"{base_filename}.docx"
                     pdf_filename = f"{base_filename}.pdf"
 
-                    # 2. Converter DOCX para PDF
-                    if DOCX2PDF_AVAILABLE:
-                        try:
-                            with tempfile.NamedTemporaryFile(delete=False, suffix=".docx") as temp_docx_file:
-                                temp_docx_file.write(docx_buffer.getvalue())
-                                temp_docx_path = temp_docx_file.name
-                            
-                            with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_pdf_file:
-                                temp_pdf_path = temp_pdf_file.name
-                            
-                            if PYTHONCOM_AVAILABLE:
-                                pythoncom.CoInitialize()
-                            try:
-                                convert(temp_docx_path, temp_pdf_path)
-                            finally:
-                                if PYTHONCOM_AVAILABLE:
-                                    pythoncom.CoUninitialize()
-                            
-                            with open(temp_pdf_path, "rb") as f:
-                                st.session_state.generated_pdf_buffer = BytesIO(f.read())
-                            st.session_state.generated_pdf_filename = pdf_filename
-                            
-                            _alert("APR gerada e convertida para PDF com sucesso!", "success")
-                            logger.info(f"Documento APR '{pdf_filename}' gerado e pronto para download.")
-
-                        except FileNotFoundError as fnfe:
-                            _alert(
-                                f"Ferramenta externa (LibreOffice/Microsoft Word) não encontrada. "
-                                f"O documento será baixado como DOCX. Detalhes: {fnfe}",
-                                "warning"
-                            )
-                            logger.error(f"FileNotFoundError durante conversão para PDF: {fnfe}", exc_info=True)
-                            st.session_state.generated_pdf_buffer = docx_buffer
-                            st.session_state.generated_pdf_filename = docx_filename
-                        except Exception as e:
-                            _alert(f"Erro ao converter para PDF: {e}. O documento será baixado como DOCX.", "warning")
-                            logger.error(f"Erro inesperado durante conversão para PDF: {e}", exc_info=True)
-                            st.session_state.generated_pdf_buffer = docx_buffer
-                            st.session_state.generated_pdf_filename = docx_filename
-                        finally:
-                            if 'temp_docx_path' in locals() and os.path.exists(temp_docx_path):
-                                os.remove(temp_docx_path)
-                            if 'temp_pdf_path' in locals() and os.path.exists(temp_pdf_path):
-                                os.remove(temp_pdf_path)
-                    else:
-                        _alert("A biblioteca 'docx2pdf' não está instalada. O documento será baixado como DOCX.", "warning")
-                        st.session_state.generated_pdf_buffer = docx_buffer
-                        st.session_state.generated_pdf_filename = docx_filename
+                    # Armazenar o DOCX recebido (por enquanto a API retorna DOCX)
+                    st.session_state.generated_pdf_buffer = BytesIO(doc_bytes)
+                    st.session_state.generated_pdf_filename = docx_filename
+                    
+                    _alert("APR gerada com sucesso via API!", "success")
+                    logger.info(f"Documento APR '{docx_filename}' gerado via API.")
                 except Exception as e:
                     _alert(f"Erro ao gerar o documento da APR: {e}", "error")
                     logger.error(f"Erro ao gerar documento da APR: {e}", exc_info=True)

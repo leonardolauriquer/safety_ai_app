@@ -1,0 +1,12 @@
+User-agent: *
+# Permite indexação da landing page pública
+Allow: /
+
+# Bloqueia rotas internas do app
+Disallow: /?page=admin*
+Disallow: /?page=settings*
+Disallow: /?page=sync*
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://safetyai-472110.web.app/sitemap.xml

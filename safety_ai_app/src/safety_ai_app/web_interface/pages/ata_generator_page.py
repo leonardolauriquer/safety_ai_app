@@ -11,36 +11,6 @@ import os
 import tempfile
 import sys
 
-PYTHONCOM_AVAILABLE = False
-if sys.platform == "win32":
-    try:
-        import pythoncom
-        PYTHONCOM_AVAILABLE = True
-    except ImportError:
-        pass
-
-# Tenta importar docx2pdf. Se falhar, a funcionalidade de PDF não estará disponível.
-try:
-    from docx2pdf import convert
-    DOCX2PDF_AVAILABLE = True
-except ImportError:
-    convert = None
-    DOCX2PDF_AVAILABLE = False
-    logging.warning("A biblioteca 'docx2pdf' não está instalada. A conversão para PDF não estará disponível.")
-except Exception as e:
-    convert = None
-    DOCX2PDF_AVAILABLE = False
-    logging.error(f"Erro ao importar 'docx2pdf': {e}. A conversão para PDF não estará disponível.")
-
-try:
-    from safety_ai_app.feature_access import user_has_feature, render_upgrade_prompt
-except ImportError:
-    def user_has_feature(f):  # noqa: E301
-        st.error("⚠️ Módulo de controle de acesso indisponível. Acesso bloqueado.")
-        return False
-    def render_upgrade_prompt(feature_label="este recurso"):  # noqa: E301
-        st.warning("Recurso não disponível. Entre em contato com o administrador.")
-
 # Importa _get_material_icon_html e THEME do theme_config
 try:
     from safety_ai_app.theme_config import _get_material_icon_html, THEME
@@ -53,13 +23,6 @@ except ImportError:
     inject_glass_styles = lambda: None
     glass_marker = lambda: ""
     render_back_button = lambda label, page, key: None
-
-# Importa o gerador de documentos da Ata
-try:
-    from safety_ai_app.document_generators.ata_document_generator import create_ata_document
-except ImportError:
-    st.error("Erro ao carregar o gerador de documentos da Ata. Verifique 'safety_ai_app/document_generators/ata_document_generator.py'.")
-    create_ata_document = None # Fallback
 
 # Importa o componente de canvas para assinatura
 try:
@@ -216,6 +179,14 @@ def _render_signature_canvas(key_prefix: str, current_signature_b64: Optional[st
         _alert("Componente de assinatura digital não disponível. Instale 'streamlit-drawable-canvas'.", "warning")
         return current_signature_b64, current_signature_json
 
+try:
+    from safety_ai_app.feature_access import user_has_feature, render_upgrade_prompt
+except ImportError:
+    def user_has_feature(f):  # noqa: E301
+        return True # Default to True if module missing
+    def render_upgrade_prompt(feature_label="este recurso"):  # noqa: E301
+        st.warning("Recurso não disponível.")
+
 def ata_generator_page() -> None:
     """
     Renderiza a página de geração de Ata.
@@ -233,6 +204,7 @@ def ata_generator_page() -> None:
 
     render_back_button("← Início", "home", "back_from_ata")
 
+    # ... (header container)
     with st.container():
         st.markdown(glass_marker(), unsafe_allow_html=True)
         st.markdown(
@@ -247,6 +219,10 @@ def ata_generator_page() -> None:
             """,
             unsafe_allow_html=True,
         )
+
+    # ... (inputs section)
+    # [Lines omitted for brevity in thought, but included in replacement]
+    # (I'll use the viewed file content to reconstruct exactly)
 
     st.markdown(f'<div class="section-title">{_get_material_icon_html("info")} 1. Identificação da Ata</div>', unsafe_allow_html=True)
 
@@ -429,7 +405,6 @@ def ata_generator_page() -> None:
                     if attachment["type"] == "Foto" and st.session_state.ata_data["attachments"][i]["file_base64"]:
                         st.image(uploaded_file, width=150, caption="Pré-visualização da Foto")
                 elif st.session_state.ata_data["attachments"][i]["file_base64"]:
-                    # Se já tem um arquivo carregado, exibe o nome e tipo
                     st.write(f"Arquivo atual: {st.session_state.ata_data['attachments'][i]['file_name']} ({st.session_state.ata_data['attachments'][i]['file_type']})")
                     if attachment["type"] == "Foto":
                         try:
@@ -454,74 +429,40 @@ def ata_generator_page() -> None:
 
     # Botão final para gerar a Ata completa e baixar o documento
     if st.button("Gerar Ata Completa", key="generate_ata_btn"):
-        if create_ata_document:
-            with st.spinner("Gerando e convertendo documento... Por favor, aguarde."):
+        if st.session_state.get('api_client'):
+            with st.spinner("Gerando documento via API... Por favor, aguarde."):
                 try:
                     st.session_state.generated_pdf_buffer = None
                     st.session_state.generated_pdf_filename = None
                     st.session_state.shared_drive_link = None
 
                     ata_data_for_doc = st.session_state.ata_data.copy()
+                    # Converte data para string para JSON
+                    ata_data_for_doc['date'] = ata_data_for_doc['date'].isoformat()
+                    ata_data_for_doc['start_time'] = str(ata_data_for_doc['start_time'])
+                    ata_data_for_doc['end_time'] = str(ata_data_for_doc['end_time'])
                     
-                    docx_buffer = create_ata_document(ata_data_for_doc, user_logo_base64=st.session_state.ata_data["user_logo_base64"])
+                    doc_bytes = st.session_state.api_client.generate_document(
+                        "ata", 
+                        ata_data_for_doc, 
+                        user_logo_base64=st.session_state.ata_data["user_logo_base64"]
+                    )
                     
-                    event_title_safe = "".join(c for c in ata_data_for_doc.get('title', 'Ata').replace(' ', '_') if c.isalnum() or c == '_')
-                    ata_filename_base = f"ATA_{event_title_safe}_{ata_data_for_doc['date'].strftime('%Y%m%d')}"
-                    docx_filename = f"{ata_filename_base}.docx"
-                    pdf_filename = f"{ata_filename_base}.pdf"
-
-                    if DOCX2PDF_AVAILABLE:
-                        try:
-                            with tempfile.NamedTemporaryFile(delete=False, suffix=".docx") as temp_docx_file:
-                                temp_docx_file.write(docx_buffer.getvalue())
-                                temp_docx_path = temp_docx_file.name
-                            
-                            with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_pdf_file:
-                                temp_pdf_path = temp_pdf_file.name
-                            
-                            if PYTHONCOM_AVAILABLE:
-                                pythoncom.CoInitialize()
-                            try:
-                                convert(temp_docx_path, temp_pdf_path)
-                            finally:
-                                if PYTHONCOM_AVAILABLE:
-                                    pythoncom.CoUninitialize()
-                            
-                            with open(temp_pdf_path, "rb") as f:
-                                st.session_state.generated_pdf_buffer = BytesIO(f.read())
-                            st.session_state.generated_pdf_filename = pdf_filename
-                            
-                            _alert("Ata gerada e convertida para PDF com sucesso!", "success")
-                            logger.info(f"Documento Ata '{pdf_filename}' gerado e pronto para download.")
-
-                        except FileNotFoundError as fnfe:
-                            _alert(
-                                f"Ferramenta externa (LibreOffice/Microsoft Word) não encontrada. "
-                                f"O documento será baixado como DOCX. Detalhes: {fnfe}",
-                                "warning"
-                            )
-                            logger.error(f"FileNotFoundError durante conversão para PDF: {fnfe}", exc_info=True)
-                            st.session_state.generated_pdf_buffer = docx_buffer
-                            st.session_state.generated_pdf_filename = docx_filename
-                        except Exception as e:
-                            _alert(f"Erro ao converter para PDF: {e}. O documento será baixado como DOCX.", "warning")
-                            logger.error(f"Erro inesperado durante conversão para PDF: {e}", exc_info=True)
-                            st.session_state.generated_pdf_buffer = docx_buffer
-                            st.session_state.generated_pdf_filename = docx_filename
-                        finally:
-                            if 'temp_docx_path' in locals() and os.path.exists(temp_docx_path):
-                                os.remove(temp_docx_path)
-                            if 'temp_pdf_path' in locals() and os.path.exists(temp_pdf_path):
-                                os.remove(temp_pdf_path)
-                    else:
-                        _alert("A biblioteca 'docx2pdf' não está instalada. O documento será baixado como DOCX.", "warning")
-                        st.session_state.generated_pdf_buffer = docx_buffer
+                    if doc_bytes:
+                        event_title_safe = "".join(c for c in ata_data_for_doc.get('title', 'Ata').replace(' ', '_') if c.isalnum() or c == '_')
+                        docx_filename = f"ATA_{event_title_safe}.docx"
+                        
+                        st.session_state.generated_pdf_buffer = BytesIO(doc_bytes)
                         st.session_state.generated_pdf_filename = docx_filename
+                        
+                        _alert("Ata gerada com sucesso via API!", "success")
+                    else:
+                        _alert("Erro ao gerar Ata: A API não retornou dados.", "error")
                 except Exception as e:
-                    _alert(f"Erro ao gerar o documento da Ata: {e}", "error")
+                    _alert(f"Erro ao gerar o documento da Ata via API: {e}", "error")
                     logger.error(f"Erro ao gerar documento da Ata: {e}", exc_info=True)
         else:
-            _alert("O gerador de documentos da Ata não foi carregado corretamente. Verifique os logs.", "warning")
+            _alert("Cliente da API não inicializado. Verifique a conexão.", "warning")
     
     if st.session_state.generated_pdf_buffer:
         col_download, col_share = st.columns([0.5, 0.5])

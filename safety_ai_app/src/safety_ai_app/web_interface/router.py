@@ -6,7 +6,7 @@ logger = logging.getLogger(__name__)
 
 VALID_PAGES = [
     # Main navigation
-    "home", "chat", "library", "knowledge_base", "jobs_board", "news_feed",
+    "home", "chat", "library", "knowledge_base", "admin_knowledge_base", "jobs_board", "news_feed",
     # Quick consultations
     "cbo_consult", "cid_consult", "cnae_consult", "ca_consult", "fines_consult",
     # Dimensioning
@@ -63,6 +63,7 @@ def build_page_registry(
     from safety_ai_app.web_interface.pages.settings_page import render_page as render_settings_page
     from safety_ai_app.web_interface.pages.ai_evaluation_page import render_page as render_ai_evaluation_page
     from safety_ai_app.web_interface.pages.admin_panel_page import render_page as render_admin_panel_page
+    from safety_ai_app.web_interface.pages.admin_knowledge_base import show as render_admin_knowledge_page
 
     try:
         from safety_ai_app.web_interface.pages.news_feed_page import render_page as render_news_feed_page
@@ -119,6 +120,7 @@ def build_page_registry(
         "emergency_brigade_sizing": render_emergency_brigade_sizing_page,
         "admin": render_admin_panel_page,
         "admin_panel": render_admin_panel_page,
+        "admin_knowledge_base": render_admin_knowledge_page,
     }
 
 

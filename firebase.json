@@ -1,17 +1,19 @@
 {
   "hosting": {
-    "site": "safety-ai-2026",
+    "site": "safetyai-472110",
     "public": "public",
     "ignore": [
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
     ],
-    "redirects": [
+    "rewrites": [
       {
         "source": "**",
-        "destination": "https://safety-ai-app-710675170484.us-central1.run.app",
-        "type": 301
+        "run": {
+          "serviceId": "safety-ai-app",
+          "region": "us-central1"
+        }
       }
     ],
     "headers": [

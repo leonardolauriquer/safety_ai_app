@@ -23,7 +23,7 @@ def is_session_idle_expired() -> bool:
     return (time.time() - last) > SESSION_IDLE_TIMEOUT_SECONDS
 
 
-def initialize_common(get_qa_instance_cached, get_app_drive_service_cached, set_correlation_id) -> None:
+def initialize_common(get_api_client_func, get_app_drive_service_cached, set_correlation_id) -> None:
     if "session_id" not in st.session_state:
         st.session_state.session_id = str(uuid.uuid4())
     if "correlation_id" not in st.session_state:
@@ -41,8 +41,11 @@ def initialize_common(get_qa_instance_cached, get_app_drive_service_cached, set_
         st.session_state.user_plan = "free"
     if "logged_in" not in st.session_state:
         st.session_state.logged_in = False
+    if "api_client" not in st.session_state:
+        st.session_state.api_client = get_api_client_func()
+    # Retrocompatibilidade (algumas páginas podem usar nr_qa)
     if "nr_qa" not in st.session_state:
-        st.session_state.nr_qa = get_qa_instance_cached()
+        st.session_state.nr_qa = st.session_state.api_client
     if "app_drive_service" not in st.session_state:
         st.session_state.app_drive_service = get_app_drive_service_cached()
     if "user_drive_service" not in st.session_state:

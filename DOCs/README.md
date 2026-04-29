@@ -38,6 +38,12 @@ O SafetyAI e uma aplicacao de inteligencia artificial especializada em Saude e S
 | [INTEGRACOES.md](INTEGRACOES.md) | APIs externas e integracoes |
 | [INTERFACE.md](INTERFACE.md) | Design cyber-neon e UI |
 | [AUTENTICACAO.md](AUTENTICACAO.md) | Fluxo de autenticacao |
+| [2026-04-20-Correcao-OAuth-Performance.md](2026-04-20-Correcao-OAuth-Performance.md) | Manutencao de Performance e OAuth |
+| [2026-04-20-Correcao-Build-Deploy.md](2026-04-20-Correcao-Build-Deploy.md) | Correcao de Build e Deploy (Cloud Run) |
+| [2026-04-20-Padronizacao-Project-ID.md](2026-04-20-Padronizacao-Project-ID.md) | Padronizacao do Project ID (safetyai-472110) |
+| [2026-04-20-Otimizacao-Inicializacao-Rapida.md](2026-04-20-Otimizacao-Inicializacao-Rapida.md) | Otimizacao de Inicializacao Rapida e Deferimento |
+| [2026-04-21-Otimizacao-Login-Extrema.md](2026-04-21-Otimizacao-Login-Extrema.md) | Otimizacao Extrema de Performance no Login |
+| [2026-04-29-Security-Hardening.md](2026-04-29-Security-Hardening.md) | **Security Hardening** — CORS restrito, CSP/HSTS, MIME validation, RAG fix, Firestore retry, OG tags |
 
 ## Como Executar
 
