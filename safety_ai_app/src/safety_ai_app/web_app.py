@@ -6,8 +6,11 @@ import time
 from typing import Optional, Any
 
 # Início do rastreio de performance
+from safety_ai_app.session_manager import initialize_session, touch_activity, is_session_expired, initialize_post_login
+
 if "start_time" not in st.session_state:
     st.session_state.start_time = time.time()
+    initialize_session()
     print(f"\n[SAFETY-AI] >>> NOVO BOOT: {time.strftime('%H:%M:%S')}")
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -38,7 +41,6 @@ st.set_page_config(
 )
 
 from safety_ai_app.web_interface.utils import get_image_base64 as _get_image_base64, process_markdown_for_external_links
-from safety_ai_app.web_interface import session_state as _ss
 from safety_ai_app.security.security_logger import log_security_event, SecurityEvent
 from safety_ai_app.api_client import SafetyAIAPIClient
 
@@ -237,20 +239,13 @@ def do_logout(reason: str = "user_action") -> None:
         user_email = st.session_state.get("user_email")
         from safety_ai_app.auth.google_auth import _delete_creds as _gdrive_delete_creds
         _gdrive_delete_creds(user_id=st.session_state.get("session_id"))
-        st.session_state.logged_in = False
-        st.session_state.user_drive_service = None
-        st.session_state.user_drive_auth_needed = False
-        st.session_state.user_drive_auth_url = None
-        st.session_state.user_drive_auth_error = None
-        if "messages" in st.session_state:
-            st.session_state.messages = []
-        st.session_state.current_page = "home"
-        if "last_activity" in st.session_state:
-            del st.session_state["last_activity"]
+        
+        from safety_ai_app.session_manager import reset_session
+        reset_session()
+        
         log_security_event(SecurityEvent.LOGOUT, user_email=user_email, detail=reason)
         st.query_params.clear()
         st.query_params["page"] = "home"
-        st.query_params["sync_done"] = "true"
     except Exception as e:
         logger.error(f"Erro durante o logout: {e}", exc_info=True)
         st.error(f"Ocorreu um erro ao tentar fazer logout. Detalhes: {e}")
@@ -262,7 +257,6 @@ def main_app_entrypoint() -> None:
     from safety_ai_app.web_interface.sidebar import render_sidebar_menu
     from safety_ai_app.web_interface.router import build_page_registry, route_page, VALID_PAGES
     from safety_ai_app.web_interface.pages.sync_page import render_page as render_sync_page
-    from safety_ai_app.web_interface.session_state import is_session_idle_expired, touch_last_activity
     from safety_ai_app.web_interface.pwa_support import get_pwa_injection_html
 
     # --- Phase 1: Critical UI Styles (Always needed) ---
@@ -305,7 +299,9 @@ def main_app_entrypoint() -> None:
     t2 = time.time()
     # Model warmup and Sync are now moved to the Sync Page or explicit buttons.
     _cleanup_temp_files()
-    _ss.initialize_common(get_api_client, get_app_drive_service_cached, set_correlation_id)
+    
+    # Garante que o estado comum esteja sempre pronto
+    initialize_session()
 
     requested_page_from_url = st.query_params.get("page")
     sync_done_in_url = st.query_params.get("sync_done") == "true"
@@ -331,7 +327,7 @@ def main_app_entrypoint() -> None:
         render_login_page(project_root, THEME, get_user_drive_service_wrapper)
         return
 
-    if is_session_idle_expired():
+    if is_session_expired():
         logger.info("[APP_FLOW] Sessão expirada por inatividade.")
         log_security_event(
             SecurityEvent.SESSION_TIMEOUT,
@@ -342,7 +338,7 @@ def main_app_entrypoint() -> None:
         do_logout(reason="session_timeout")
         return
 
-    touch_last_activity()
+    touch_activity()
 
     if is_logged_in and not sync_done_in_url:
         logger.info("[APP_FLOW] Usuário logado mas sync não realizado. Redirecionando para sync_page.")
@@ -374,7 +370,8 @@ def main_app_entrypoint() -> None:
             do_logout()
         st.session_state.nav_request = ""
 
-    _ss.initialize_post_login()
+    # Inicializa estado pós-login se necessário (mensagens, etc)
+    initialize_post_login(st.session_state.user_email, st.session_state.user_name)
 
     current_url_params = {k: v for k, v in st.query_params.items()}
     target_page = "home"

@@ -44,6 +44,8 @@ O SafetyAI e uma aplicacao de inteligencia artificial especializada em Saude e S
 | [2026-04-20-Otimizacao-Inicializacao-Rapida.md](2026-04-20-Otimizacao-Inicializacao-Rapida.md) | Otimizacao de Inicializacao Rapida e Deferimento |
 | [2026-04-21-Otimizacao-Login-Extrema.md](2026-04-21-Otimizacao-Login-Extrema.md) | Otimizacao Extrema de Performance no Login |
 | [2026-04-29-Security-Hardening.md](2026-04-29-Security-Hardening.md) | **Security Hardening** — CORS restrito, CSP/HSTS, MIME validation, RAG fix, Firestore retry, OG tags |
+| [2026-04-29-Refatoracao-God-Files.md](2026-04-29-Refatoracao-God-Files.md) | **Refatoração Admin & RAG** — Decomposição de arquivos gigantes, isolamento de lógica de indexação e histórico. |
+| [2026-04-29-Refatoracao-Chat-e-Performance.md](2026-04-29-Refatoracao-Chat-e-Performance.md) | **Refatoração Chat & Performance** — Modularização do chat, proteção XSS e cache de performance no Admin. |
 
 ## Como Executar
 

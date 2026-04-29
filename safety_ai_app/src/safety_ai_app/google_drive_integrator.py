@@ -45,6 +45,28 @@ DIMENSIONAMENTO_SESMT_FILE_ID = "17pu8jBvKCRdZY2d3wbgAFUGm2eoZhidr"
 PALAVRAS_CRUZADAS_FILE_ID = "1lNywo2vsXEocZItSCrM9kWuEZyWKNLqW"
 SHOW_DO_MILHAO_PERGUNTAS_FILE_ID = "1Y-v4eX9VXu2yTtAmxyjBmKsBYbGoRjIM"
 
+# MIME Types permitidos para processamento RAG (White-list)
+ALLOWED_MIME_TYPES = {
+    'application/pdf',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'text/plain',
+    'application/vnd.google-apps.document',
+}
+
+def _validate_drive_file_integrity(file_metadata: Dict[str, Any]) -> bool:
+    """Valida se o arquivo do Drive é seguro e está em formato suportado."""
+    name = file_metadata.get('name', 'Desconhecido')
+    mime = file_metadata.get('mimeType', '')
+    size = int(file_metadata.get('size', 0))
+    if mime not in ALLOWED_MIME_TYPES:
+        logger.warning(f"Arquivo ignorado (MIME não permitido): {name} [{mime}]")
+        return False
+    if size > 50 * 1024 * 1024:
+        logger.warning(f"Arquivo ignorado (Muito grande): {name} [{size} bytes]")
+        return False
+    return True
+
+
 
 class GoogleDriveIntegrator:
     """Thin facade over DriveDownloader providing Drive access via service-account credentials."""
@@ -81,7 +103,9 @@ class GoogleDriveIntegrator:
         return self._dl.list_folders(parent_id)
 
     def get_processable_drive_files_in_folder(self, folder_id: str) -> List[Dict[str, str]]:
-        return self._dl.get_processable_files(folder_id)
+        all_files = self._dl.get_processable_files(folder_id)
+        # Aplica a validação estrita de integridade e MIME Type
+        return [f for f in all_files if _validate_drive_file_integrity(f)]
 
     # ------------------------------------------------------------------
     # Upload

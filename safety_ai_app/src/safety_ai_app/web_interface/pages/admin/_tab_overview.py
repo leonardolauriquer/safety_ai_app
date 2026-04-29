@@ -22,6 +22,51 @@ from safety_ai_app.web_interface.pages.admin._helpers import (
 
 logger = logging.getLogger(__name__)
 
+@st.cache_data(ttl=600)
+def _get_chroma_stats(db_path: str) -> str:
+    """Retorna a contagem total de documentos no ChromaDB com cache."""
+    try:
+        import chromadb
+        client = chromadb.PersistentClient(path=db_path)
+        total = sum(col.count() for col in client.list_collections())
+        return f"{total:,}"
+    except Exception:
+        return "–"
+
+@st.cache_data(ttl=300)
+def _get_log_stats(app_log: Any, rag_logs_dir: Any) -> tuple[str, str]:
+    """Calcula o tamanho dos logs com cache de 5 minutos."""
+    app_log_size = "–"
+    rag_log_size = "–"
+    try:
+        if app_log.exists():
+            from safety_ai_app.web_interface.pages.admin._helpers import _human_size
+            app_log_size = _human_size(app_log.stat().st_size)
+    except Exception: pass
+    try:
+        if rag_logs_dir.exists():
+            from safety_ai_app.web_interface.pages.admin._helpers import _human_size
+            total_rag = sum(f.stat().st_size for f in rag_logs_dir.rglob("*.jsonl"))
+            rag_log_size = _human_size(total_rag)
+    except Exception: pass
+    return app_log_size, rag_log_size
+
+@st.cache_data(ttl=600)
+def _get_eval_stats(eval_dir: Any) -> str:
+    """Recupera o score da última avaliação de IA com cache."""
+    try:
+        import json
+        if eval_dir.exists():
+            files = sorted(eval_dir.glob("eval_*.json"), reverse=True)
+            if files:
+                with files[0].open(encoding="utf-8") as f:
+                    rpt = json.load(f)
+                agg = rpt.get("aggregate_metrics", {})
+                score = sum(agg.values()) / len(agg) if agg else 0
+                return f"{int(score*100)}%"
+    except Exception: pass
+    return "–"
+
 
 def _render_metric_card(col: Any, icon: str, value: str, label: str, color: str = "#4ADE80") -> None:
     with col:
@@ -37,52 +82,26 @@ def _render_metric_card(col: Any, icon: str, value: str, label: str, color: str 
 def _tab_overview() -> None:
     st.markdown('<div class="section-title">📊 Métricas do Sistema</div>', unsafe_allow_html=True)
 
-    # ChromaDB doc count
-    chroma_count = "–"
-    try:
-        import chromadb
-        client = chromadb.PersistentClient(path=str(_CHROMA_DB_DIR))
-        total = sum(col.count() for col in client.list_collections())
-        chroma_count = f"{total:,}"
-    except Exception:
-        chroma_count = "–"
+    # Use cached stats
+    chroma_count = _get_chroma_stats(str(_CHROMA_DB_DIR))
+    app_log_size, rag_log_size = _get_log_stats(_LOG_PATH, _RAG_LOGS_DIR)
+    last_eval = _get_eval_stats(_AI_CONFIG_PATH.parent / "eval" / "results")
 
-    # Embedding model
+    # Embedding model & Warmup (No cache for real-time check)
     embedding_model = "–"
     sentinel = _CHROMA_DB_DIR / ".embedding_model"
     if sentinel.exists():
-        try:
-            embedding_model = sentinel.read_text(encoding="utf-8").strip() or "–"
-        except Exception:
-            pass
+        try: embedding_model = sentinel.read_text(encoding="utf-8").strip() or "–"
+        except Exception: pass
 
-    # Warmup status
     warmup_status = "–"
     try:
         from safety_ai_app.nr_rag_qa import is_warmup_complete
         warmup_status = "✅ Pronto" if is_warmup_complete() else "⏳ Aquecendo"
-    except Exception:
-        warmup_status = "–"
+    except Exception: pass
 
-    # Log sizes
-    app_log_size = "–"
-    rag_log_size = "–"
-    try:
-        if _LOG_PATH.exists():
-            app_log_size = _human_size(_LOG_PATH.stat().st_size)
-    except Exception:
-        pass
-    try:
-        if _RAG_LOGS_DIR.exists():
-            total_rag = sum(f.stat().st_size for f in _RAG_LOGS_DIR.rglob("*.jsonl"))
-            rag_log_size = _human_size(total_rag)
-    except Exception:
-        pass
-
-    # Last sync
-    last_sync = "–"
-    sync_ok = "–"
-    next_sync = "–"
+    # Last sync (Real-time from scheduler)
+    last_sync, sync_ok, next_sync = "–", "–", "–"
     try:
         from safety_ai_app.auto_sync_scheduler import get_scheduler
         status = get_scheduler().get_status()
@@ -93,27 +112,8 @@ def _tab_overview() -> None:
         if status.get("next_run_time"):
             dt2 = datetime.fromtimestamp(status["next_run_time"], tz=timezone.utc)
             next_sync = dt2.strftime("%d/%m/%Y %H:%M")
-    except Exception:
-        pass
+    except Exception: pass
 
-    # Last AI evaluation
-    last_eval = "–"
-    try:
-        import json
-        from pathlib import Path
-        results_dir = _AI_CONFIG_PATH.parent / "eval" / "results"
-        if results_dir.exists():
-            files = sorted(results_dir.glob("eval_*.json"), reverse=True)
-            if files:
-                with files[0].open(encoding="utf-8") as f:
-                    rpt = json.load(f)
-                agg = rpt.get("aggregate_metrics", {})
-                score = sum(agg.values()) / len(agg) if agg else 0
-                last_eval = f"{int(score*100)}%"
-    except Exception:
-        pass
-
-    # Active AI model
     ai_model = os.environ.get("OPENROUTER_MODEL", "–")
     if ai_model == "–":
         cfg = _load_json(_AI_CONFIG_PATH, {})
