@@ -28,6 +28,19 @@ from .rag import (
     SAFE_REFUSAL,
 )
 
+# Indexação de NR PDFs em background (extraído para módulo dedicado)
+from safety_ai_app.rag.nr_indexer import (
+    get_indexed_nr_numbers_from_mte,  # noqa: F811 — override com impl canonica
+    start_nr_indexing_background,
+    get_nr_indexing_status,
+    is_nr_indexing_running,
+    NR_INDEXING_STATUS_FILE,
+)
+
+# Gerenciamento de histórico de chat (extraído para módulo dedicado)
+from safety_ai_app.rag.history_manager import compress_history as _compress_history
+
+
 try:
     from safety_ai_app.security.security_logger import log_security_event, SecurityEvent as _SecurityEvent
     _SEC_LOGGER_AVAILABLE = True
@@ -122,143 +135,10 @@ def _log_module_availability():
 
 
 # ---------------------------------------------------------------------------
-# NR PDF background indexing (admin feature)
+# NR PDF background indexing — delegado para rag/nr_indexer.py
+# A API pública é reexportada acima via imports para compatibilidade retroativa.
 # ---------------------------------------------------------------------------
 
-_nr_indexing_thread: Optional[threading.Thread] = None
-_nr_indexing_status: Dict[str, Any] = {}
-_nr_indexing_lock = threading.Lock()
-
-NR_INDEXING_STATUS_FILE = os.path.join(
-    os.path.dirname(CHROMADB_PERSIST_DIRECTORY), "nr_indexing_status.json"
-)
-
-
-def get_indexed_nr_numbers_from_mte(collection) -> list:
-    """Return list of NR numbers (int) already indexed from MTE-oficial source."""
-    try:
-        result = collection.get(include=["metadatas"])
-        indexed = set()
-        for meta in result.get("metadatas", []):
-            if meta.get("source") == "MTE-oficial":
-                nr = meta.get("nr_number")
-                if isinstance(nr, int):
-                    indexed.add(nr)
-                elif isinstance(nr, str):
-                    try:
-                        clean = nr.replace("NR-", "").lstrip("0") or "0"
-                        indexed.add(int(clean))
-                    except ValueError:
-                        pass
-        return sorted(indexed)
-    except Exception as e:
-        logger.warning(f"[NR-INDEX] Erro ao checar NRs indexadas: {e}")
-        return []
-
-
-def _nr_indexing_worker(qa_instance, nr_list: list) -> None:
-    """Background thread: indexes NR PDFs using the app's existing QA instance."""
-    import json as _json
-
-    nrs_dir = os.path.join(os.path.dirname(CHROMADB_PERSIST_DIRECTORY), "nrs")
-    status: Dict[str, Any] = {
-        "running": True, "started_at": datetime.now().isoformat(),
-        "total": len(nr_list), "done": 0, "errors": 0,
-        "current": None, "results": {}
-    }
-
-    def _save_status():
-        try:
-            with open(NR_INDEXING_STATUS_FILE, "w") as f:
-                _json.dump(status, f)
-        except Exception:
-            pass
-
-    _save_status()
-
-    for nr in nr_list:
-        pdf_path = os.path.join(nrs_dir, f"NR-{nr:02d}.pdf")
-        status["current"] = f"NR-{nr:02d}"
-        _save_status()
-
-        if not os.path.exists(pdf_path):
-            logger.warning(f"[NR-INDEX] NR-{nr:02d}: PDF não encontrado")
-            status["results"][str(nr)] = {"status": "not_found"}
-            status["done"] += 1
-            _save_status()
-            continue
-
-        try:
-            meta = {
-                "nr_number": nr,
-                "doc_type": "norma_regulamentadora",
-                "source": "MTE-oficial",
-                "source_file": f"NR-{nr:02d}.pdf",
-                "document_name": f"NR-{nr:02d}",
-                "source_type": "local_pdf",
-                "extraction_method": "pypdf",
-                "file_type": "application/pdf",
-            }
-            before = qa_instance.vector_db._collection.count()
-            qa_instance.process_document_to_chroma(
-                file_path=pdf_path,
-                document_name=f"NR-{nr:02d}.pdf",
-                source="MTE-oficial",
-                file_type="application/pdf",
-                additional_metadata=meta,
-            )
-            after = qa_instance.vector_db._collection.count()
-            added = after - before
-            logger.info(f"[NR-INDEX] NR-{nr:02d}: OK, +{added} chunks (total: {after})")
-            status["results"][str(nr)] = {"status": "ok", "chunks_added": added}
-        except Exception as e:
-            logger.error(f"[NR-INDEX] NR-{nr:02d}: ERRO — {e}", exc_info=True)
-            status["results"][str(nr)] = {"status": "error", "error": str(e)}
-            status["errors"] += 1
-
-        status["done"] += 1
-        _save_status()
-
-    status["running"] = False
-    status["current"] = None
-    status["finished_at"] = datetime.now().isoformat()
-    _save_status()
-    logger.info(f"[NR-INDEX] Indexamento concluído. {status['done']}/{status['total']} NRs processadas.")
-
-
-def start_nr_indexing_background(qa_instance, nr_list: list) -> bool:
-    """Start background NR indexing. Returns False if already running."""
-    global _nr_indexing_thread
-    with _nr_indexing_lock:
-        if _nr_indexing_thread is not None and _nr_indexing_thread.is_alive():
-            return False
-        _nr_indexing_thread = threading.Thread(
-            target=_nr_indexing_worker,
-            args=(qa_instance, nr_list),
-            daemon=True,
-            name="nr-indexing",
-        )
-        _nr_indexing_thread.start()
-        logger.info(f"[NR-INDEX] Background indexing started for {len(nr_list)} NRs.")
-        return True
-
-
-def get_nr_indexing_status() -> Dict[str, Any]:
-    """Return current indexing status from file."""
-    import json as _json
-    try:
-        if os.path.exists(NR_INDEXING_STATUS_FILE):
-            with open(NR_INDEXING_STATUS_FILE) as f:
-                return _json.load(f)
-    except Exception:
-        pass
-    return {}
-
-
-def is_nr_indexing_running() -> bool:
-    """True if the background indexing thread is still alive."""
-    global _nr_indexing_thread
-    return _nr_indexing_thread is not None and _nr_indexing_thread.is_alive()
 
 
 # ---------------------------------------------------------------------------
@@ -596,42 +476,13 @@ class NRQuestionAnswering:
         max_turns: int = 10,
         max_chars: int = 16000,
     ) -> List[Any]:
-        """
-        Summarize old messages when history exceeds max_turns or max_chars.
-        Returns a new list where old messages are replaced by a summary AIMessage.
-        """
-        if len(messages) <= max_turns * 2:
-            total_chars = sum(len(m.content) for m in messages if hasattr(m, 'content'))
-            if total_chars <= max_chars:
-                return messages
-
-        keep_recent = max_turns
-        to_compress = messages[:-keep_recent] if len(messages) > keep_recent else []
-        recent = messages[-keep_recent:] if len(messages) > keep_recent else messages
-
-        if not to_compress or not self.llm:
-            return messages
-
-        try:
-            history_text = "\n".join(
-                f"{'Usuário' if isinstance(m, HumanMessage) else 'SafetyAI'}: {m.content}"
-                for m in to_compress
-            )
-            summary_prompt = (
-                "Você é um assistente que resume conversas sobre SST (Saúde e Segurança do Trabalho). "
-                "Resuma o seguinte histórico de conversa em português, preservando os pontos técnicos "
-                "mais importantes (NRs citadas, perguntas principais, conclusões):\n\n"
-                f"{history_text}\n\n"
-                "Resuma em até 400 palavras, mantendo os fatos técnicos essenciais."
-            )
-            summary_response = self.llm.invoke(summary_prompt)
-            summary_content = summary_response.content if hasattr(summary_response, 'content') else str(summary_response)
-            summary_message = AIMessage(content=f"[Resumo do histórico anterior]\n{summary_content}")
-            logger.info(f"Histórico comprimido: {len(to_compress)} mensagens → 1 resumo.")
-            return [summary_message] + list(recent)
-        except Exception as e:
-            logger.warning(f"Falha na compressão de histórico: {e}. Usando histórico completo.")
-            return messages
+        """Delegate to rag.history_manager.compress_history."""
+        return _compress_history(
+            messages=messages,
+            llm=self.llm,
+            max_turns=max_turns,
+            max_chars=max_chars,
+        )
 
     def _detect_temperature(self, query: str) -> float:
         """Return document or factual temperature based on query type (values from ai_config.json)."""
